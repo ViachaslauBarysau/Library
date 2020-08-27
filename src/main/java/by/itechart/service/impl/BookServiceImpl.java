@@ -5,6 +5,8 @@ import by.itechart.repository.BookRepository;
 import by.itechart.repository.impl.BookRepositoryImpl;
 import by.itechart.service.BookService;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
@@ -17,11 +19,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getPageOfBooks(int pageNumber) {
-        return bookRepository.getPageOfBooks(pageNumber);
+        return bookRepository.getBooks(pageNumber);
     }
 
     @Override
     public int getCountOfPages() {
         return bookRepository.getCountOfPages();
+    }
+
+    @Override
+    public void deleteBooks(Object[] booksList) {
+        bookRepository.deleteBooks(booksList);
     }
 }

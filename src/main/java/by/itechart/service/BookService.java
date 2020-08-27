@@ -7,4 +7,5 @@ import java.util.List;
 public interface BookService {
     List<Book> getPageOfBooks (int pageNumber);
     int getCountOfPages();
+    void deleteBooks(Object[] booksList);
 }

@@ -44,8 +44,8 @@ CREATE TABLE Books_Readers
     Time_Period INTEGER NOT NULL,
     Return_date DATETIME,
     PRIMARY KEY (ID),
-    FOREIGN KEY (Book_ID) REFERENCES Books (ID),
-    FOREIGN KEY (Reader_ID) REFERENCES Readers (ID)
+    FOREIGN KEY (Book_ID) REFERENCES Books (ID) ON DELETE CASCADE,
+    FOREIGN KEY (Reader_ID) REFERENCES Readers (ID) ON DELETE CASCADE
 );
 
 
@@ -55,8 +55,8 @@ CREATE TABLE Books_Authors
     Book_ID INTEGER NOT NULL,
     Author_ID INTEGER NOT NULL,
     PRIMARY KEY (ID),
-    FOREIGN KEY (Book_ID) REFERENCES Books (ID),
-    FOREIGN KEY (Author_ID) REFERENCES Authors (ID)
+    FOREIGN KEY (Book_ID) REFERENCES Books (ID) ON DELETE CASCADE,
+    FOREIGN KEY (Author_ID) REFERENCES Authors (ID) ON DELETE CASCADE
 );
 
 CREATE TABLE Books_Genres
@@ -65,8 +65,8 @@ CREATE TABLE Books_Genres
     Book_ID INTEGER NOT NULL,
     Genre_ID INTEGER NOT NULL,
     PRIMARY KEY (ID),
-    FOREIGN KEY (Book_ID) REFERENCES Books (ID),
-    FOREIGN KEY (Genre_ID) REFERENCES Genres (ID)
+    FOREIGN KEY (Book_ID) REFERENCES Books (ID) ON DELETE CASCADE,
+    FOREIGN KEY (Genre_ID) REFERENCES Genres (ID) ON DELETE CASCADE
 );
 
 CREATE TABLE Books_Covers
@@ -75,7 +75,7 @@ CREATE TABLE Books_Covers
     Book_ID INTEGER NOT NULL,
     Title VARCHAR(255),
     PRIMARY KEY (ID),
-    FOREIGN KEY (Book_ID) REFERENCES Books (ID)
+    FOREIGN KEY (Book_ID) REFERENCES Books (ID) ON DELETE CASCADE
 );
 
 INSERT INTO Books(Title, Publisher, Publish_date, Page_count, Isbn, Description, Total_amount, Available_amount)
