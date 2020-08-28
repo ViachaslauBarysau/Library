@@ -3,8 +3,6 @@ package by.itechart.repository.impl;
 
 import by.itechart.entity.Book;
 import by.itechart.repository.BookRepository;
-import by.itechart.service.AuthorService;
-import by.itechart.service.impl.AuthorServiceImpl;
 import by.itechart.util.ConnectionHelper;
 
 
@@ -19,7 +17,7 @@ public class BookRepositoryImpl implements BookRepository {
     public static BookRepositoryImpl getInstance() {
         return instance;
     }
-    private AuthorService authorService = AuthorServiceImpl.getInstance();
+
 
     private static final int COUNT_OF_BOOKS_ON_PAGE = 10;
     private static final String SQL_DELETE_BOOKS_BY_IDS = "DELETE FROM Books WHERE id = ANY (?);";
@@ -87,7 +85,6 @@ public class BookRepositoryImpl implements BookRepository {
                                 .description(resultSet.getString("Description"))
                                 .totalAmount(resultSet.getInt("Total_amount"))
                                 .availableAmount(resultSet.getInt("Available_amount"))
-                                .description("Description")
                                 .authors(new ArrayList<>())
                                 .covers(new ArrayList<>())
                                 .genres(new ArrayList<>())

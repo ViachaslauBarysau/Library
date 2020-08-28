@@ -22,27 +22,29 @@
         </c:forEach>
     </div>
     Title
-    <p><input type="text" size="40" value="${book.title}" ></p>
+    <p><input type="text" size="40" value="${book.title}" required></p>
     Authors
-    <c:forEach var="author" items="${book.authors}">
-        <p><input type="text" size="40" value="${author}" ></p>
+    <c:forEach var="author" items="${book.authors}" >
+        <p><input type="text" size="40" value="${author}" required></p>
     </c:forEach>
     Publisher
-    <p><input type="text" size="40" value="${book.publisher}" ></p>
+    <p><input type="text" size="40" value="${book.publisher}" required></p>
     Publish date
-    <p><input type="text" size="40" value="${book.publishDate}" ></p>
+    <p><input type="text" size="40" value="${book.publishDate}" required></p>
     Genres
     <c:forEach var="genre" items="${book.genres}">
         <p><input type="text" size="40" value="${genre}" ></p>
     </c:forEach>
     Page count
-    <p><input type="text" size="40" value="${book.pageCount}" ></p>
+    <p><input type="text" size="40" value="${book.pageCount}" required></p>
     ISBN
-    <p><input type="text" size="40" value="${book.ISBN}" ></p>
+    <p><input type="text" size="40" value="${book.ISBN}" required></p>
     Description
-    <p><input type="text" size="40" value="${book.description}" ></p>
+    <p><textarea maxlength="400" cols="42" rows="12" required>
+    ${book.description}
+    </textarea></p>
     Total amount
-    <p><input type="text" size="40" value="${book.totalAmount}" ></p>
+    <p><input type="text" size="40" value="${book.totalAmount}" required></p>
     Status
     <p><input type="text" size="40" value="Available ${book.availableAmount} out of ${book.totalAmount}" readonly></p>
 

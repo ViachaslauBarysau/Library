@@ -21,10 +21,27 @@ public class GetBookListCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
-        List<Book> pageOfBooks = bookService.getPageOfBooks(Integer.parseInt(request.getParameter("page")));
+        int pageNumber = 1;
+
+        try {
+            pageNumber = Integer.parseInt(request.getParameter("page"));
+        } catch (Exception e) {
+
+        }
+
+        int countOfPages = bookService.getCountOfPages();
+        if (pageNumber>countOfPages) {
+            pageNumber = countOfPages;
+        } else if (pageNumber<1) {
+            pageNumber = 1;
+        }
+
+        List<Book> pageOfBooks = bookService.getPageOfBooks(pageNumber);
+
         request.setAttribute("books", pageOfBooks);
-        request.setAttribute("pageCount", bookService.getCountOfPages());
-        request.setAttribute("pageNumber", request.getParameter("page"));
+        request.setAttribute("pageCount", countOfPages);
+        request.setAttribute("pageNumber", pageNumber);
+
         forward("mainpage");
     }
 }

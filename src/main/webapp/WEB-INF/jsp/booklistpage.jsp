@@ -38,6 +38,7 @@
             </tr>
         </c:forEach>
     </table>
+    <input hidden name="page" value="${pageNumber}">
     <button type="submit" formaction="lib-app?command=ADD_BOOK" />
     Add Book
     </button>
@@ -49,7 +50,7 @@
         &lt;
         </button>
     </c:if>
-    ${pageNumber}
+    page ${pageNumber}
     <c:if test ="${pageNumber < pageCount}">
         <button type="submit" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber + 1}" />
         &gt;

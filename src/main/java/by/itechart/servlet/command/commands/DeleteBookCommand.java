@@ -23,16 +23,20 @@ public class DeleteBookCommand extends LibraryCommand {
     @Override
     public void process() throws ServletException, IOException {
 
-        Object[] booksIdsForDeleting = Arrays.stream(request.getParameterValues("bookid")).mapToInt(Integer::parseInt).boxed().toArray();
-
+        try {
+            Object[] booksIdsForDeleting = Arrays.stream(request.getParameterValues("bookid")).mapToInt(Integer::parseInt).boxed().toArray();
             bookService.deleteBooks(booksIdsForDeleting);
+        } catch (Exception e) {
 
-//        List<Book> pageOfBooks = bookService.getPageOfBooks(Integer.parseInt(request.getParameter("page")));
-            List<Book> pageOfBooks = bookService.getPageOfBooks(1);
-            request.setAttribute("books", pageOfBooks);
-            request.setAttribute("pageCount", bookService.getCountOfPages());
-            request.setAttribute("pageNumber", request.getParameter("page"));
+        }
 
+        int countOfPages = bookService.getCountOfPages();
+        int pageNumber = Math.min(countOfPages, Integer.parseInt(request.getParameter("page")));
+        List<Book> pageOfBooks = bookService.getPageOfBooks(pageNumber);
+
+        request.setAttribute("books", pageOfBooks);
+        request.setAttribute("pageCount", countOfPages);
+        request.setAttribute("pageNumber", pageNumber);
 
         forward("mainpage");
     }
