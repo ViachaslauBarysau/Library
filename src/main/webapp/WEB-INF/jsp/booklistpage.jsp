@@ -12,7 +12,7 @@
     <title>Title</title>
 </head>
 <body>
-<form method="post" action="mainpage.jsp">
+<form method="post">
     <table>
         <tr>
             <th></th>
@@ -25,7 +25,7 @@
             <tr>
                 <td><input type="checkbox" name="bookid" value="${book.id}"></td>
                 <td>
-                    <a href="lib-app?command=BookPage&id=${book.id}">
+                    <a href="lib-app?command=BOOK_PAGE&id=${book.id}">
                         ${book.title}
                     </a>
                 </td>

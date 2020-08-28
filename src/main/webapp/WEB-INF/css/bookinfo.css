@@ -1,0 +1,32 @@
+body {
+    background-color: #E6E6E6;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 150px);
+    grid-auto-rows: 150px;
+    grid-gap: 1em;
+
+}
+
+div.cover {
+    border: 1px solid #212941;
+    align-self: center;
+    justify-self: center;
+}
+
+div.cover:hover {
+    border: 2px solid #568967;
+}
+
+
+div.cover img {
+    max-width: 140px;
+    max-height: 140px;
+}
+
+.imagepreview {
+    max-width: 400px;
+    max-height: 400px;
+}

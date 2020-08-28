@@ -11,6 +11,7 @@ import by.itechart.util.ConnectionHelper;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class BookRepositoryImpl implements BookRepository {
@@ -27,32 +28,35 @@ public class BookRepositoryImpl implements BookRepository {
         " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
         " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
         " WHERE Book_ID IN (SELECT ID FROM BOOKS LIMIT ? OFFSET ?);";
+    private static final String SQL_GET_BOOK="SELECT Books.*, Authors.Name, Genres.Title AS Genre," +
+            " Covers.Title AS Cover FROM Books" +
+            " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
+            " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
+            " LEFT JOIN Books_Genres ON Books.Id=Books_Genres.Book_Id" +
+            " LEFT JOIN Genres ON Books_Genres.Genre_Id=Genres.Id" +
+            " LEFT JOIN Covers ON Covers.Book_Id=Books.Id" +
+            " WHERE Books.ID = ?;";
 
 
     @Override
-    public List<Book> getBooks(int limitOffset) {
-        List<Book> bookList = new ArrayList<>();
+    public List<Book> getBookEntities(int limitOffset) {
+        List<Book> bookEntitiesList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_PAGE_OF_BOOKS)) {
                 preparedStatement.setInt(1, COUNT_OF_BOOKS_ON_PAGE);
                 preparedStatement.setInt(2, (limitOffset-1)*COUNT_OF_BOOKS_ON_PAGE);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    if (bookList.isEmpty() || bookList.get(bookList.size()-1).getId()!=resultSet.getInt("ID")) {
-                        bookList.add(Book.builder()
+                    if (bookEntitiesList.isEmpty() || bookEntitiesList.get(bookEntitiesList.size()-1).getId()!=resultSet.getInt("ID")) {
+                        bookEntitiesList.add(Book.builder()
                                 .id(resultSet.getInt("ID"))
                                 .title(resultSet.getString("Title"))
                                 .authors(new ArrayList<>(Arrays.asList(resultSet.getString("Name"))))
                                 .publishDate(resultSet.getInt("Publish_date"))
-//                                .publisher(resultSet.getString("Publisher"))
-//                                .pageCount(resultSet.getInt("Page_count"))
-//                                .ISBN(resultSet.getString("Isbn"))
-//                                .description(resultSet.getString("Description"))
-//                                .totalAmount(resultSet.getInt("Total_amount"))
                                 .availableAmount(resultSet.getInt("Available_amount"))
                                 .build());
                     } else {
-                        bookList.get(bookList.size()-1).getAuthors().add(resultSet.getString("Name"));
+                        bookEntitiesList.get(bookEntitiesList.size()-1).getAuthors().add(resultSet.getString("Name"));
                     }
 
                 }
@@ -61,7 +65,57 @@ public class BookRepositoryImpl implements BookRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return bookList;
+        return bookEntitiesList;
+    }
+
+    @Override
+    public Book getBook(int bookId) {
+        Book book = new Book();
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK)) {
+                preparedStatement.setInt(1, bookId);
+
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                    while (resultSet.next()) {
+                        book = Book.builder()
+                                .id(resultSet.getInt("ID"))
+                                .title(resultSet.getString("Title"))
+                                .publishDate(resultSet.getInt("Publish_date"))
+                                .publisher(resultSet.getString("Publisher"))
+                                .pageCount(resultSet.getInt("Page_count"))
+                                .ISBN(resultSet.getString("Isbn"))
+                                .description(resultSet.getString("Description"))
+                                .totalAmount(resultSet.getInt("Total_amount"))
+                                .availableAmount(resultSet.getInt("Available_amount"))
+                                .description("Description")
+                                .authors(new ArrayList<>())
+                                .covers(new ArrayList<>())
+                                .genres(new ArrayList<>())
+                                .build();
+                        break;
+                    }
+                HashSet<String> authors = new HashSet<>();
+                HashSet<String> genres = new HashSet<>();
+                HashSet<String> covers = new HashSet<>();
+                while (resultSet.next()) {
+                    if (resultSet.getString("Name") != null) {
+                        authors.add(resultSet.getString("Name"));
+                    }
+                    if (resultSet.getString("Genre")!= null) {
+                        genres.add(resultSet.getString("Genre"));
+                    }
+                    if (resultSet.getString("Cover") != null) {
+                        covers.add(resultSet.getString("Cover"));
+                    }
+                }
+                book.getAuthors().addAll(authors);
+                book.getGenres().addAll(genres);
+                book.getCovers().addAll(covers);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return book;
     }
 
     @Override

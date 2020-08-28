@@ -11,8 +11,14 @@
     <title>Title</title>
 </head>
 <body>
-Main Page
-Search Page
-Email Page
+<a href="lib-app?command=GET_BOOK_LIST&page=1">
+    Main page
+</a>
+<a href="lib-app?command=SEARCH_PAGE">
+    Search page
+</a>
+<a href="lib-app?command=EMAIL_PAGE">
+    Email Page
+</a>
 </body>
 </html>

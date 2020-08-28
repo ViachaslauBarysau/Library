@@ -69,7 +69,7 @@ CREATE TABLE Books_Genres
     FOREIGN KEY (Genre_ID) REFERENCES Genres (ID) ON DELETE CASCADE
 );
 
-CREATE TABLE Books_Covers
+CREATE TABLE Covers
 (
     ID    long NOT NULL AUTO_INCREMENT,
     Book_ID INTEGER NOT NULL,
@@ -137,6 +137,25 @@ VALUES ('horror'),
        ('fantasy'),
        ('drama');
 
+INSERT INTO Covers(Book_ID, Title)
+VALUES (1, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (1, 'ceff27d9d31e677493288f8a95e9ebc3.png'),
+       (1, 'f2314ffdcbc394a3bdd0ba8543a56844.png'),
+       (2, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (3, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (4, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (5, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (6, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (7, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (8, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (9, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (10, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (11, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (12, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (13, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (14, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (15, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
+       (16, '69aacd9ea1219a3a4b43b64f6a4c7276.png');
 
 INSERT INTO Books_Authors(Book_ID, Author_ID)
 VALUES (1, 1),

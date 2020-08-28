@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DeleteBookCommand extends LibraryCommand {
-    BookService bookService = BookServiceImpl.getInstance();
+    private BookService bookService = BookServiceImpl.getInstance();
     private static DeleteBookCommand instance = new DeleteBookCommand();
 
     public static DeleteBookCommand getInstance() {
@@ -25,13 +25,15 @@ public class DeleteBookCommand extends LibraryCommand {
 
         Object[] booksIdsForDeleting = Arrays.stream(request.getParameterValues("bookid")).mapToInt(Integer::parseInt).boxed().toArray();
 
-        bookService.deleteBooks(booksIdsForDeleting);
+            bookService.deleteBooks(booksIdsForDeleting);
 
 //        List<Book> pageOfBooks = bookService.getPageOfBooks(Integer.parseInt(request.getParameter("page")));
-        List<Book> pageOfBooks = bookService.getPageOfBooks(1);
-        request.setAttribute("books", pageOfBooks);
-        request.setAttribute("pageCount", bookService.getCountOfPages());
-        request.setAttribute("pageNumber", request.getParameter("page"));
+            List<Book> pageOfBooks = bookService.getPageOfBooks(1);
+            request.setAttribute("books", pageOfBooks);
+            request.setAttribute("pageCount", bookService.getCountOfPages());
+            request.setAttribute("pageNumber", request.getParameter("page"));
+
+
         forward("mainpage");
     }
 }

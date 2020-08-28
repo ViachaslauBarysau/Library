@@ -15,6 +15,6 @@ public class SearchPageCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
-
+        forward("searchpage");
     }
 }

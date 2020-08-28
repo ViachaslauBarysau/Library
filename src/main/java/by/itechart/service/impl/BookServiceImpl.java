@@ -19,7 +19,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getPageOfBooks(int pageNumber) {
-        return bookRepository.getBooks(pageNumber);
+        return bookRepository.getBookEntities(pageNumber);
     }
 
     @Override
@@ -30,5 +30,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public void deleteBooks(Object[] booksList) {
         bookRepository.deleteBooks(booksList);
+    }
+
+    @Override
+    public Book getBook(int bookId) {
+        return bookRepository.getBook(bookId);
     }
 }

@@ -1,24 +1,25 @@
 package by.itechart.servlet.command.commands;
 
+import by.itechart.entity.Book;
 import by.itechart.service.BookService;
 import by.itechart.service.impl.BookServiceImpl;
 import by.itechart.servlet.command.LibraryCommand;
-import lombok.Data;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-@Data
-public class AddEditBookCommand extends LibraryCommand {
+public class BookPageCommand extends LibraryCommand {
     private BookService bookService = BookServiceImpl.getInstance();
-    private static AddEditBookCommand instance = new AddEditBookCommand();
+    private static BookPageCommand instance = new BookPageCommand();
 
-    public static AddEditBookCommand getInstance() {
+    public static BookPageCommand getInstance() {
         return instance;
     }
 
     @Override
     public void process() throws ServletException, IOException {
-
+        Book book = bookService.getBook(Integer.parseInt(request.getParameter("id")));
+        request.setAttribute("book", book);
+        forward("bookpage");
     }
 }
