@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,4 +18,5 @@ public class Reader {
     private Date dateOfRegistration;
     private Long phoneNumber;
     private String gender;
+    private List<Borrowing> borrowings;
 }

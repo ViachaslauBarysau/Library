@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class BookRepositoryImpl implements BookRepository {
+
     private static BookRepositoryImpl instance = new BookRepositoryImpl();
     public static BookRepositoryImpl getInstance() {
         return instance;
@@ -23,9 +24,18 @@ public class BookRepositoryImpl implements BookRepository {
     private static final String SQL_DELETE_BOOKS_BY_IDS = "DELETE FROM Books WHERE id = ANY (?);";
     private static final String SQL_GET_COUNT_OF_BOOK_PAGES = "SELECT COUNT(ID) FROM BOOKS;";
     private static final String SQL_GET_PAGE_OF_BOOKS="SELECT Books.*, Authors.Name FROM Books" +
-        " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
-        " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
-        " WHERE Book_ID IN (SELECT ID FROM BOOKS LIMIT ? OFFSET ?);";
+            " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
+            " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
+            " WHERE Book_ID IN (SELECT ID FROM BOOKS LIMIT ? OFFSET ?);";
+    private static final String SQL_SEARCH_BOOKS="SELECT Books.*, Authors.Name FROM Books" +
+            " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
+            " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
+            " WHERE Books.ID = ANY (SELECT Books.ID FROM Books" +
+            " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
+            " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
+            " LEFT JOIN Books_Genres ON Books_Genres.Book_Id = Books.Id" +
+            " LEFT JOIN Genres on Genres.Id=Books_Genres.Genre_Id" +
+            " WHERE Books.title LIKE ? AND name LIKE ? AND Genres.Title LIKE ? AND description LIKE ?);";
     private static final String SQL_GET_BOOK="SELECT Books.*, Authors.Name, Genres.Title AS Genre," +
             " Covers.Title AS Cover FROM Books" +
             " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
@@ -151,5 +161,37 @@ public class BookRepositoryImpl implements BookRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<Book> searchBooks(List<String> searchParams) {
+        List<Book> bookEntitiesList = new ArrayList<>();
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SEARCH_BOOKS)) {
+                preparedStatement.setString(1, searchParams.get(0));
+                preparedStatement.setString(2, searchParams.get(1));
+                preparedStatement.setString(3, searchParams.get(2));
+                preparedStatement.setString(4, searchParams.get(3));
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    if (bookEntitiesList.isEmpty() || bookEntitiesList.get(bookEntitiesList.size()-1).getId()!=resultSet.getInt("ID")) {
+                        bookEntitiesList.add(Book.builder()
+                                .id(resultSet.getInt("ID"))
+                                .title(resultSet.getString("Title"))
+                                .authors(new ArrayList<>(Arrays.asList(resultSet.getString("Name"))))
+                                .publishDate(resultSet.getInt("Publish_date"))
+                                .availableAmount(resultSet.getInt("Available_amount"))
+                                .build());
+                    } else {
+                        bookEntitiesList.get(bookEntitiesList.size()-1).getAuthors().add(resultSet.getString("Name"));
+                    }
+
+                }
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookEntitiesList;
     }
 }

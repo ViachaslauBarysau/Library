@@ -9,4 +9,5 @@ public interface BookRepository {
     int getCountOfPages();
     void deleteBooks(Object[] bookList);
     Book getBook(int bookId);
+    List<Book> searchBooks(List<String> searchParams);
 }

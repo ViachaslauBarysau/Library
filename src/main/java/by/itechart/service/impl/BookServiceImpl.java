@@ -33,6 +33,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<Book> searchBooks(List<String> searchParams) {
+
+        for (int index=0; index<searchParams.size(); index++){
+            searchParams.set(index, "%" + searchParams.get(index) + "%");
+        }
+        return bookRepository.searchBooks(searchParams);
+
+    }
+
+    @Override
     public Book getBook(int bookId) {
         return bookRepository.getBook(bookId);
     }

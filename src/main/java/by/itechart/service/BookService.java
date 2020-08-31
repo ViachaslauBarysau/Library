@@ -9,4 +9,5 @@ public interface BookService {
     int getCountOfPages();
     void deleteBooks(Object[] booksList);
     Book getBook(int bookId);
+    List<Book> searchBooks(List<String> searchParams);
 }
