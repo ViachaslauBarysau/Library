@@ -37,13 +37,14 @@ CREATE TABLE Genres (
 
 CREATE TABLE Books_Readers
 (
-    ID       INTEGER NOT NULL AUTO_INCREMENT,
+    ReaderCard_ID       INTEGER NOT NULL AUTO_INCREMENT,
     Book_ID INTEGER NOT NULL,
     Reader_ID INTEGER NOT NULL,
     Borrow_date DATE NOT NULL,
     Time_Period INTEGER NOT NULL,
+    Due_date DATE NOT NULL,
     Return_date DATETIME,
-    PRIMARY KEY (ID),
+    PRIMARY KEY (ReaderCard_ID),
     FOREIGN KEY (Book_ID) REFERENCES Books (ID) ON DELETE CASCADE,
     FOREIGN KEY (Reader_ID) REFERENCES Readers (ID) ON DELETE CASCADE
 );
@@ -175,8 +176,6 @@ VALUES ('horror'),
 
 INSERT INTO Covers(Book_ID, Title)
 VALUES (1, 'a3103bf8144b3d9eb6caa1f9cd054a8e.png'),
-       (1, 'ceff27d9d31e677493288f8a95e9ebc3.png'),
-       (1, 'f2314ffdcbc394a3bdd0ba8543a56844.png'),
        (2, '69aacd9ea1219a3a4b43b64f6a4c7276.png'),
        (3, '8050c43d87011868b0705f83ac453cf2.png'),
        (4, '5347ce8a2856b9813d0e83ee4650f925.png'),
@@ -212,20 +211,20 @@ VALUES (1, 1),
        (15, 13),
        (16, 14);
 
-INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Time_Period, Return_date)
-VALUES (1, 1, '2019-11-27', 3, '2019-12-31 16:24:00'),
-       (1, 2, '2016-12-31', 6, '2017-03-31 12:31:08'),
-       (2, 3, '2015-01-04', 2, '2015-02-24 13:02:36'),
-       (2, 4, '2020-06-01', 6, '2020-06-30 15:22:16'),
-       (3, 5, '2019-11-16', 3, '2019-12-24 16:02:12'),
-       (3, 6, '2020-08-03', 1, '2020-08-24 16:02:12'),
-       (2, 2, '2019-08-21', 6, '2019-08-31 12:03:31'),
-       (6, 3, '2014-10-22', 3, '2014-11-14 14:22:10'),
-       (5, 1, '2018-01-29', 6, '2018-04-16 14:04:44'),
-       (8, 8, '2016-09-27', 3, '2016-10-29 10:24:06');
+INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Time_Period, Due_date, Return_date)
+VALUES (1, 1, '2019-11-27', 3, '2020-02-27', '2019-12-31 16:24:00'),
+       (1, 2, '2016-12-31', 6, '2017-07-31', '2017-03-31 12:31:08'),
+       (2, 3, '2015-01-04', 2, '2015-03-04','2015-02-24 13:02:36'),
+       (2, 4, '2020-06-01', 6, '2021-01-01', '2020-06-30 15:22:16'),
+       (3, 5, '2019-11-16', 3, '2020-02-16', '2019-12-24 16:02:12'),
+       (3, 6, '2020-08-03', 1, '2020-09-03', '2020-08-24 16:02:12'),
+       (2, 2, '2019-08-21', 6, '2020-02-21', '2019-08-31 12:03:31'),
+       (6, 3, '2014-10-22', 3, '2014-01-22', '2014-11-14 14:22:10'),
+       (5, 1, '2018-01-29', 6, '2018-07-29', '2018-04-16 14:04:44'),
+       (8, 8, '2016-09-27', 3, '2016-12-27', '2016-10-29 10:24:06');
 
-INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Time_Period)
-VALUES (16, 1, '2020-08-21', 3);
+INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Time_Period, Due_date)
+VALUES (16, 1, '2020-08-21', 3, '2020-11-21');
 
 INSERT INTO Books_Genres(Book_ID, Genre_ID)
 VALUES (1, 1),

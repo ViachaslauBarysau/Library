@@ -10,43 +10,42 @@
 <html>
 <head>
     <title>Title</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 <form method="post">
-    <img class="imagepreview" id="picture" src="images/glass.jpg">
-    <div class="grid" align="center">
-        <c:forEach var="cover" items="${book.covers}">
-            <div class="cover">
-                <img class="images" src="images/${cover}" alt="${cover}" onclick="ShowImage(this.src)">
-            </div>
-        </c:forEach>
-    </div>
+
+    <p><img class="cover" id="cover" src="images/${bookpagedto.book.covers.get(0)}"></p>
     Title
-    <p><input type="text" size="40" value="${book.title}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.book.title}" required></p>
     Authors
-    <c:forEach var="author" items="${book.authors}" >
+    <c:forEach var="author" items="${bookpagedto.book.authors}" >
         <p><input type="text" size="40" value="${author}" required></p>
     </c:forEach>
     Publisher
-    <p><input type="text" size="40" value="${book.publisher}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
     Publish date
-    <p><input type="text" size="40" value="${book.publishDate}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.book.publishDate}" required></p>
     Genres
-    <c:forEach var="genre" items="${book.genres}">
+    <c:forEach var="genre" items="${bookpagedto.book.genres}">
         <p><input type="text" size="40" value="${genre}" ></p>
     </c:forEach>
     Page count
-    <p><input type="text" size="40" value="${book.pageCount}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.book.pageCount}" required></p>
     ISBN
-    <p><input type="text" size="40" value="${book.ISBN}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.book.ISBN}" required></p>
     Description
     <p><textarea maxlength="400" cols="42" rows="12" required>
-    ${book.description}
+    ${bookpagedto.book.description}
     </textarea></p>
     Total amount
-    <p><input type="text" size="40" value="${book.totalAmount}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.book.totalAmount}" required></p>
     Status
-    <p><input type="text" size="40" value="Available ${book.availableAmount} out of ${book.totalAmount}" readonly></p>
+    <p><input type="text" size="40" value="Available ${bookpagedto.book.availableAmount} out of ${bookpagedto.book.totalAmount}" readonly></p>
 
     <button type="submit" formaction="lib-app?command=SAVE_BOOK" />
     Save
@@ -56,6 +55,78 @@
     </button>
 
 </form>
+
+Borrow Records List
+
+<table>
+    <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Borrow Date</th>
+        <th>Due Date</th>
+        <th>Return Date</th>
+    </tr>
+    <c:forEach var="readerCard" items="${bookpagedto.readerCards}" >
+        <tr>
+            <td><a href="${readerCard.readerId}" id="${readerCard.readerId}" data-toggle="modal" data-target="#myModal" class="stretched-link">${readerCard.readerEmail}</a></td>
+            <td>${readerCard.readerName}</td>
+            <td>${readerCard.borrowDate}</td>
+            <td>${readerCard.dueDate}</td>
+            <td>${readerCard.returnDate}</td>
+        </tr>
+    </c:forEach>
+</table>
+
+
+<div class="container">
+    <h2>Fading Modal</h2>
+    <p>Add the "fade" class to the modal container if you want the modal to fade in on open and fade out on close.</p>
+
+    <!-- Button to Open the Modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+        Open modal
+    </button>
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Modal Heading</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                    <form>
+                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
+                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
+                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
+                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
+                    </form>
+
+
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger">Save</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
 </body>
 </html>
 <script type="text/javascript">
