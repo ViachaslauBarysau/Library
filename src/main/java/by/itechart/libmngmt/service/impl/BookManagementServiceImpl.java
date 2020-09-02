@@ -10,8 +10,6 @@ import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
 import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.BookManagementService;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class BookManagementServiceImpl implements BookManagementService {
 

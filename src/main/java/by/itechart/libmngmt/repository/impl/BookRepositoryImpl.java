@@ -44,10 +44,12 @@ public class BookRepositoryImpl implements BookRepository {
     private static final String SQL_ADD_BOOK = "INSERT INTO Books(Title, Publisher, Publish_date, Page_count, " +
             "Isbn, Description, Total_amount, Available_amount) VALUES (?,?,?,?,?,?,?,?);";
 
+
     @Override
-    public void add(Book book) {
+    public int add(Book book) {
+        int id = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK_PAGE)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, book.getTitle());
                 preparedStatement.setString(2, book.getPublisher());
                 preparedStatement.setInt(3, book.getPublishDate());
@@ -56,11 +58,20 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setString(6, book.getDescription());
                 preparedStatement.setInt(7, book.getTotalAmount());
                 preparedStatement.setInt(8, book.getAvailableAmount());
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                preparedStatement.execute();
+                ResultSet resultSet = preparedStatement.getGeneratedKeys();
+
+                while (resultSet.next()) {
+                    System.out.println(resultSet.getInt(1));
+                    id = resultSet.getInt(1);
+                }
+
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return id;
     }
 
     @Override
@@ -94,9 +105,9 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public Book find(int bookId) {
-        Book book = new Book();
+        Book book = null;
         try (Connection connection = ConnectionHelper.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                 preparedStatement.setInt(1, bookId);
 
                 final ResultSet resultSet = preparedStatement.executeQuery();
@@ -121,18 +132,20 @@ public class BookRepositoryImpl implements BookRepository {
                 Set<String> genres = new HashSet<>();
                 Set<String> covers = new HashSet<>();
 
-                do {
-                    if (resultSet.getString("Name") != null) {
-                        authors.add(resultSet.getString("Name"));
-                    }
-                    if (resultSet.getString("Genre")!= null) {
-                        genres.add(resultSet.getString("Genre"));
-                    }
-                    if (resultSet.getString("Cover") != null) {
-                        covers.add(resultSet.getString("Cover"));
+                if (book != null) {
+                    resultSet.beforeFirst();
+                    while (resultSet.next()) {
+                        if (resultSet.getString("Name") != null) {
+                            authors.add(resultSet.getString("Name"));
+                        }
+                        if (resultSet.getString("Genre")!= null) {
+                            genres.add(resultSet.getString("Genre"));
+                        }
+                        if (resultSet.getString("Cover") != null) {
+                            covers.add(resultSet.getString("Cover"));
+                        }
                     }
                 }
-                while (resultSet.next());
 
                 book.getAuthors().addAll(authors);
                 book.getGenres().addAll(genres);

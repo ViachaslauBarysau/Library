@@ -7,5 +7,6 @@ public enum LibraryCommandType {
     BOOK_PAGE,
     GET_BOOK_LIST,
     SEARCH_PAGE,
-    SEARCH_BOOK
+    SEARCH_BOOK,
+    ADD_BOOK_PAGE
 }

@@ -1,19 +1,22 @@
 package by.itechart.libmngmt.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
-public class BookDto {
+public class BookAddDto {
 
     private long id;
-    private String tittle;
     private List<String> authors;
-    private Date publishDate;
-    private int totalAmount;
+    private List<String> genres;
+    private List<String> covers;
 
 }

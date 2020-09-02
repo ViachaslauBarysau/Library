@@ -44,7 +44,7 @@
         </c:forEach>
     </table>
     <input hidden name="page" value="${pageNumber}">
-    <button type="submit" formaction="lib-app?command=ADD_BOOK" />
+    <button type="submit" formaction="lib-app?command=ADD_BOOK_PAGE" />
     Add Book
     </button>
     <button type="submit" formaction="lib-app?command=DELETE_BOOK" />

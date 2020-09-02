@@ -18,6 +18,7 @@ public class LibraryCommandFactory {
         commands.put(LibraryCommandType.GET_BOOK_LIST, GetBookListCommand.getInstance());
         commands.put(LibraryCommandType.SEARCH_PAGE, SearchPageCommand.getInstance());
         commands.put(LibraryCommandType.SEARCH_BOOK, SearchBookCommand.getInstance());
+        commands.put(LibraryCommandType.ADD_BOOK_PAGE, AddBookPageCommand.getInstance());
     }
 
     public static LibraryCommand getCommand(HttpServletRequest request) {

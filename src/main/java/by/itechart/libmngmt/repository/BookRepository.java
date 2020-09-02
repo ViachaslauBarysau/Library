@@ -10,5 +10,5 @@ public interface BookRepository {
     void delete(Object[] bookList);
     Book find(int bookId);
     List<Book> search(List<String> searchParams);
-    void add(Book book);
+    int add(Book book);
 }
