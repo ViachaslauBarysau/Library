@@ -1,8 +1,8 @@
 package by.itechart.libmngmt.dto;
 
-import by.itechart.libmngmt.entity.Book;
-import by.itechart.libmngmt.entity.Reader;
-import by.itechart.libmngmt.entity.ReaderCard;
+import by.itechart.libmngmt.entity.BookEntity;
+import by.itechart.libmngmt.entity.ReaderEntity;
+import by.itechart.libmngmt.entity.ReaderCardEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +17,8 @@ import java.util.Map;
 @Builder
 public class BookPageDto {
 
-    Book book;
-    Map<Integer, Reader> readers;
-    List<ReaderCard> readerCards;
+    BookDto bookDto;
+    Map<Integer, ReaderDto> readers;
+    List<ReaderCardDto> readerCards;
 
 }

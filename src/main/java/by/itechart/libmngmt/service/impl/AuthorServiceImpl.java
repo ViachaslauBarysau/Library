@@ -1,14 +1,13 @@
 package by.itechart.libmngmt.service.impl;
 
-import by.itechart.libmngmt.dto.BookAddDto;
+import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.repository.AuthorRepository;
-import by.itechart.libmngmt.repository.CoverRepository;
 import by.itechart.libmngmt.repository.impl.AuthorRepositoryImpl;
-import by.itechart.libmngmt.repository.impl.CoverRepositoryImpl;
 import by.itechart.libmngmt.service.AuthorService;
 
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AuthorServiceImpl implements AuthorService {
@@ -22,16 +21,23 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public void add(BookAddDto bookAddDto) {
+    public void add(BookDto bookDto) {
         List<String> allAuthorsList = authorRepository.get();
-        List<String> bookAuthorsList = bookAddDto.getAuthors();
+        List<String> bookAuthorsList = new ArrayList<>();
+        bookAuthorsList.addAll(bookDto.getAuthors());
         bookAuthorsList.removeAll(allAuthorsList);
         for (int index=0; index<bookAuthorsList.size(); index++) {
             authorRepository.add(bookAuthorsList.get(index));
         }
-            Object[] authorNames = bookAuthorsList.toArray();
-        List<Integer> authorIDs = new ArrayList<>();
-        authorIDs = authorRepository.getId(authorNames);
+        Object[] authorNames = bookDto.getAuthors().toArray();
+        List<Integer> authorIDs = authorRepository.getId(authorNames);
+
+        authorRepository.deleteBooksAuthorsRecords(bookDto.getId());
+
+        for (int authorID: authorIDs
+             ) {
+            authorRepository.addBookAuthorRecord(bookDto.getId(), authorID);
+        }
     }
 
 }

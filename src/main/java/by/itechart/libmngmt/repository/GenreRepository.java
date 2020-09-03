@@ -1,10 +1,11 @@
 package by.itechart.libmngmt.repository;
 
-import by.itechart.libmngmt.dto.BookAddDto;
-
 import java.util.List;
 
 public interface GenreRepository {
-    void add(BookAddDto bookAddDto);
+    void add(String title);
     List<String> get();
+    List<Integer> getId(Object[] genres);
+    void addBookGenreRecord(int bookId, int genreId);
+    void deleteBooksGenresRecords(int bookId);
 }

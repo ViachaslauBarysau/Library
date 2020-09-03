@@ -17,35 +17,43 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
 
-    <p><img class="cover" id="cover" src="images/${bookpagedto.book.covers.get(0)}"></p>
+    <p><img class="cover" id="cover" src="images/${bookpagedto.bookDto.covers.get(0)}"></p>
+    Choose image to change cover:
+    <p><input type="file" name="file" size="40"/></p>
     Title
-    <p><input type="text" size="40" value="${bookpagedto.book.title}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.bookDto.title}" required></p>
     Authors
-    <c:forEach var="author" items="${bookpagedto.book.authors}" >
+    <c:if test="${empty bookpagedto.bookDto.authors}">
+        <p><input type="text" size="40" required></p>
+    </c:if>
+    <c:forEach var="author" items="${bookpagedto.bookDto.authors}" >
         <p><input type="text" size="40" value="${author}" required></p>
     </c:forEach>
     Publisher
-    <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
     Publish date
-    <p><input type="text" size="40" value="${bookpagedto.book.publishDate}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.bookDto.publishDate}" required></p>
     Genres
-    <c:forEach var="genre" items="${bookpagedto.book.genres}">
+    <c:if test="${empty bookpagedto.bookDto.genres}">
+        <p><input type="text" size="40" required></p>
+    </c:if>
+    <c:forEach var="genre" items="${bookpagedto.bookDto.genres}">
         <p><input type="text" size="40" value="${genre}" ></p>
     </c:forEach>
     Page count
-    <p><input type="text" size="40" value="${bookpagedto.book.pageCount}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.bookDto.pageCount}" required></p>
     ISBN
-    <p><input type="text" size="40" value="${bookpagedto.book.ISBN}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.bookDto.ISBN}" required></p>
     Description
     <p><textarea maxlength="400" cols="42" rows="12" required>
-    ${bookpagedto.book.description}
+    ${bookpagedto.bookDto.description}
     </textarea></p>
     Total amount
-    <p><input type="text" size="40" value="${bookpagedto.book.totalAmount}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.bookDto.totalAmount}" required></p>
     Status
-    <p><input type="text" size="40" value="Available ${bookpagedto.book.availableAmount} out of ${bookpagedto.book.totalAmount}" readonly></p>
+    <p><input type="text" size="40" value="Available ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
 
     <button type="submit" formaction="lib-app?command=SAVE_BOOK" />
     Save
@@ -79,12 +87,12 @@ Borrow Records List
 
 
 <div class="container">
-    <h2>Fading Modal</h2>
-    <p>Add the "fade" class to the modal container if you want the modal to fade in on open and fade out on close.</p>
+<%--    <h2>Fading Modal</h2>--%>
+<%--    <p>Add the "fade" class to the modal container if you want the modal to fade in on open and fade out on close.</p>--%>
 
     <!-- Button to Open the Modal -->
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-        Open modal
+        Add
     </button>
 
     <!-- The Modal -->
@@ -102,10 +110,10 @@ Borrow Records List
                 <div class="modal-body">
 
                     <form>
-                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
-                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
-                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
-                        <p><input type="text" size="40" value="${bookpagedto.book.publisher}" required></p>
+                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
+                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
+                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
+                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
                     </form>
 
 

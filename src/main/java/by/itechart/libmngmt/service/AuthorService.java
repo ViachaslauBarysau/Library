@@ -1,9 +1,7 @@
 package by.itechart.libmngmt.service;
 
-import by.itechart.libmngmt.dto.BookAddDto;
-
-import java.util.List;
+import by.itechart.libmngmt.dto.BookDto;
 
 public interface AuthorService {
-    void add(BookAddDto bookAddDto);
+    void add(BookDto bookDto);
 }

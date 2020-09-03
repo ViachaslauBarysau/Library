@@ -1,14 +1,17 @@
 package by.itechart.libmngmt.service;
 
-import by.itechart.libmngmt.entity.Book;
+import by.itechart.libmngmt.dto.BookDto;
+import by.itechart.libmngmt.entity.BookEntity;
 
 import java.util.List;
 
 public interface BookService {
-    List<Book> getPageOfBooks (int pageNumber);
+    List<BookEntity> getPageOfBooks (int pageNumber);
     int getCountOfPages();
     void deleteBooks(Object[] booksList);
-    Book getBook(int bookId);
-    List<Book> searchBooks(List<String> searchParams);
-    void addBook(Book book);
+    BookEntity getBook(int bookId);
+    List<BookEntity> searchBooks(List<String> searchParams);
+    void addBook(BookEntity book);
+    int add(BookEntity book);
+    BookDto find(int bookId);
 }

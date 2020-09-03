@@ -1,6 +1,6 @@
 package by.itechart.libmngmt.servlet.command.commands;
 
-import by.itechart.libmngmt.entity.Book;
+import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.servlet.command.LibraryCommand;
@@ -32,7 +32,7 @@ public class SearchBookCommand extends LibraryCommand {
 //        searchParams.add("%com%");
 //        searchParams.add("%%");
 
-        List<Book> searchResult = bookService.searchBooks(searchParams);
+        List<BookEntity> searchResult = bookService.searchBooks(searchParams);
         request.setAttribute("books", searchResult);
         forward("searchpage");
     }

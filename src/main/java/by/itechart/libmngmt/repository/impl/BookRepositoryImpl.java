@@ -1,7 +1,8 @@
 package by.itechart.libmngmt.repository.impl;
 
 
-import by.itechart.libmngmt.entity.Book;
+import by.itechart.libmngmt.dto.BookDto;
+import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
@@ -43,10 +44,32 @@ public class BookRepositoryImpl implements BookRepository {
             " WHERE Books.ID = ?;";
     private static final String SQL_ADD_BOOK = "INSERT INTO Books(Title, Publisher, Publish_date, Page_count, " +
             "Isbn, Description, Total_amount, Available_amount) VALUES (?,?,?,?,?,?,?,?);";
+    private static final String SQL_UPDATE_BOOK = "UPDATE Books SET Title=?, Publisher=?, Publish_date=?, Page_count=?, ISBN=?, Description=?, Total_amount=?, Available_amount=? WHERE Id=?;";
 
 
     @Override
-    public int add(Book book) {
+    public void update(BookDto bookDto) {
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE_BOOK)) {
+                preparedStatement.setString(1, bookDto.getTitle());
+                preparedStatement.setString(2, bookDto.getPublisher());
+                preparedStatement.setInt(3, bookDto.getPublishDate());
+                preparedStatement.setInt(4, bookDto.getPageCount());
+                preparedStatement.setString(5, bookDto.getISBN());
+                preparedStatement.setString(6, bookDto.getDescription());
+                preparedStatement.setInt(7, bookDto.getTotalAmount());
+                preparedStatement.setInt(8, bookDto.getAvailableAmount());
+                preparedStatement.setInt(9, bookDto.getId());
+                preparedStatement.execute();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public int add(BookEntity book) {
         int id = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
@@ -62,7 +85,6 @@ public class BookRepositoryImpl implements BookRepository {
                 ResultSet resultSet = preparedStatement.getGeneratedKeys();
 
                 while (resultSet.next()) {
-                    System.out.println(resultSet.getInt(1));
                     id = resultSet.getInt(1);
                 }
 
@@ -75,8 +97,8 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public List<Book> get(int limitOffset) {
-        List<Book> list = new ArrayList<>();
+    public List<BookEntity> get(int limitOffset) {
+        List<BookEntity> list = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK_PAGE)) {
                 preparedStatement.setInt(1, BOOK_PAGE_COUNT);
@@ -84,7 +106,7 @@ public class BookRepositoryImpl implements BookRepository {
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     if (list.isEmpty() || list.get(list.size()-1).getId()!=resultSet.getInt("ID")) {
-                        list.add(Book.builder()
+                        list.add(BookEntity.builder()
                                 .id(resultSet.getInt("ID"))
                                 .title(resultSet.getString("Title"))
                                 .authors(new ArrayList<>(Arrays.asList(resultSet.getString("Name"))))
@@ -103,16 +125,17 @@ public class BookRepositoryImpl implements BookRepository {
         return list;
     }
 
+
     @Override
-    public Book find(int bookId) {
-        Book book = null;
+    public BookEntity find(int bookId) {
+        BookEntity book = null;
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                 preparedStatement.setInt(1, bookId);
 
                 final ResultSet resultSet = preparedStatement.executeQuery();
                     while (resultSet.next()) {
-                        book = Book.builder()
+                        book = BookEntity.builder()
                                 .id(resultSet.getInt("ID"))
                                 .title(resultSet.getString("Title"))
                                 .publishDate(resultSet.getInt("Publish_date"))
@@ -196,8 +219,8 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public List<Book> search(List<String> searchParams) {
-        List<Book> list = new ArrayList<>();
+    public List<BookEntity> search(List<String> searchParams) {
+        List<BookEntity> list = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SEARCH_BOOKS)) {
                 preparedStatement.setString(1, searchParams.get(0));
@@ -207,7 +230,7 @@ public class BookRepositoryImpl implements BookRepository {
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     if (list.isEmpty() || list.get(list.size()-1).getId()!=resultSet.getInt("ID")) {
-                        list.add(Book.builder()
+                        list.add(BookEntity.builder()
                                 .id(resultSet.getInt("ID"))
                                 .title(resultSet.getString("Title"))
                                 .authors(new ArrayList<>(Arrays.asList(resultSet.getString("Name"))))

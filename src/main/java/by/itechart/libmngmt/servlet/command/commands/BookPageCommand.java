@@ -23,7 +23,6 @@ public class BookPageCommand extends LibraryCommand {
     public void process() throws ServletException, IOException {
         BookPageDto bookPageDto = bookManagementService.getBookPageDto(Integer.parseInt(request.getParameter("id")));
         request.setAttribute("bookpagedto", bookPageDto);
-        request.setAttribute("command", "EDIT_BOOK");
         forward("bookpage");
     }
 }

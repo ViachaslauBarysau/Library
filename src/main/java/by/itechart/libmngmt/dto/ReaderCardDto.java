@@ -1,4 +1,4 @@
-package by.itechart.libmngmt.entity;
+package by.itechart.libmngmt.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,8 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Builder
-public class ReaderCard {
-
+public class ReaderCardDto {
     private int id;
     private int bookId;
     private int readerId;
@@ -23,5 +22,4 @@ public class ReaderCard {
     private int timePeriod;
     private Date dueDate;
     private Timestamp returnDate;
-
 }

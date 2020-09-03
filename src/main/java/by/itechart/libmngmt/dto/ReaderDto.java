@@ -6,17 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
-public class BookAddDto {
+public class ReaderDto {
 
-    private long id;
-    private List<String> authors;
-    private List<String> genres;
-    private List<String> covers;
+    private int id;
+    private String name;
+    private String email;
+    private Date dateOfRegistration;
+    private Long phoneNumber;
 
 }

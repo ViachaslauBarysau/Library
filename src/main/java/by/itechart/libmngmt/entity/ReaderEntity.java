@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class Reader {
+public class ReaderEntity {
 
     private int id;
     private String name;

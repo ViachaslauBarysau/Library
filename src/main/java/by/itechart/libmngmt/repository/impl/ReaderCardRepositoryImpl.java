@@ -1,7 +1,7 @@
 package by.itechart.libmngmt.repository.impl;
 
-import by.itechart.libmngmt.entity.Book;
-import by.itechart.libmngmt.entity.ReaderCard;
+import by.itechart.libmngmt.dto.ReaderCardDto;
+import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ReaderCardRepositoryImpl implements ReaderCardRepository {
@@ -25,14 +24,24 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
 
 
     @Override
-    public List<ReaderCard> get(int bookId) {
-        List<ReaderCard> list = new ArrayList<>();
+    public void add(ReaderCardDto readerCardDto) {
+
+    }
+
+    @Override
+    public void update(ReaderCardDto readerCardDto) {
+
+    }
+
+    @Override
+    public List<ReaderCardEntity> get(int bookId) {
+        List<ReaderCardEntity> list = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERCARDS_BY_BOOKID)) {
                 preparedStatement.setInt(1, bookId);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    list.add(ReaderCard.builder()
+                    list.add(ReaderCardEntity.builder()
                                 .id(resultSet.getInt("ReaderCard_ID"))
                                 .bookId(resultSet.getInt("book_ID"))
                                 .readerId(resultSet.getInt("reader_ID"))

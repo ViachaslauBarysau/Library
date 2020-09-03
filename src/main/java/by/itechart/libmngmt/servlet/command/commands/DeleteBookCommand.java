@@ -1,6 +1,6 @@
 package by.itechart.libmngmt.servlet.command.commands;
 
-import by.itechart.libmngmt.entity.Book;
+import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.servlet.command.LibraryCommand;
@@ -30,7 +30,7 @@ public class DeleteBookCommand extends LibraryCommand {
 
         int countOfPages = bookService.getCountOfPages();
         int pageNumber = Math.min(countOfPages, Integer.parseInt(request.getParameter("page")));
-        List<Book> pageOfBooks = bookService.getPageOfBooks(pageNumber);
+        List<BookEntity> pageOfBooks = bookService.getPageOfBooks(pageNumber);
 
         request.setAttribute("books", pageOfBooks);
         request.setAttribute("pageCount", countOfPages);
