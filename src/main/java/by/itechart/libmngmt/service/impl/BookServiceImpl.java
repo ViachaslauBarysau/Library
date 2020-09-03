@@ -8,10 +8,13 @@ import by.itechart.libmngmt.service.AuthorService;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.CoverService;
 import by.itechart.libmngmt.service.GenreService;
+import by.itechart.libmngmt.util.ConnectionHelper;
 
+import java.sql.*;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
+
     private BookRepository bookRepository = BookRepositoryImpl.getInstance();
     private AuthorService authorService = AuthorServiceImpl.getInstance();
     private GenreService genreService = GenreServiceImpl.getInstance();

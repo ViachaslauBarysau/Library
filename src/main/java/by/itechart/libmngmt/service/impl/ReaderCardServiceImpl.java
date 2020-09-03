@@ -37,7 +37,7 @@ public class ReaderCardServiceImpl implements ReaderCardService {
                 .build());
 
         }
-        return null;
+        return readerCardDtos;
     }
 
     @Override

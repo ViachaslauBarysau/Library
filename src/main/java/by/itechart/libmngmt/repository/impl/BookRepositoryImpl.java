@@ -4,6 +4,8 @@ package by.itechart.libmngmt.repository.impl;
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
+import by.itechart.libmngmt.service.BookService;
+import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
 
@@ -99,6 +101,7 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public List<BookEntity> get(int limitOffset) {
         List<BookEntity> list = new ArrayList<>();
+
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK_PAGE)) {
                 preparedStatement.setInt(1, BOOK_PAGE_COUNT);

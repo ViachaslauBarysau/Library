@@ -53,7 +53,13 @@
     Total amount
     <p><input type="text" size="40" value="${bookpagedto.bookDto.totalAmount}" required></p>
     Status
-    <p><input type="text" size="40" value="Available ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
+
+    <c:if test ="${bookpagedto.bookDto.totalAmount - bookpagedto.bookDto.availableAmount < 1}">
+        <p><input type="text" size="40" value="Unavailable" readonly></p>
+    </c:if>
+    <c:if test ="${bookpagedto.bookDto.totalAmount - bookpagedto.bookDto.availableAmount > 0}">
+        <p><input type="text" size="40" value="Available ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
+    </c:if>
 
     <button type="submit" formaction="lib-app?command=SAVE_BOOK" />
     Save
