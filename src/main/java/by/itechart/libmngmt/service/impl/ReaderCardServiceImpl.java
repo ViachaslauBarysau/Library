@@ -42,12 +42,12 @@ public class ReaderCardServiceImpl implements ReaderCardService {
 
     @Override
     public void add(ReaderCardDto readerCardDto) {
-
+        readerCardRepository.add(readerCardDto);
     }
 
     @Override
     public void update(ReaderCardDto readerCardDto) {
-
+        readerCardRepository.update(readerCardDto);
     }
 
 

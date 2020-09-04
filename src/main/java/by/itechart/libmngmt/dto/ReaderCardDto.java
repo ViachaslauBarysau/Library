@@ -13,6 +13,7 @@ import java.util.Date;
 @Data
 @Builder
 public class ReaderCardDto {
+
     private int id;
     private int bookId;
     private int readerId;
@@ -22,4 +23,5 @@ public class ReaderCardDto {
     private int timePeriod;
     private Date dueDate;
     private Timestamp returnDate;
+    
 }

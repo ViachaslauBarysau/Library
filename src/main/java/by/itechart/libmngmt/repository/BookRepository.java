@@ -10,7 +10,8 @@ public interface BookRepository {
     int getPageCount();
     void delete(Object[] bookList);
     BookEntity find(int bookId);
-    List<BookEntity> search(List<String> searchParams);
+    List<BookEntity> search(List<String> searchParams, int limitOffset);
     int add(BookEntity book);
     void update(BookDto bookDto);
+    int getSearchPageCount(List<String> searchParams);
 }

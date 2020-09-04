@@ -8,9 +8,7 @@ import by.itechart.libmngmt.service.AuthorService;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.CoverService;
 import by.itechart.libmngmt.service.GenreService;
-import by.itechart.libmngmt.util.ConnectionHelper;
 
-import java.sql.*;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
@@ -26,18 +24,28 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookEntity> getPageOfBooks(int pageNumber) {
+    public List<BookEntity> getBookPage(int pageNumber) {
         return bookRepository.get(pageNumber);
     }
 
     @Override
-    public int getCountOfPages() {
+    public int getPageCount() {
         return bookRepository.getPageCount();
     }
 
     @Override
-    public void deleteBooks(Object[] booksList) {
+    public void delete(Object[] booksList) {
         bookRepository.delete(booksList);
+    }
+
+    @Override
+    public int getSearchPageCount(List<String> searchParams) {
+
+        for (int index=0; index<searchParams.size(); index++){
+            searchParams.set(index, "%" + searchParams.get(index) + "%");
+        }
+
+        return bookRepository.getSearchPageCount(searchParams);
     }
 
     @Override
@@ -60,19 +68,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookEntity> searchBooks(List<String> searchParams) {
+    public List<BookEntity> search(List<String> searchParams, int pageNumber) {
 
         for (int index=0; index<searchParams.size(); index++){
             searchParams.set(index, "%" + searchParams.get(index) + "%");
         }
-        return bookRepository.search(searchParams);
+        return bookRepository.search(searchParams, pageNumber);
 
     }
 
     @Override
     public void addBook(BookEntity bookEntity) {
 
-        int bookId = add(bookEntity);
+        int bookId = addBookGetId(bookEntity);
 
         BookDto bookDto = BookDto.builder().id(bookId)
                 .authors(bookEntity.getAuthors())
@@ -86,11 +94,9 @@ public class BookServiceImpl implements BookService {
 
     }
 
+
     @Override
-    public BookEntity getBook(int bookId) {
-        return bookRepository.find(bookId);
-    }
-    public int add(BookEntity book) {
+    public int addBookGetId(BookEntity book) {
         return bookRepository.add(book);
     }
 

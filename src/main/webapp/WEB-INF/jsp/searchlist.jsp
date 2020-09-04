@@ -1,35 +1,36 @@
 <%--
   Created by IntelliJ IDEA.
   User: Lemongrass
-  Date: 28.08.2020
-  Time: 14:49
+  Date: 04.09.2020
+  Time: 14:20
   To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<%--
+Created by IntelliJ IDEA.
+User: Lemongrass
+Date: 24.08.2020
+Time: 19:54
+To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>Title</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-
-
 <form method="post">
-
-<%--    <input type="text" name="command" value="SEARCH_BOOK" size="40" hidden>--%>
-    Title
-    <p><input type="text" name="title" size="40" value="${title}"></p>
-    Authors
-    <p><input type="text" name="author" size="40" value="${author}"></p>
-    Genres
-    <p><input type="text" name="genre" size="40" value="${genre}"></p>
-    Description
-    <p><input type="text" name="description" size="40" value="${description}"></p>
-
-    <button type="submit" formaction="lib-app?command=SEARCH_BOOK"/>
-    Search
-    </button>
-
     <table>
         <tr>
             <th></th>
@@ -55,51 +56,28 @@
             </tr>
         </c:forEach>
     </table>
-
+    <input hidden name="page" value="${pageNumber}">
     <button type="submit" formaction="lib-app?command=ADD_BOOK_PAGE" />
     Add Book
     </button>
-    <button type="submit" formaction="lib-app?command=DELETE_SEARCHED_BOOK&page=${pageNumber}" />
+    <button type="submit" formaction="lib-app?command=DELETE_SEARCHED_BOOK" />
     Delete Book(-s)
     </button>
     <c:if test ="${pageNumber > 1}">
-        <button type="submit" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber-1}" />
+        <button type="submit" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber - 1}" />
         &lt;
         </button>
     </c:if>
     page ${pageNumber}
     <c:if test ="${pageNumber < pageCount}">
-        <button type="submit" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber+1}" />
+        <button type="submit" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber + 1}" />
         &gt;
         </button>
     </c:if>
 </form>
 
+</body>
+</html>
 
-
-
-
-<%--<form method="get">--%>
-<%--    <input type="text" name="command" value="SEARCH_BOOK" size="40" hidden>--%>
-<%--    Title--%>
-<%--    <p><input type="text" name="title" size="40"></p>--%>
-<%--    Authors--%>
-<%--    <p><input type="text" name="author" size="40"></p>--%>
-<%--    Genres--%>
-<%--    <p><input type="text" name="genre" size="40"></p>--%>
-<%--    Description--%>
-<%--    <p><input type="text" name="description" size="40"></p>--%>
-
-<%--    <input type="text" name="page" value="1" size="40" hidden>--%>
-
-
-
-
-
-<%--    <button type="submit"/>--%>
-<%--    Search--%>
-<%--    </button>--%>
-
-<%--</form>--%>
 </body>
 </html>

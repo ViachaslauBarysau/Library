@@ -1,4 +1,4 @@
-package by.itechart.libmngmt.servlet.command;
+package by.itechart.libmngmt.controller.command;
 
 public enum LibraryCommandType {
     DELETE_BOOK,
@@ -8,5 +8,6 @@ public enum LibraryCommandType {
     GET_BOOK_LIST,
     SEARCH_PAGE,
     SEARCH_BOOK,
-    ADD_BOOK_PAGE
+    ADD_BOOK_PAGE,
+    DELETE_SEARCHED_BOOK
 }

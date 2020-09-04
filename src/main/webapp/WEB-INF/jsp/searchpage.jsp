@@ -14,7 +14,7 @@
 
 <jsp:include page="/WEB-INF/jsp/navigationpage.jsp"/>
 <jsp:include page="/WEB-INF/jsp/searchframe.jsp"/>
-<jsp:include page="/WEB-INF/jsp/booklistpage.jsp"/>
+<%--<jsp:include page="/WEB-INF/jsp/searchlist.jsp"/>--%>
 
 </body>
 </html>

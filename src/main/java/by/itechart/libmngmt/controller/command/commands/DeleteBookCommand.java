@@ -1,9 +1,9 @@
-package by.itechart.libmngmt.servlet.command.commands;
+package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.servlet.command.LibraryCommand;
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -23,14 +23,14 @@ public class DeleteBookCommand extends LibraryCommand {
 
         try {
             Object[] booksIdsForDeleting = Arrays.stream(request.getParameterValues("bookid")).mapToInt(Integer::parseInt).boxed().toArray();
-            bookService.deleteBooks(booksIdsForDeleting);
+            bookService.delete(booksIdsForDeleting);
         } catch (Exception e) {
 
         }
 
-        int countOfPages = bookService.getCountOfPages();
+        int countOfPages = bookService.getPageCount();
         int pageNumber = Math.min(countOfPages, Integer.parseInt(request.getParameter("page")));
-        List<BookEntity> pageOfBooks = bookService.getPageOfBooks(pageNumber);
+        List<BookEntity> pageOfBooks = bookService.getBookPage(pageNumber);
 
         request.setAttribute("books", pageOfBooks);
         request.setAttribute("pageCount", countOfPages);

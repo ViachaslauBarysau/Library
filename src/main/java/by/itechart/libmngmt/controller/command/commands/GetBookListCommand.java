@@ -1,9 +1,9 @@
-package by.itechart.libmngmt.servlet.command.commands;
+package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.servlet.command.LibraryCommand;
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 import lombok.Data;
 
 import javax.servlet.ServletException;
@@ -29,17 +29,17 @@ public class GetBookListCommand extends LibraryCommand {
 
         }
 
-        int countOfPages = bookService.getCountOfPages();
-        if (pageNumber>countOfPages) {
-            pageNumber = countOfPages;
+        int pageCount = bookService.getPageCount();
+        if (pageNumber>pageCount) {
+            pageNumber = pageCount;
         } else if (pageNumber<1) {
             pageNumber = 1;
         }
 
-        List<BookEntity> pageOfBooks = bookService.getPageOfBooks(pageNumber);
+        List<BookEntity> bookPage = bookService.getBookPage(pageNumber);
 
-        request.setAttribute("books", pageOfBooks);
-        request.setAttribute("pageCount", countOfPages);
+        request.setAttribute("books", bookPage);
+        request.setAttribute("pageCount", pageCount);
         request.setAttribute("pageNumber", pageNumber);
 
         forward("mainpage");

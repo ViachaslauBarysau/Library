@@ -6,12 +6,12 @@ import by.itechart.libmngmt.entity.BookEntity;
 import java.util.List;
 
 public interface BookService {
-    List<BookEntity> getPageOfBooks (int pageNumber);
-    int getCountOfPages();
-    void deleteBooks(Object[] booksList);
-    BookEntity getBook(int bookId);
-    List<BookEntity> searchBooks(List<String> searchParams);
+    List<BookEntity> getBookPage(int pageNumber);
+    int getPageCount();
+    void delete(Object[] booksList);
+    List<BookEntity> search(List<String> searchParams, int pageNumber);
     void addBook(BookEntity book);
-    int add(BookEntity book);
+    int addBookGetId(BookEntity book);
     BookDto find(int bookId);
+    int getSearchPageCount(List<String> searchParams);
 }

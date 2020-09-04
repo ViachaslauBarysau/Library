@@ -3,7 +3,6 @@ package by.itechart.libmngmt.repository.impl;
 import by.itechart.libmngmt.repository.AuthorRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
-import javax.transaction.Transaction;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

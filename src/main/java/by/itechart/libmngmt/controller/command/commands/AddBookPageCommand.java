@@ -1,20 +1,18 @@
-package by.itechart.libmngmt.servlet.command.commands;
+package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.dto.BookPageDto;
 import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.dto.ReaderDto;
-import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.servlet.command.LibraryCommand;
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class AddBookPageCommand extends LibraryCommand {
     private BookService bookService = BookServiceImpl.getInstance();

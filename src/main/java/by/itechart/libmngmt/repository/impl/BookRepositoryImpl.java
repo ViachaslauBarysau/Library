@@ -4,8 +4,6 @@ package by.itechart.libmngmt.repository.impl;
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
-import by.itechart.libmngmt.service.BookService;
-import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
 
@@ -22,7 +20,7 @@ public class BookRepositoryImpl implements BookRepository {
 
     private static final int BOOK_PAGE_COUNT = 10;
     private static final String SQL_DELETE_BOOKS_BY_IDS = "DELETE FROM Books WHERE id = ANY (?);";
-    private static final String SQL_GET_PAGE_COUNT = "SELECT COUNT(ID) FROM BOOKS;";
+    private static final String SQL_GET_PAGE_COUNT = "SELECT COUNT(ID) FROM Books;";
     private static final String SQL_GET_BOOK_PAGE = "SELECT Books.*, Authors.Name FROM Books" +
             " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
             " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
@@ -35,7 +33,16 @@ public class BookRepositoryImpl implements BookRepository {
             " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
             " LEFT JOIN Books_Genres ON Books_Genres.Book_Id = Books.Id" +
             " LEFT JOIN Genres on Genres.Id=Books_Genres.Genre_Id" +
+            " WHERE Books.title LIKE ? AND name LIKE ? AND Genres.Title LIKE ? AND description LIKE ?  ORDER BY Books.Title ASC) ORDER BY Title ASC LIMIT ? OFFSET ?;";
+
+    private static final String SQL_GET_SEARCH_PAGE_COUNT = "SELECT COUNT(ID) FROM (SELECT DISTINCT Books.ID FROM Books" +
+            " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
+            " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
+            " LEFT JOIN Books_Genres ON Books_Genres.Book_Id = Books.Id" +
+            " LEFT JOIN Genres on Genres.Id=Books_Genres.Genre_Id" +
             " WHERE Books.title LIKE ? AND name LIKE ? AND Genres.Title LIKE ? AND description LIKE ?);";
+
+
     private static final String SQL_GET_BOOK = "SELECT Books.*, Authors.Name, Genres.Title AS Genre," +
             " Covers.Title AS Cover FROM Books" +
             " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
@@ -46,7 +53,8 @@ public class BookRepositoryImpl implements BookRepository {
             " WHERE Books.ID = ?;";
     private static final String SQL_ADD_BOOK = "INSERT INTO Books(Title, Publisher, Publish_date, Page_count, " +
             "Isbn, Description, Total_amount, Available_amount) VALUES (?,?,?,?,?,?,?,?);";
-    private static final String SQL_UPDATE_BOOK = "UPDATE Books SET Title=?, Publisher=?, Publish_date=?, Page_count=?, ISBN=?, Description=?, Total_amount=?, Available_amount=? WHERE Id=?;";
+    private static final String SQL_UPDATE_BOOK = "UPDATE Books SET Title=?, Publisher=?, Publish_date=?," +
+            " Page_count=?, ISBN=?, Description=?, Total_amount=?, Available_amount=? WHERE Id=?;";
 
 
     @Override
@@ -68,6 +76,32 @@ public class BookRepositoryImpl implements BookRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int getSearchPageCount(List<String> searchParams) {
+        int searchPageCount = 1;
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_SEARCH_PAGE_COUNT)) {
+                preparedStatement.setString(1, searchParams.get(0));
+                preparedStatement.setString(2, searchParams.get(1));
+                preparedStatement.setString(3, searchParams.get(2));
+                preparedStatement.setString(4, searchParams.get(3));
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                while(resultSet.next()){
+                    int booksCount = resultSet.getInt(1);
+                    if (booksCount% BOOK_PAGE_COUNT ==0) {
+                        searchPageCount = booksCount/(BOOK_PAGE_COUNT);
+                    } else {
+                        searchPageCount = booksCount/(BOOK_PAGE_COUNT) + 1;
+                    }
+
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return searchPageCount;
     }
 
     @Override
@@ -222,7 +256,7 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public List<BookEntity> search(List<String> searchParams) {
+    public List<BookEntity> search(List<String> searchParams, int limitOffset) {
         List<BookEntity> list = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_SEARCH_BOOKS)) {
@@ -230,6 +264,8 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setString(2, searchParams.get(1));
                 preparedStatement.setString(3, searchParams.get(2));
                 preparedStatement.setString(4, searchParams.get(3));
+                preparedStatement.setInt(5, BOOK_PAGE_COUNT);
+                preparedStatement.setInt(6, (limitOffset-1)* BOOK_PAGE_COUNT);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     if (list.isEmpty() || list.get(list.size()-1).getId()!=resultSet.getInt("ID")) {

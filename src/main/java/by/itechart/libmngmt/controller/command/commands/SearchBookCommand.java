@@ -1,9 +1,9 @@
-package by.itechart.libmngmt.servlet.command.commands;
+package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.servlet.command.LibraryCommand;
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 import lombok.Data;
 
 import javax.servlet.ServletException;
@@ -22,18 +22,39 @@ public class SearchBookCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
+        int pageNumber = 1;
+
+        try {
+            pageNumber = Integer.parseInt(request.getParameter("page"));
+        } catch (Exception e) {
+
+        }
+
         List<String> searchParams = new ArrayList<>();
         searchParams.add(request.getParameter("title"));
         searchParams.add(request.getParameter("author"));
         searchParams.add(request.getParameter("genre"));
         searchParams.add(request.getParameter("description"));
-//        searchParams.add("%a%");
-//        searchParams.add("%%");
-//        searchParams.add("%com%");
-//        searchParams.add("%%");
 
-        List<BookEntity> searchResult = bookService.searchBooks(searchParams);
+        int pageCount = bookService.getSearchPageCount(searchParams);
+
+        if (pageNumber>pageCount) {
+            pageNumber = pageCount;
+        } else if (pageNumber<1) {
+            pageNumber = 1;
+        }
+
+        List<BookEntity> searchResult = bookService.search(searchParams, pageNumber);
         request.setAttribute("books", searchResult);
+
+        request.setAttribute("pageCount", pageCount);
+        request.setAttribute("pageNumber", pageNumber);
+
+        request.setAttribute("title", request.getParameter("title"));
+        request.setAttribute("author", request.getParameter("author"));
+        request.setAttribute("genre", request.getParameter("genre"));
+        request.setAttribute("description", request.getParameter("description"));
+
         forward("searchpage");
     }
 }

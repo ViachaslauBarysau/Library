@@ -17,7 +17,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" name="bookForm">
 
     <p><img class="cover" id="cover" src="images/${bookpagedto.bookDto.covers.get(0)}"></p>
     Choose image to change cover:
@@ -52,12 +52,12 @@
     </textarea></p>
     Total amount
     <p><input type="text" size="40" value="${bookpagedto.bookDto.totalAmount}" required></p>
+    <p><input type="text" size="40" value="${bookpagedto.bookDto.availableAmount}" hidden></p>
     Status
-
-    <c:if test ="${bookpagedto.bookDto.totalAmount - bookpagedto.bookDto.availableAmount < 1}">
+    <c:if test ="${bookpagedto.bookDto.availableAmount <= 0}">
         <p><input type="text" size="40" value="Unavailable" readonly></p>
     </c:if>
-    <c:if test ="${bookpagedto.bookDto.totalAmount - bookpagedto.bookDto.availableAmount > 0}">
+    <c:if test ="${bookpagedto.bookDto.availableAmount > 0}">
         <p><input type="text" size="40" value="Available ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
     </c:if>
 
@@ -97,7 +97,7 @@ Borrow Records List
 <%--    <p>Add the "fade" class to the modal container if you want the modal to fade in on open and fade out on close.</p>--%>
 
     <!-- Button to Open the Modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="Showmodal()">
         Add
     </button>
 
@@ -116,12 +116,11 @@ Borrow Records List
                 <div class="modal-body">
 
                     <form>
-                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
-                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
-                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
-                        <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
+                        <p><input id="firstrow" type="text" size="40"  required></p>
+                        <p><input id="secondrow" type="text" size="40" required></p>
+                        <p><input id="thirdrow" type="text" size="40" required></p>
+                        <p><input id="fourthrow" type="text" size="40" required></p>
                     </form>
-
 
                 </div>
 

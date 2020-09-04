@@ -1,6 +1,6 @@
-package by.itechart.libmngmt.servlet.command.commands;
+package by.itechart.libmngmt.controller.command.commands;
 
-import by.itechart.libmngmt.servlet.command.LibraryCommand;
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -15,6 +15,7 @@ public class SearchPageCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
+
         forward("searchpage");
     }
 }

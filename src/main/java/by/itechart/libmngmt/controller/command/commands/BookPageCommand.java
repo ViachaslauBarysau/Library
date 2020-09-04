@@ -1,11 +1,11 @@
-package by.itechart.libmngmt.servlet.command.commands;
+package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.dto.BookPageDto;
 import by.itechart.libmngmt.service.BookManagementService;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookManagementServiceImpl;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.servlet.command.LibraryCommand;
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 
 import javax.servlet.ServletException;
 import java.io.IOException;

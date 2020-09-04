@@ -1,4 +1,4 @@
-package by.itechart.libmngmt.servlet.command;
+package by.itechart.libmngmt.controller.command;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
