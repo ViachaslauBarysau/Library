@@ -9,5 +9,6 @@ public interface ReaderCardService {
     void add(ReaderCardDto readerCardDto);
     void update(ReaderCardDto readerCardDto);
     List<ReaderCardDto> get(int bookId);
+    ReaderCardDto getReaderCard(int readerCardId);
 
 }

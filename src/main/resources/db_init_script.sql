@@ -44,6 +44,7 @@ CREATE TABLE Books_Readers
     Time_Period INTEGER NOT NULL,
     Due_date DATE NOT NULL,
     Return_date DATETIME,
+    Comment VARCHAR,
     PRIMARY KEY (ReaderCard_ID),
     FOREIGN KEY (Book_ID) REFERENCES Books (ID) ON DELETE CASCADE,
     FOREIGN KEY (Reader_ID) REFERENCES Readers (ID) ON DELETE CASCADE

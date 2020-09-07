@@ -34,10 +34,29 @@ public class ReaderCardServiceImpl implements ReaderCardService {
                 .timePeriod(readerCardEntity.getTimePeriod())
                 .dueDate(readerCardEntity.getDueDate())
                 .returnDate(readerCardEntity.getReturnDate())
+                .comment(readerCardEntity.getComment())
                 .build());
 
         }
         return readerCardDtos;
+    }
+
+    @Override
+    public ReaderCardDto getReaderCard(int readerCardId) {
+        ReaderCardEntity readerCardEntity = readerCardRepository.getReaderCard(readerCardId);
+        ReaderCardDto readerCardDto = ReaderCardDto.builder()
+                .id(readerCardEntity.getId())
+                .bookId(readerCardEntity.getBookId())
+                .readerId(readerCardEntity.getReaderId())
+                .readerName(readerCardEntity.getReaderName())
+                .readerEmail(readerCardEntity.getReaderEmail())
+                .borrowDate(readerCardEntity.getBorrowDate())
+                .timePeriod(readerCardEntity.getTimePeriod())
+                .dueDate(readerCardEntity.getDueDate())
+                .returnDate(readerCardEntity.getReturnDate())
+                .comment(readerCardEntity.getComment())
+                .build();
+        return readerCardDto;
     }
 
     @Override

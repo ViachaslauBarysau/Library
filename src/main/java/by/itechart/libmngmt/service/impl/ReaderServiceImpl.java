@@ -7,6 +7,7 @@ import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ReaderServiceImpl implements ReaderService {
@@ -37,5 +38,15 @@ public class ReaderServiceImpl implements ReaderService {
                                             .build());
         }
         return readerDtos;
+    }
+
+    @Override
+    public List<String> getEmails(String pattern) {
+        return readerRepository.getEmails(pattern + "%");
+    }
+
+    @Override
+    public String getNameByEmail(String email) {
+        return readerRepository.getName(email);
     }
 }

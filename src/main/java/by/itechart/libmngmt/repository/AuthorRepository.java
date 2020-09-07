@@ -1,5 +1,7 @@
 package by.itechart.libmngmt.repository;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface AuthorRepository {
@@ -8,4 +10,11 @@ public interface AuthorRepository {
     List<Integer> getId(Object[] names);
     void addBookAuthorRecord(int bookId, int authorId);
     void deleteBooksAuthorsRecords(int bookId);
+
+    void add(String name, Connection connection) throws SQLException;
+    List<String> get(Connection connection) throws SQLException;
+    List<Integer> getId(Object[] names, Connection connection) throws SQLException;
+    void addBookAuthorRecord(int bookId, int authorId, Connection connection) throws SQLException;
+    void deleteBooksAuthorsRecords(int bookId, Connection connection) throws SQLException;
+
 }

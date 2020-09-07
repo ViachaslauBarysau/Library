@@ -23,5 +23,6 @@ public class ReaderCardDto {
     private int timePeriod;
     private Date dueDate;
     private Timestamp returnDate;
-    
+    private String comment;
+
 }

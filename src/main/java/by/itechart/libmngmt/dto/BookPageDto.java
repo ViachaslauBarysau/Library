@@ -18,7 +18,6 @@ import java.util.Map;
 public class BookPageDto {
 
     BookDto bookDto;
-    Map<Integer, ReaderDto> readers;
     List<ReaderCardDto> readerCards;
 
 }

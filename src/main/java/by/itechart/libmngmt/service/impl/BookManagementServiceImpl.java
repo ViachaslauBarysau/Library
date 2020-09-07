@@ -26,7 +26,7 @@ public class BookManagementServiceImpl implements BookManagementService {
 
     @Override
     public BookPageDto getBookPageDto(int bookId) {
-        BookPageDto bookPageDto = new BookPageDto(bookService.find(bookId), readerService.get(bookId), readerCardService.get(bookId));
+        BookPageDto bookPageDto = new BookPageDto(bookService.find(bookId), readerCardService.get(bookId));
         return bookPageDto;
     }
 }

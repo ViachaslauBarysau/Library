@@ -6,6 +6,8 @@ import by.itechart.libmngmt.repository.CoverRepository;
 import by.itechart.libmngmt.repository.impl.CoverRepositoryImpl;
 import by.itechart.libmngmt.service.CoverService;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public class CoverServiceImpl implements CoverService {
@@ -22,6 +24,15 @@ public class CoverServiceImpl implements CoverService {
         coverRepository.delete(bookDto.getId());
         for (int index=0; index<bookCoversList.size(); index++) {
             coverRepository.add(bookDto.getId(), bookCoversList.get(index));
+        }
+    }
+
+    @Override
+    public void add(BookDto bookDto, Connection connection) throws SQLException {
+        List<String> bookCoversList = bookDto.getCovers();
+        coverRepository.delete(bookDto.getId(), connection);
+        for (int index=0; index<bookCoversList.size(); index++) {
+            coverRepository.add(bookDto.getId(), bookCoversList.get(index), connection);
         }
     }
 }

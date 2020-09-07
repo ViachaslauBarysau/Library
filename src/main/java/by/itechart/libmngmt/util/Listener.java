@@ -10,6 +10,8 @@ public class Listener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         DatabaseInitializer.createDatabase();
+        FolderPropertiesAdder.addImageFolder();
+
     }
 
     @Override

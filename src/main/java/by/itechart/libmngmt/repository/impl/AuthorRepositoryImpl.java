@@ -21,18 +21,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     private static final String SQL_INSERT_BOOK_AUTHOR_RECORD = "INSERT INTO Books_Authors (Book_Id, Author_Id) VALUES (?,?);";
     private static final String SQL_DELETE_BOOKS_AUTHORS_RECORDS = "DELETE FROM Books_Authors WHERE Book_id = ?;";
 
-    @Override
-    public void deleteBooksAuthorsRecords(int bookId) {
 
-        try (Connection connection = ConnectionHelper.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_AUTHORS_RECORDS)) {
-                preparedStatement.setInt(1, bookId);
-                preparedStatement.execute();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void add(String name) {
@@ -49,6 +38,36 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
 
     @Override
+    public void add(String name, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_AUTHOR)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.execute();
+        }
+    }
+
+
+    @Override
+    public void deleteBooksAuthorsRecords(int bookId) {
+
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_AUTHORS_RECORDS)) {
+                preparedStatement.setInt(1, bookId);
+                preparedStatement.execute();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteBooksAuthorsRecords(int bookId, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_AUTHORS_RECORDS)) {
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.execute();
+        }
+    }
+
+    @Override
     public void addBookAuthorRecord(int bookId, int authorId) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_AUTHOR_RECORD)) {
@@ -60,6 +79,16 @@ public class AuthorRepositoryImpl implements AuthorRepository {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void addBookAuthorRecord(int bookId, int authorId, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_AUTHOR_RECORD)) {
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.setInt(2, authorId);
+            preparedStatement.execute();
+        }
+    }
+
 
     @Override
     public List<Integer> getId(Object[] names) {
@@ -80,6 +109,21 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         return list;
     }
 
+    @Override
+    public List<Integer> getId(Object[] names, Connection connection) throws SQLException {
+        List<Integer> list = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
+            Array namesArray = connection.createArrayOf("VARCHAR", names);
+            preparedStatement.setArray(1, namesArray);
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                list.add(resultSet.getInt("ID"));
+            }
+        }
+        return list;
+    }
+
+
 
     @Override
     public List<String> get() {
@@ -97,4 +141,17 @@ public class AuthorRepositoryImpl implements AuthorRepository {
         }
         return list;
     }
+
+    @Override
+    public List<String> get(Connection connection) throws SQLException {
+        List<String> list = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_NAMES)) {
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                list.add(resultSet.getString("Name"));
+            }
+        }
+        return list;
+    }
+
 }

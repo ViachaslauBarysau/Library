@@ -33,6 +33,14 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
+    public void deleteBooksGenresRecords(int bookId, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_GENRES_RECORDS)) {
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.execute();
+        }
+    }
+
+    @Override
     public List<Integer> getId(Object[] genres) {
         List<Integer> list = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
@@ -52,6 +60,21 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
+    public List<Integer> getId(Object[] genres, Connection connection) throws SQLException {
+        List<Integer> list = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
+            Array genresArray = connection.createArrayOf("VARCHAR", genres);
+            preparedStatement.setArray(1, genresArray);
+            preparedStatement.executeQuery();
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                list.add(resultSet.getInt("ID"));
+            }
+        }
+        return list;
+    }
+
+    @Override
     public void addBookGenreRecord(int bookId, int genreId) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_GENRE_RECORD)) {
@@ -61,6 +84,15 @@ public class GenreRepositoryImpl implements GenreRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void addBookGenreRecord(int bookId, int genreId, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_GENRE_RECORD)) {
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.setInt(2, genreId);
+            preparedStatement.execute();
         }
     }
 
@@ -82,6 +114,19 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
+    public List<String> get(Connection connection) throws SQLException {
+        List<String> list = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_TITLES)) {
+            final ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                list.add(resultSet.getString("Title"));
+            }
+
+        }
+        return list;
+    }
+
+    @Override
     public void add(String title) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_GENRE)) {
@@ -92,4 +137,13 @@ public class GenreRepositoryImpl implements GenreRepository {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void add(String title, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_GENRE)) {
+            preparedStatement.setString(1, title);
+            preparedStatement.execute();
+        }
+    }
+
 }

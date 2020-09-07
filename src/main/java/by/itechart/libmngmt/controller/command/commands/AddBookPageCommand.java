@@ -25,19 +25,15 @@ public class AddBookPageCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
+
         BookDto bookDto = new BookDto();
         bookDto.setCovers(Arrays.asList("glass.jpg"));
         BookPageDto bookPageDto = BookPageDto.builder()
                 .bookDto(bookDto)
-                .readers(new HashMap<Integer, ReaderDto>())
+//                .readers(new HashMap<Integer, ReaderDto>())
                 .readerCards(new ArrayList<ReaderCardDto>())
                 .build();
         request.setAttribute("bookpagedto", bookPageDto);
-//      For book adding test
-//        BookEntity book = bookService.getBook(1);
-//        book.getAuthors().add("ASsds");
-//        book.getGenres().add("ASDAS");
-//        bookService.addBook(book);
 
         forward("bookpage");
     }

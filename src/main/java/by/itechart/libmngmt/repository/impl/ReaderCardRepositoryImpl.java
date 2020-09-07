@@ -23,6 +23,9 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     private static final String SQL_ADD_READER_CARD = "INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Time_Period, " +
             "Due_date) VALUES (?,?,?,?,?);";
 
+    private static final String SQL_GET_READERCARDS_BY_ID = "SELECT * FROM Books_Readers LEFT JOIN Readers" +
+            " ON Readers.ID=Books_Readers.ReaderCard_ID WHERE ReaderCard_ID = ?;";
+
     @Override
     public void add(ReaderCardDto readerCardDto) {
         try (Connection connection = ConnectionHelper.getConnection()) {
@@ -60,6 +63,34 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     }
 
     @Override
+    public ReaderCardEntity getReaderCard(int readerCardId) {
+        ReaderCardEntity readerCardEntity = new ReaderCardEntity();
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERCARDS_BY_ID)) {
+                preparedStatement.setInt(1, readerCardId);
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    readerCardEntity = ReaderCardEntity.builder()
+                            .id(resultSet.getInt("ReaderCard_ID"))
+                            .bookId(resultSet.getInt("book_ID"))
+                            .readerId(resultSet.getInt("reader_ID"))
+                            .readerName(resultSet.getString("Name"))
+                            .readerEmail(resultSet.getString("Email"))
+                            .borrowDate(resultSet.getDate("Borrow_date"))
+                            .timePeriod(resultSet.getInt("Time_Period"))
+                            .dueDate(resultSet.getDate("Due_date"))
+                            .returnDate(resultSet.getTimestamp("Return_date"))
+                            .comment(resultSet.getString("Comment"))
+                            .build();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return readerCardEntity;
+    }
+
+    @Override
     public List<ReaderCardEntity> get(int bookId) {
         List<ReaderCardEntity> list = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
@@ -77,6 +108,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
                                 .timePeriod(resultSet.getInt("Time_Period"))
                                 .dueDate(resultSet.getDate("Due_date"))
                                 .returnDate(resultSet.getTimestamp("Return_date"))
+                                .comment(resultSet.getString("Comment"))
                                 .build());
                 }
             }

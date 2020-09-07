@@ -1,5 +1,8 @@
 package by.itechart.libmngmt.controller;
 
+import by.itechart.libmngmt.dto.ReaderCardDto;
+import by.itechart.libmngmt.service.ReaderCardService;
+import by.itechart.libmngmt.service.impl.ReaderCardServiceImpl;
 import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
@@ -12,14 +15,19 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
+@WebServlet(urlPatterns = {"/rdr-crd"})
+public class ReaderCardController extends HttpServlet {
 
-@WebServlet(urlPatterns = {"/fetch/*"})
-public class FetchController extends HttpServlet {
+    ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Integer> list = Arrays.asList(1, 2, 3);
 
-        String str = new Gson().toJson(list);
+        int readerCardId = Integer.parseInt(req.getParameter("id"));
+        ReaderCardDto readerCardDto = readerCardService.getReaderCard(readerCardId);
+
+
+        String str = new Gson().toJson(readerCardDto);
 
         PrintWriter out = resp.getWriter();
         resp.setContentType("application/json");
@@ -33,4 +41,5 @@ public class FetchController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doPost(req, resp);
     }
+
 }

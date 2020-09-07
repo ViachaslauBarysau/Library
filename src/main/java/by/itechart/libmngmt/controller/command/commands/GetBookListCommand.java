@@ -1,9 +1,9 @@
 package by.itechart.libmngmt.controller.command.commands;
 
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.controller.command.LibraryCommand;
 import lombok.Data;
 
 import javax.servlet.ServletException;
@@ -21,6 +21,7 @@ public class GetBookListCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
+
         int pageNumber = 1;
 
         try {

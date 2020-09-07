@@ -58,18 +58,18 @@ public class BookRepositoryImpl implements BookRepository {
 
 
     @Override
-    public void update(BookDto bookDto) {
+    public void update(BookDto book) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE_BOOK)) {
-                preparedStatement.setString(1, bookDto.getTitle());
-                preparedStatement.setString(2, bookDto.getPublisher());
-                preparedStatement.setInt(3, bookDto.getPublishDate());
-                preparedStatement.setInt(4, bookDto.getPageCount());
-                preparedStatement.setString(5, bookDto.getISBN());
-                preparedStatement.setString(6, bookDto.getDescription());
-                preparedStatement.setInt(7, bookDto.getTotalAmount());
-                preparedStatement.setInt(8, bookDto.getAvailableAmount());
-                preparedStatement.setInt(9, bookDto.getId());
+                preparedStatement.setString(1, book.getTitle());
+                preparedStatement.setString(2, book.getPublisher());
+                preparedStatement.setInt(3, book.getPublishDate());
+                preparedStatement.setInt(4, book.getPageCount());
+                preparedStatement.setString(5, book.getISBN());
+                preparedStatement.setString(6, book.getDescription());
+                preparedStatement.setInt(7, book.getTotalAmount());
+                preparedStatement.setInt(8, book.getAvailableAmount());
+                preparedStatement.setInt(9, book.getId());
                 preparedStatement.execute();
             }
 
@@ -105,7 +105,47 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public int add(BookEntity book) {
+    public void update(BookDto book, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE_BOOK)) {
+            preparedStatement.setString(1, book.getTitle());
+            preparedStatement.setString(2, book.getPublisher());
+            preparedStatement.setInt(3, book.getPublishDate());
+            preparedStatement.setInt(4, book.getPageCount());
+            preparedStatement.setString(5, book.getISBN());
+            preparedStatement.setString(6, book.getDescription());
+            preparedStatement.setInt(7, book.getTotalAmount());
+            preparedStatement.setInt(8, book.getAvailableAmount());
+            preparedStatement.setInt(9, book.getId());
+            preparedStatement.execute();
+        }
+    }
+
+    @Override
+    public int add(BookDto book, Connection connection) throws SQLException {
+        int id = 0;
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, book.getTitle());
+                preparedStatement.setString(2, book.getPublisher());
+                preparedStatement.setInt(3, book.getPublishDate());
+                preparedStatement.setInt(4, book.getPageCount());
+                preparedStatement.setString(5, book.getISBN());
+                preparedStatement.setString(6, book.getDescription());
+                preparedStatement.setInt(7, book.getTotalAmount());
+                preparedStatement.setInt(8, book.getAvailableAmount());
+                preparedStatement.execute();
+                ResultSet resultSet = preparedStatement.getGeneratedKeys();
+
+                while (resultSet.next()) {
+                    id = resultSet.getInt(1);
+                }
+
+            }
+
+        return id;
+    }
+
+    @Override
+    public int add(BookDto book) {
         int id = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {

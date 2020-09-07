@@ -31,6 +31,14 @@ public class CoverRepositoryImpl implements CoverRepository {
         }
     }
 
+    @Override
+    public void add(int bookId, String title, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_COVER)) {
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.setString(2, title);
+            preparedStatement.execute();
+        }
+    }
 
     @Override
     public void delete(int bookId) {
@@ -44,6 +52,11 @@ public class CoverRepositoryImpl implements CoverRepository {
         }
     }
 
-
-
+    @Override
+    public void delete(int bookId, Connection connection) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_COVERS_BY_BOOK_ID)) {
+            preparedStatement.setInt(1, bookId);
+            preparedStatement.execute();
+        }
+    }
 }

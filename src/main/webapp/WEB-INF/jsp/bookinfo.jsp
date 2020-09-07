@@ -12,56 +12,59 @@
     <title>Title</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+<%--    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>--%>
+<%--    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>--%>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-<form method="post" enctype="multipart/form-data" name="bookForm">
 
-    <p><img class="cover" id="cover" src="images/${bookpagedto.bookDto.covers.get(0)}"></p>
+<form method="post" enctype="multipart/form-data">
+
+    <input type="text" size="40" name="id" value="${bookpagedto.bookDto.id}" hidden />
+    <input type="text" size="40" name="currentCover" value="${bookpagedto.bookDto.covers.get(0)}" hidden />
+    <p><img class="cover" id="cover" name="cover" src="images/${bookpagedto.bookDto.covers.get(0)}"></p>
     Choose image to change cover:
-    <p><input type="file" name="file" size="40"/></p>
+    <p><input type="file" name="file" accept="image/jpeg, image/png" /></p>
     Title
-    <p><input type="text" size="40" value="${bookpagedto.bookDto.title}" required></p>
+    <p><input type="text" size="40" name="title" value="${bookpagedto.bookDto.title}" required /></p>
     Authors
     <c:if test="${empty bookpagedto.bookDto.authors}">
-        <p><input type="text" size="40" required></p>
+        <p><input type="text" name="authors" size="40" required></p>
     </c:if>
-    <c:forEach var="author" items="${bookpagedto.bookDto.authors}" >
-        <p><input type="text" size="40" value="${author}" required></p>
+    <c:forEach var="author"  items="${bookpagedto.bookDto.authors}" >
+        <p><input type="text" name="authors" size="40" value="${author}" required /></p>
     </c:forEach>
     Publisher
-    <p><input type="text" size="40" value="${bookpagedto.bookDto.publisher}" required></p>
+    <p><input type="text" name="publisher" size="40" value="${bookpagedto.bookDto.publisher}" required /></p>
     Publish date
-    <p><input type="text" size="40" value="${bookpagedto.bookDto.publishDate}" required></p>
+    <p><input type="text" name="publishDate" size="40" value="${bookpagedto.bookDto.publishDate}" required /></p>
     Genres
     <c:if test="${empty bookpagedto.bookDto.genres}">
-        <p><input type="text" size="40" required></p>
+        <p><input type="text" name="genres" size="40" required/></p>
     </c:if>
     <c:forEach var="genre" items="${bookpagedto.bookDto.genres}">
-        <p><input type="text" size="40" value="${genre}" ></p>
+        <p><input type="text" name="genres" size="40" value="${genre}" required /></p>
     </c:forEach>
     Page count
-    <p><input type="text" size="40" value="${bookpagedto.bookDto.pageCount}" required></p>
+    <p><input type="text" name="pageCount" size="40" value="${bookpagedto.bookDto.pageCount}" required /></p>
     ISBN
-    <p><input type="text" size="40" value="${bookpagedto.bookDto.ISBN}" required></p>
+    <p><input type="text" name="ISBN" size="40" value="${bookpagedto.bookDto.ISBN}" required /></p>
     Description
-    <p><textarea maxlength="400" cols="42" rows="12" required>
+    <p><textarea maxlength="400" name="description" cols="42" rows="12" required>
     ${bookpagedto.bookDto.description}
     </textarea></p>
     Total amount
-    <p><input type="text" size="40" value="${bookpagedto.bookDto.totalAmount}" required></p>
-    <p><input type="text" size="40" value="${bookpagedto.bookDto.availableAmount}" hidden></p>
+    <p><input type="text" size="40" name="totalAmount" value="${bookpagedto.bookDto.totalAmount}" required /></p>
+    <p><input type="text" size="40" name="availableAmount" value="${bookpagedto.bookDto.availableAmount}" hidden required /></p>
     Status
     <c:if test ="${bookpagedto.bookDto.availableAmount <= 0}">
-        <p><input type="text" size="40" value="Unavailable" readonly></p>
+        <p><input type="text" size="40" value="Unavailable" readonly required /></p>
     </c:if>
     <c:if test ="${bookpagedto.bookDto.availableAmount > 0}">
         <p><input type="text" size="40" value="Available ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
     </c:if>
 
-    <button type="submit" formaction="lib-app?command=SAVE_BOOK" />
+    <button type="submit" formaction="lib-app?command=ADD_EDIT_BOOK" />
     Save
     </button>
     <button type="submit" formaction="lib-app?command=DISMISS" />
@@ -97,7 +100,7 @@ Borrow Records List
 <%--    <p>Add the "fade" class to the modal container if you want the modal to fade in on open and fade out on close.</p>--%>
 
     <!-- Button to Open the Modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="Showmodal()">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="getEmails()">
         Add
     </button>
 
@@ -116,10 +119,17 @@ Borrow Records List
                 <div class="modal-body">
 
                     <form>
-                        <p><input id="firstrow" type="text" size="40"  required></p>
-                        <p><input id="secondrow" type="text" size="40" required></p>
-                        <p><input id="thirdrow" type="text" size="40" required></p>
-                        <p><input id="fourthrow" type="text" size="40" required></p>
+                        <p><input id="email" type="email" size="40"  required></p>
+                        <p><input id="name" type="text" size="40" required></p>
+                        <p><input id="borrowdate" type="date" size="40" required></p>
+                        <p><input id="timeperiod" type="text" size="40" required></p>
+                        <p><select name="status">
+                            <option disabled selected>Select to change status</option>
+                            <option value="returned">Returned</option>
+                            <option value="damaged">Returned and damaged</option>
+                            <option value="lost">Lost</option>
+                        </select></p>
+                        <p><input id="comment" type="text" size="40"></p>
                     </form>
 
                 </div>

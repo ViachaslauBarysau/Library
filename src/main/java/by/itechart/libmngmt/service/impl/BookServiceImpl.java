@@ -8,7 +8,12 @@ import by.itechart.libmngmt.service.AuthorService;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.CoverService;
 import by.itechart.libmngmt.service.GenreService;
+import by.itechart.libmngmt.util.ConnectionHelper;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
@@ -49,6 +54,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public void updateBook(BookDto bookDto) {
+        bookRepository.update(bookDto);
+    }
+
+    @Override
     public BookDto find(int bookId) {
         BookEntity bookEntity = bookRepository.find(bookId);
         BookDto bookDto = BookDto.builder()
@@ -59,6 +69,7 @@ public class BookServiceImpl implements BookService {
                 .ISBN(bookEntity.getISBN())
                 .description(bookEntity.getDescription())
                 .totalAmount(bookEntity.getTotalAmount())
+                .pageCount(bookEntity.getPageCount())
                 .availableAmount(bookEntity.getAvailableAmount())
                 .authors(bookEntity.getAuthors())
                 .genres(bookEntity.getGenres())
@@ -78,26 +89,51 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void addBook(BookEntity bookEntity) {
+    public void updateBook(BookDto bookDto, Connection connection) throws SQLException {
+        bookRepository.update(bookDto, connection);
+    }
 
-        int bookId = addBookGetId(bookEntity);
+    @Override
+    public void addEditBook(BookDto book) {
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            connection.setAutoCommit(false);
+            int bookId = 0;
+            if (book.getId()==0) {
+                bookId = addBookGetId(book, connection);
+            } else {
+                updateBook(book, connection);
+                bookId = book.getId();
+            }
+            BookDto bookDto = new BookDto();
+            bookDto = BookDto.builder().id(bookId)
+                    .authors(book.getAuthors())
+                    .covers(book.getCovers())
+                    .genres(book.getGenres())
+                    .build();
 
-        BookDto bookDto = BookDto.builder().id(bookId)
-                .authors(bookEntity.getAuthors())
-                .covers(bookEntity.getCovers())
-                .genres(bookEntity.getGenres())
-                .build();
+            authorService.add(bookDto, connection);
+            genreService.add(bookDto, connection);
+            coverService.add(bookDto, connection);
+            connection.commit();
 
-        authorService.add(bookDto);
-        genreService.add(bookDto);
-        coverService.add(bookDto);
+        }
+             catch (SQLException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
 
     @Override
-    public int addBookGetId(BookEntity book) {
+    public int addBookGetId(BookDto book) {
         return bookRepository.add(book);
     }
+
+    @Override
+    public int addBookGetId(BookDto book, Connection connection) throws SQLException {
+        return bookRepository.add(book, connection);
+    }
+
 
 }

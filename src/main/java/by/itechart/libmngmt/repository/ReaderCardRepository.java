@@ -9,4 +9,5 @@ public interface ReaderCardRepository {
     List<ReaderCardEntity> get(int bookId);
     void add(ReaderCardDto readerCardDto);
     void update(ReaderCardDto readerCardDto);
+    ReaderCardEntity getReaderCard(int readerCardId);
 }
