@@ -17,7 +17,8 @@ public class GenreRepositoryImpl implements GenreRepository {
     private static final String SQL_GET_GENRES_TITLES = "SELECT Title FROM GENRES;";
     private static final String SQL_ADD_GENRE = "INSERT INTO Genres (Title) VALUES (?);";
     private static final String SQL_GET_GENRES_IDS = "SELECT ID FROM Genres WHERE Title = ANY (?);";
-    private static final String SQL_INSERT_BOOK_GENRE_RECORD = "INSERT INTO Books_Genres (Book_Id, Genre_Id) VALUES (?,?);";
+    private static final String SQL_INSERT_BOOK_GENRE_RECORD = "INSERT INTO Books_Genres (Book_Id, Genre_Id)" +
+            " VALUES (?,?);";
     private static final String SQL_DELETE_BOOKS_GENRES_RECORDS = "DELETE FROM Books_Genres WHERE Book_id = ?;";
 
     @Override
@@ -42,7 +43,7 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @Override
     public List<Integer> getId(Object[] genres) {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
                 Array genresArray = connection.createArrayOf("VARCHAR", genres);
@@ -50,28 +51,28 @@ public class GenreRepositoryImpl implements GenreRepository {
                 preparedStatement.executeQuery();
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    list.add(resultSet.getInt("ID"));
+                    resultList.add(resultSet.getInt("ID"));
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return list;
+        return resultList;
     }
 
     @Override
     public List<Integer> getId(Object[] genres, Connection connection) throws SQLException {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
             Array genresArray = connection.createArrayOf("VARCHAR", genres);
             preparedStatement.setArray(1, genresArray);
             preparedStatement.executeQuery();
             final ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                list.add(resultSet.getInt("ID"));
+                resultList.add(resultSet.getInt("ID"));
             }
         }
-        return list;
+        return resultList;
     }
 
     @Override
@@ -98,32 +99,32 @@ public class GenreRepositoryImpl implements GenreRepository {
 
     @Override
     public List<String> get() {
-        List<String> list = new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_TITLES)) {
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    list.add(resultSet.getString("Title"));
+                    resultList.add(resultSet.getString("Title"));
                 }
 
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return list;
+        return resultList;
     }
 
     @Override
     public List<String> get(Connection connection) throws SQLException {
-        List<String> list = new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_TITLES)) {
             final ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                list.add(resultSet.getString("Title"));
+                resultList.add(resultSet.getString("Title"));
             }
 
         }
-        return list;
+        return resultList;
     }
 
     @Override

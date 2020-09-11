@@ -1,12 +1,12 @@
 package by.itechart.libmngmt.service.impl;
 
 import by.itechart.libmngmt.dto.ReaderCardDto;
-import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderCardService;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +31,7 @@ public class ReaderCardServiceImpl implements ReaderCardService {
                 .readerName(readerCardEntity.getReaderName())
                 .readerEmail(readerCardEntity.getReaderEmail())
                 .borrowDate(readerCardEntity.getBorrowDate())
-                .timePeriod(readerCardEntity.getTimePeriod())
+                .status(readerCardEntity.getStatus())
                 .dueDate(readerCardEntity.getDueDate())
                 .returnDate(readerCardEntity.getReturnDate())
                 .comment(readerCardEntity.getComment())
@@ -39,6 +39,16 @@ public class ReaderCardServiceImpl implements ReaderCardService {
 
         }
         return readerCardDtos;
+    }
+
+    @Override
+    public List<Date> getNearestReturnDates(int bookId) {
+        return readerCardRepository.getNearestReturnDates(bookId);
+    }
+
+    @Override
+    public int getNearestReturnReaderCardId(int bookId) {
+        return readerCardRepository.getNearestReturnReaderCardId(bookId);
     }
 
     @Override
@@ -51,22 +61,25 @@ public class ReaderCardServiceImpl implements ReaderCardService {
                 .readerName(readerCardEntity.getReaderName())
                 .readerEmail(readerCardEntity.getReaderEmail())
                 .borrowDate(readerCardEntity.getBorrowDate())
-                .timePeriod(readerCardEntity.getTimePeriod())
+                .status(readerCardEntity.getStatus())
                 .dueDate(readerCardEntity.getDueDate())
                 .returnDate(readerCardEntity.getReturnDate())
                 .comment(readerCardEntity.getComment())
                 .build();
+        if (readerCardEntity.getComment() == null) {
+            readerCardDto.setComment("");
+        }
         return readerCardDto;
     }
 
     @Override
-    public void add(ReaderCardDto readerCardDto) {
-        readerCardRepository.add(readerCardDto);
+    public void add(ReaderCardEntity readerCard) {
+        readerCardRepository.add(readerCard);
     }
 
     @Override
-    public void update(ReaderCardDto readerCardDto) {
-        readerCardRepository.update(readerCardDto);
+    public void update(ReaderCardEntity readerCard) {
+        readerCardRepository.update(readerCard);
     }
 
 

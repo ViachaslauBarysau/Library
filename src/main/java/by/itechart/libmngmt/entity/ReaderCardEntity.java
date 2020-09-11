@@ -5,8 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Date;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +21,7 @@ public class ReaderCardEntity {
     private String readerName;
     private String readerEmail;
     private Date borrowDate;
-    private int timePeriod;
+    private String status;
     private Date dueDate;
     private Timestamp returnDate;
     private String comment;

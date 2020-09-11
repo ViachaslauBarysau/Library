@@ -36,25 +36,29 @@ public class SearchBookCommand extends LibraryCommand {
         searchParams.add(request.getParameter("genre"));
         searchParams.add(request.getParameter("description"));
 
-        int pageCount = bookService.getSearchPageCount(searchParams);
+        if (!request.getParameter("title").equals("") || !request.getParameter("author").equals("")
+        || !request.getParameter("genre").equals("") || !request.getParameter("description").equals("")) {
+            int pageCount = bookService.getSearchPageCount(searchParams);
 
-        if (pageNumber>pageCount) {
-            pageNumber = pageCount;
-        } else if (pageNumber<1) {
-            pageNumber = 1;
+            if (pageNumber > pageCount) {
+                pageNumber = pageCount;
+            } else if (pageNumber < 1) {
+                pageNumber = 1;
+            }
+
+            List<BookEntity> searchResult = bookService.search(searchParams, pageNumber);
+            request.setAttribute("books", searchResult);
+
+            request.setAttribute("pageCount", pageCount);
+            request.setAttribute("pageNumber", pageNumber);
+
+            request.setAttribute("title", request.getParameter("title"));
+            request.setAttribute("author", request.getParameter("author"));
+            request.setAttribute("genre", request.getParameter("genre"));
+            request.setAttribute("description", request.getParameter("description"));
         }
 
-        List<BookEntity> searchResult = bookService.search(searchParams, pageNumber);
-        request.setAttribute("books", searchResult);
-
-        request.setAttribute("pageCount", pageCount);
-        request.setAttribute("pageNumber", pageNumber);
-
-        request.setAttribute("title", request.getParameter("title"));
-        request.setAttribute("author", request.getParameter("author"));
-        request.setAttribute("genre", request.getParameter("genre"));
-        request.setAttribute("description", request.getParameter("description"));
-
         forward("searchpage");
+
     }
 }

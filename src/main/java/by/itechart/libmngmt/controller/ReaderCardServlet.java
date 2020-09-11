@@ -12,11 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.List;
 
 @WebServlet(urlPatterns = {"/rdr-crd"})
-public class ReaderCardController extends HttpServlet {
+public class ReaderCardServlet extends HttpServlet {
 
     ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
 

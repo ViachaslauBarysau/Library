@@ -21,20 +21,22 @@ public class ReaderRepositoryImpl implements ReaderRepository {
 
     private static ReaderRepositoryImpl instance = new ReaderRepositoryImpl();
 
-    private static final String SQL_GET_READERS_BY_BOOKID = "SELECT * FROM Readers LEFT JOIN BOOKS_READERS ON Readers.ID=Books_Readers.Reader_Id WHERE Books_Readers.Book_id = ?;";
-    private static final String SQL_ADD_READER = "INSERT INTO Readers (Name, Email, Date_of_registration, Phone_number) VALUES (?,?,?,?);";
+    private static final String SQL_GET_READERS_BY_BOOKID = "SELECT * FROM Readers LEFT JOIN BOOKS_READERS" +
+            " ON Readers.ID=Books_Readers.Reader_Id WHERE Books_Readers.Book_id = ?;";
+    private static final String SQL_ADD_READER = "INSERT INTO Readers (Name, Email, Date_of_registration," +
+            " Phone_number) VALUES (?,?,?,?);";
     private static final String SQL_GET_READERS_EMAILS = "SELECT Email FROM Readers WHERE Email LIKE ?;";
     private static final String SQL_GET_READER_NAME_BY_EMAIL = "SELECT NAME FROM Readers WHERE Email = ?;";
 
     @Override
     public Map<Integer, ReaderEntity> get(int bookId) {
-        Map<Integer, ReaderEntity> map = new HashMap<>();
+        Map<Integer, ReaderEntity> resultMap = new HashMap<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERS_BY_BOOKID)) {
                 preparedStatement.setInt(1, bookId);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    map.put(resultSet.getInt("ID"), ReaderEntity.builder()
+                    resultMap.put(resultSet.getInt("ID"), ReaderEntity.builder()
                                                 .id(resultSet.getInt("ID"))
                                                 .name(resultSet.getString("Name"))
                                                 .email(resultSet.getString("Email"))
@@ -47,7 +49,7 @@ public class ReaderRepositoryImpl implements ReaderRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return map;
+        return resultMap;
     }
 
     @Override
@@ -70,31 +72,32 @@ public class ReaderRepositoryImpl implements ReaderRepository {
 
     @Override
     public List<String> getEmails(String searchParameter) {
-        List<String> list = new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERS_EMAILS)) {
                 preparedStatement.setString(1, searchParameter);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                        list.add(resultSet.getString("Email"));
+                        resultList.add(resultSet.getString("Email"));
                 }
 
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return list;
+        return resultList;
 
     }
 
     @Override
-    public void add(ReaderDto readerDto) {
+    public void add(ReaderEntity reader) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_READER)) {
-                preparedStatement.setString(1, readerDto.getName());
-                preparedStatement.setString(2, readerDto.getEmail());
-                preparedStatement.setDate(3, (java.sql.Date) readerDto.getDateOfRegistration());
-                preparedStatement.setLong(4, readerDto.getPhoneNumber());
+                int index = 1;
+                preparedStatement.setString(index++, reader.getName());
+                preparedStatement.setString(index++, reader.getEmail());
+                preparedStatement.setDate(index++, reader.getDateOfRegistration());
+                preparedStatement.setLong(index++, reader.getPhoneNumber());
                 preparedStatement.execute();
             }
         } catch (SQLException e) {

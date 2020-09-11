@@ -7,6 +7,7 @@ import by.itechart.libmngmt.service.GenreService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenreServiceImpl implements GenreService {
@@ -20,12 +21,14 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public void add(BookDto bookDto) {
         List<String> allGenresList = genreRepository.get();
-        List<String> bookGenresList = bookDto.getGenres();
-        bookGenresList.remove(allGenresList);
-        for (int index=0; index<bookGenresList.size(); index++) {
-            genreRepository.add(bookGenresList.get(index));
+        List<String> bookGenresList = new ArrayList<>();
+        bookGenresList =  bookDto.getGenres();
+        bookGenresList.removeAll(allGenresList);
+        for (String genre: bookGenresList
+        ) {
+            genreRepository.add(genre);
         }
-        Object[] genreTitles = bookGenresList.toArray();
+        Object[] genreTitles = bookDto.getGenres().toArray();
         List<Integer> genreIDs = genreRepository.getId(genreTitles);
 
         genreRepository.deleteBooksGenresRecords(bookDto.getId());
@@ -38,13 +41,18 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public void add(BookDto bookDto, Connection connection) throws SQLException {
+
         List<String> allGenresList = genreRepository.get(connection);
-        List<String> bookGenresList = bookDto.getGenres();
-        bookGenresList.remove(allGenresList);
-        for (int index=0; index<bookGenresList.size(); index++) {
-            genreRepository.add(bookGenresList.get(index), connection);
+        List<String> bookGenresList = new ArrayList<>();
+        bookGenresList.addAll(bookDto.getGenres());
+        bookGenresList.removeAll(allGenresList);
+
+        for (String genre: bookGenresList
+             ) {
+            genreRepository.add(genre, connection);
         }
-        Object[] genreTitles = bookGenresList.toArray();
+
+        Object[] genreTitles = bookDto.getGenres().toArray();
         List<Integer> genreIDs = genreRepository.getId(genreTitles, connection);
 
         genreRepository.deleteBooksGenresRecords(bookDto.getId(), connection);

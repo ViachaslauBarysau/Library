@@ -22,8 +22,9 @@ public class CoverServiceImpl implements CoverService {
     public void add(BookDto bookDto) {
         List<String> bookCoversList = bookDto.getCovers();
         coverRepository.delete(bookDto.getId());
-        for (int index=0; index<bookCoversList.size(); index++) {
-            coverRepository.add(bookDto.getId(), bookCoversList.get(index));
+        for (String cover: bookCoversList
+        ) {
+            coverRepository.add(bookDto.getId(), cover);
         }
     }
 
@@ -31,8 +32,9 @@ public class CoverServiceImpl implements CoverService {
     public void add(BookDto bookDto, Connection connection) throws SQLException {
         List<String> bookCoversList = bookDto.getCovers();
         coverRepository.delete(bookDto.getId(), connection);
-        for (int index=0; index<bookCoversList.size(); index++) {
-            coverRepository.add(bookDto.getId(), bookCoversList.get(index), connection);
+        for (String cover: bookCoversList
+        ) {
+            coverRepository.add(bookDto.getId(), cover, connection);
         }
     }
 }

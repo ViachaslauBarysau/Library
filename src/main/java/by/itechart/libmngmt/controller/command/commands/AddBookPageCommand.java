@@ -27,10 +27,10 @@ public class AddBookPageCommand extends LibraryCommand {
     public void process() throws ServletException, IOException {
 
         BookDto bookDto = new BookDto();
+        bookDto.setId(0);
         bookDto.setCovers(Arrays.asList("glass.jpg"));
         BookPageDto bookPageDto = BookPageDto.builder()
                 .bookDto(bookDto)
-//                .readers(new HashMap<Integer, ReaderDto>())
                 .readerCards(new ArrayList<ReaderCardDto>())
                 .build();
         request.setAttribute("bookpagedto", bookPageDto);

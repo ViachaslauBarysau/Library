@@ -37,9 +37,9 @@ public class GetBookListCommand extends LibraryCommand {
             pageNumber = 1;
         }
 
-        List<BookEntity> bookPage = bookService.getBookPage(pageNumber);
+        List<BookEntity> books = bookService.getBookPage(pageNumber);
 
-        request.setAttribute("books", bookPage);
+        request.setAttribute("books", books);
         request.setAttribute("pageCount", pageCount);
         request.setAttribute("pageNumber", pageNumber);
 

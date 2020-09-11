@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.sql.Date;
+import java.text.DateFormat;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,5 +27,6 @@ public class BookDto {
     private List<String> authors;
     private List<String> genres;
     private List<String> covers;
+
 
 }

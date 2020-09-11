@@ -6,7 +6,7 @@ CREATE TABLE Books
     Publish_date INTEGER NOT NULL,
     Page_count INTEGER NOT NULL,
     Isbn VARCHAR(255) NOT NULL,
-    Description VARCHAR(400) NOT NULL,
+    Description VARCHAR(400),
     Total_amount INTEGER NOT NULL,
     Available_amount INTEGER NOT NULL,
     PRIMARY KEY (ID)
@@ -17,8 +17,8 @@ CREATE TABLE Readers
     ID       INTEGER NOT NULL AUTO_INCREMENT,
     Name    VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL,
-    Date_of_registration DATE NOT NULL,
-    Phone_number BIGINT NOT NULL,
+    Date_of_registration DATE,
+    Phone_number BIGINT,
     PRIMARY KEY (ID)
 );
 
@@ -41,7 +41,7 @@ CREATE TABLE Books_Readers
     Book_ID INTEGER NOT NULL,
     Reader_ID INTEGER NOT NULL,
     Borrow_date DATE NOT NULL,
-    Time_Period INTEGER NOT NULL,
+    Status VARCHAR,
     Due_date DATE NOT NULL,
     Return_date DATETIME,
     Comment VARCHAR,
@@ -83,7 +83,7 @@ CREATE TABLE Covers
 INSERT INTO Books(Title, Publisher, Publish_date, Page_count, Isbn, Description, Total_amount, Available_amount)
 VALUES ('The Film Experience', 'Alpina', 2012, 512, '2-266-11156', 'Enjoy a more poignant film experience by diving' ||
         ' into the details which built modern-day cinema as Film Experience combines, technology, business, the visual ' ||
-        'language of film, and its history into a single, cohesive presentation of this ever-evolving medium.', 4, 4),
+        'language of film, and its history into a single, cohesive presentation of this ever-evolving medium.', 2, 0),
        ('War and Peace', 'Alpina', 2008, 1225, '2-254-15436', 'The novel spans the period 1805 to 1820. ' ||
         'The era of Catherine the Great was still fresh in the minds of older people. Catherine had made ' ||
         'French the language of her royal court. For the next 100 years, it became a social requirement for' ||
@@ -99,7 +99,7 @@ VALUES ('The Film Experience', 'Alpina', 2012, 512, '2-266-11156', 'Enjoy a more
        ('Kashtanka ', 'Admire', 1999, 444, '5-566-46738', 'Based on a new translation and adapted especially for ' ||
         'young readers, Kashtanka is an enchanting introduction to the work of one of the world’s foremost authors.' ||
         ' Gennady Spirin’s award-winning illustrations bring new life to this adaptation of Anton Chekhov’s ' ||
-        'charming adventure.', 1, 1),
+        'charming adventure.', 1, 0),
        ('Ruslan and Ludmila', 'Admire', 1998, 376, '6-326-17890', 'In a brief prologue, the narrator of the story ' ||
         'describes a green oak by the sea, on which a learned cat walks back and forth on a gold chain. When the ' ||
         'cat walks to the right, he sings - to the left he tells stories. In this magical place, ' ||
@@ -136,7 +136,7 @@ VALUES ('The Film Experience', 'Alpina', 2012, 512, '2-266-11156', 'Enjoy a more
         ' when the wild she loves begins to disappear, Franny can no longer wander without a destination.', 4, 4),
        ('Vesper Flights', 'Alpina', 2018, 817, '9-446-44456', 'Vesper Flights is a book about observation, ' ||
         'fascination, time, memory, love and loss and how we make the world around us. Moving and frank, personal ' ||
-        'and political, it confirms Helen Macdonald as one of this century''s greatest nature writers.', 4, 3);
+        'and political, it confirms Helen Macdonald as one of this century''s greatest nature writers.', 2, 1);
 
 INSERT INTO Readers(Name, Email, Date_of_registration, Phone_number)
 VALUES ('Alexandr Kuznetsov', 'kuznetsov@gmail.com', '2016-12-31', 375292342343),
@@ -145,8 +145,8 @@ VALUES ('Alexandr Kuznetsov', 'kuznetsov@gmail.com', '2016-12-31', 375292342343)
        ('Ivan Ivanov', 'ivanov@gmail.com', '2014-02-27', 375334456567),
        ('Svetlana Prokofeva', 'prokofeva@gmail.com', '2018-10-11', 375299807654),
        ('Valerii Poloneichik', 'poloneichik@gmail.com', '2019-09-24',375295433455),
-       ('Viachaslau Borisov', 'borisov@gmail.com', '2020-07-01', 375294343434),
        ('Anton Antonov', 'antonov@gmail.com', '2015-10-09', 375448768736),
+       ('Viachaslau Borisov', 'borisov@gmail.com', '2020-07-01', 375294343434),
        ('Elena Efremova', 'efremoav@gmail.com', '2015-11-11', 375295454556),
        ('Sergei Alferov', 'alferov@gmail.com', '2020-02-03', 375337767763),
        ('Petr Petrov', 'petrov@gmail.com', '2019-04-23', 375444565651),
@@ -212,20 +212,23 @@ VALUES (1, 1),
        (15, 13),
        (16, 14);
 
-INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Time_Period, Due_date, Return_date)
-VALUES (1, 1, '2019-11-27', 3, '2020-02-27', '2019-12-31 16:24:00'),
-       (1, 2, '2016-12-31', 6, '2017-07-31', '2017-03-31 12:31:08'),
-       (2, 3, '2015-01-04', 2, '2015-03-04','2015-02-24 13:02:36'),
-       (2, 4, '2020-06-01', 6, '2021-01-01', '2020-06-30 15:22:16'),
-       (3, 5, '2019-11-16', 3, '2020-02-16', '2019-12-24 16:02:12'),
-       (3, 6, '2020-08-03', 1, '2020-09-03', '2020-08-24 16:02:12'),
-       (2, 2, '2019-08-21', 6, '2020-02-21', '2019-08-31 12:03:31'),
-       (6, 3, '2014-10-22', 3, '2014-01-22', '2014-11-14 14:22:10'),
-       (5, 1, '2018-01-29', 6, '2018-07-29', '2018-04-16 14:04:44'),
-       (8, 8, '2016-09-27', 3, '2016-12-27', '2016-10-29 10:24:06');
+INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Status, Due_date, Return_date)
+VALUES (1, 1, '2019-11-27', 'returned', '2020-02-27', '2019-12-31 16:24:00'),
+       (1, 2, '2016-12-31', 'returned', '2017-07-31', '2017-03-31 12:31:08'),
+       (2, 3, '2015-01-04', 'returned', '2015-03-04','2015-02-24 13:02:36'),
+       (2, 4, '2020-06-01', 'damaged', '2021-01-01', '2020-06-30 15:22:16'),
+       (3, 5, '2019-11-16', 'returned', '2020-02-16', '2019-12-24 16:02:12'),
+       (3, 6, '2020-08-03', 'lost', '2020-09-03', '2020-08-24 16:02:12'),
+       (2, 2, '2019-08-21', 'returned', '2020-02-21', '2019-08-31 12:03:31'),
+       (6, 3, '2014-10-22', 'lost', '2014-01-22', '2014-11-14 14:22:10'),
+       (5, 1, '2018-01-29', 'returned', '2018-07-29', '2018-04-16 14:04:44'),
+       (8, 8, '2016-09-27', 'returned', '2016-12-27', '2016-10-29 10:24:06');
 
-INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Time_Period, Due_date)
-VALUES (16, 1, '2020-08-21', 3, '2020-11-21');
+INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Due_date)
+VALUES (5, 2, '2020-08-24', '2020-11-24'),
+       (16, 1, '2020-08-21', '2020-11-21'),
+       (1, 8, '2020-09-08', '2020-12-08'),
+       (1, 3, '2020-07-10', '2020-10-10');
 
 INSERT INTO Books_Genres(Book_ID, Genre_ID)
 VALUES (1, 1),

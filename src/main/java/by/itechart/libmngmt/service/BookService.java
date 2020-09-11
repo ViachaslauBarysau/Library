@@ -12,11 +12,11 @@ public interface BookService {
     int getPageCount();
     void delete(Object[] booksList);
     List<BookEntity> search(List<String> searchParams, int pageNumber);
-    void addEditBook(BookDto book);
-    int addBookGetId(BookDto book);
+    int addEditBook(BookEntity book);
+    int addBookGetId(BookEntity book);
     BookDto find(int bookId);
     int getSearchPageCount(List<String> searchParams);
-    void updateBook(BookDto bookDto);
-    int addBookGetId(BookDto book, Connection connection) throws SQLException;
-    void updateBook(BookDto bookDto, Connection connection) throws SQLException;
+    void updateBook(BookEntity book);
+    int addBookGetId(BookEntity book, Connection connection) throws SQLException;
+    void updateBook(BookEntity bookDto, Connection connection) throws SQLException;
 }

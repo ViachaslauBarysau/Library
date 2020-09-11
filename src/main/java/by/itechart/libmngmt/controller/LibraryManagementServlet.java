@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @MultipartConfig
 @WebServlet(urlPatterns = {"/lib-app"})
-public class LibraryManagementController extends HttpServlet {
+public class LibraryManagementServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         LibraryCommand command = LibraryCommandFactory.getCommand(req);

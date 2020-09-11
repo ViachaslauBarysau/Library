@@ -18,7 +18,8 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     private static final String SQL_GET_AUTHORS_NAMES = "SELECT Name FROM Authors;";
     private static final String SQL_ADD_AUTHOR = "INSERT INTO Authors (Name) VALUES (?);";
     private static final String SQL_GET_AUTHORS_IDS = "SELECT ID FROM Authors WHERE Name = ANY (?);";
-    private static final String SQL_INSERT_BOOK_AUTHOR_RECORD = "INSERT INTO Books_Authors (Book_Id, Author_Id) VALUES (?,?);";
+    private static final String SQL_INSERT_BOOK_AUTHOR_RECORD = "INSERT INTO Books_Authors (Book_Id," +
+            " Author_Id) VALUES (?,?);";
     private static final String SQL_DELETE_BOOKS_AUTHORS_RECORDS = "DELETE FROM Books_Authors WHERE Book_id = ?;";
 
 
@@ -92,66 +93,66 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
     @Override
     public List<Integer> getId(Object[] names) {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
                 Array namesArray = connection.createArrayOf("VARCHAR", names);
                 preparedStatement.setArray(1, namesArray);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    list.add(resultSet.getInt("ID"));
+                    resultList.add(resultSet.getInt("ID"));
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return list;
+        return resultList;
     }
 
     @Override
     public List<Integer> getId(Object[] names, Connection connection) throws SQLException {
-        List<Integer> list = new ArrayList<>();
+        List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
             Array namesArray = connection.createArrayOf("VARCHAR", names);
             preparedStatement.setArray(1, namesArray);
             final ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                list.add(resultSet.getInt("ID"));
+                resultList.add(resultSet.getInt("ID"));
             }
         }
-        return list;
+        return resultList;
     }
 
 
 
     @Override
     public List<String> get() {
-        List<String> list = new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_NAMES)) {
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    list.add(resultSet.getString("Name"));
+                    resultList.add(resultSet.getString("Name"));
                 }
 
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return list;
+        return resultList;
     }
 
     @Override
     public List<String> get(Connection connection) throws SQLException {
-        List<String> list = new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_NAMES)) {
             final ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                list.add(resultSet.getString("Name"));
+                resultList.add(resultSet.getString("Name"));
             }
         }
-        return list;
+        return resultList;
     }
 
 }

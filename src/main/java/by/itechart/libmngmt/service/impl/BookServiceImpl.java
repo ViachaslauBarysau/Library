@@ -3,7 +3,9 @@ package by.itechart.libmngmt.service.impl;
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
+import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
+import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
 import by.itechart.libmngmt.service.AuthorService;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.CoverService;
@@ -11,8 +13,7 @@ import by.itechart.libmngmt.service.GenreService;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookEntity> getBookPage(int pageNumber) {
-        return bookRepository.get(pageNumber);
+        return bookRepository.findAll(pageNumber);
     }
 
     @Override
@@ -54,13 +55,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateBook(BookDto bookDto) {
-        bookRepository.update(bookDto);
+    public void updateBook(BookEntity book) {
+        bookRepository.update(book);
     }
 
     @Override
     public BookDto find(int bookId) {
         BookEntity bookEntity = bookRepository.find(bookId);
+
         BookDto bookDto = BookDto.builder()
                 .id(bookEntity.getId())
                 .title(bookEntity.getTitle())
@@ -89,23 +91,22 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void updateBook(BookDto bookDto, Connection connection) throws SQLException {
-        bookRepository.update(bookDto, connection);
+    public void updateBook(BookEntity book, Connection connection) throws SQLException {
+        bookRepository.update(book, connection);
     }
 
     @Override
-    public void addEditBook(BookDto book) {
+    public int addEditBook(BookEntity book) {
+        int bookId = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
             connection.setAutoCommit(false);
-            int bookId = 0;
             if (book.getId()==0) {
                 bookId = addBookGetId(book, connection);
             } else {
                 updateBook(book, connection);
                 bookId = book.getId();
             }
-            BookDto bookDto = new BookDto();
-            bookDto = BookDto.builder().id(bookId)
+            BookDto bookDto = BookDto.builder().id(bookId)
                     .authors(book.getAuthors())
                     .covers(book.getCovers())
                     .genres(book.getGenres())
@@ -116,22 +117,23 @@ public class BookServiceImpl implements BookService {
             coverService.add(bookDto, connection);
             connection.commit();
 
+            connection.setAutoCommit(true);
+
         }
              catch (SQLException e) {
             e.printStackTrace();
         }
-
-
+        return bookId;
     }
 
 
     @Override
-    public int addBookGetId(BookDto book) {
+    public int addBookGetId(BookEntity book) {
         return bookRepository.add(book);
     }
 
     @Override
-    public int addBookGetId(BookDto book, Connection connection) throws SQLException {
+    public int addBookGetId(BookEntity book, Connection connection) throws SQLException {
         return bookRepository.add(book, connection);
     }
 

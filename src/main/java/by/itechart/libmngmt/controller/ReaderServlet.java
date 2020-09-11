@@ -15,9 +15,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(urlPatterns = {"/rdr"})
-public class ReaderController extends HttpServlet {
+public class ReaderServlet extends HttpServlet {
 
     private ReaderService readerService = ReaderServiceImpl.getInstance();
 
@@ -45,7 +46,18 @@ public class ReaderController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+
+        String email = "pavlova@gmail.com";
+        String test = req.getParameter("email");
+        System.out.println(test);
+        String name = readerService.getNameByEmail(email);
+        String json = new Gson().toJson(name);
+        PrintWriter out = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        out.print(json);
+        out.flush();
+
     }
 
 }

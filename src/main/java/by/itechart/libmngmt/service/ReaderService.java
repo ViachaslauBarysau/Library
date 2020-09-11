@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface ReaderService {
     void add(ReaderDto readerDto);
-    Map<Integer, ReaderDto> get(int bookId);
+//    Map<Integer, ReaderDto> get(int bookId);
     List<String> getEmails(String pattern);
     String getNameByEmail(String email);
 }

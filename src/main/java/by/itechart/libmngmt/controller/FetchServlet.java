@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @WebServlet(urlPatterns = {"/fetch/*"})
-public class FetchController extends HttpServlet {
+public class FetchServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Integer> list = Arrays.asList(1, 2, 3);
