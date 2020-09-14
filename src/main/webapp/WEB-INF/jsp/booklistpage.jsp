@@ -12,13 +12,12 @@
     <title>Title</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
 <form method="post">
-    <table>
+    <table class="table table-striped">
+        <thead class="thead-dark">
         <tr>
             <th></th>
             <th>Title</th>
@@ -26,6 +25,7 @@
             <th>Publish date</th>
             <th>Amount available</th>
         </tr>
+        </thead>
         <c:forEach var="book" items="${books}">
             <tr>
                 <td><input type="checkbox" name="bookid" value="${book.id}"></td>
@@ -44,22 +44,32 @@
         </c:forEach>
     </table>
     <input hidden name="page" value="${pageNumber}">
-    <button type="submit" formaction="lib-app?command=ADD_BOOK_PAGE" />
+    <button type="submit" class="btn btn-primary" formaction="lib-app?command=ADD_BOOK_PAGE" />
     Add Book
     </button>
-    <button type="submit" formaction="lib-app?command=DELETE_BOOK" />
+    <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_BOOK" />
     Delete Book(-s)
     </button>
-    <c:if test ="${pageNumber > 1}">
-        <button type="submit" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber - 1}" />
-        &lt;
-        </button>
-    </c:if>
-    page ${pageNumber}
-    <c:if test ="${pageNumber < pageCount}">
-        <button type="submit" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber + 1}" />
-        &gt;
-        </button>
+
+    <c:if test ="${not empty pageNumber}">
+        <c:if test ="${pageNumber > 1}">
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber-1}" />
+            &lt;
+            </button>
+            ${pageNumber}
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber+1}" disabled/>
+            &gt;
+            </button>
+        </c:if>
+        <c:if test ="${pageNumber < pageCount}">
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber-1}" disabled/>
+            &lt;
+            </button>
+            ${pageNumber}
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber+1}" />
+            &gt;
+            </button>
+        </c:if>
     </c:if>
 </form>
 

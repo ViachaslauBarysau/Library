@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface ReaderRepository {
-    Map<Integer, ReaderEntity> get(int bookId);
+    void insertUpdate(ReaderEntity readerEntity);
+    int getId(String email);
     void add(ReaderEntity reader);
     List<String> getEmails(String searchParameter);
     String getName(String email);

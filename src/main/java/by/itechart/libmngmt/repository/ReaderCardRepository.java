@@ -13,4 +13,5 @@ public interface ReaderCardRepository {
     void add(ReaderCardEntity readerCard);
     void update(ReaderCardEntity readerCard);
     ReaderCardEntity getReaderCard(int readerCardId);
+    int getActiveReaderCardsCount(int bookId);
 }

@@ -18,7 +18,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
 
     private static final String SQL_GET_READERCARDS_BY_BOOKID = "SELECT * FROM Books_Readers LEFT JOIN Readers" +
             " ON Readers.ID=Books_Readers.Reader_ID WHERE Book_id = ?;";
-    private static final String SQL_UPDATE_READER_CARD = "UPDATE Books_Readers SET Return_date=?, Comment = ? WHERE ReaderCard_ID = ?;";
+    private static final String SQL_UPDATE_READER_CARD = "UPDATE Books_Readers SET Status = ?, Return_date = ?, Comment = ? WHERE ReaderCard_ID = ?;";
     private static final String SQL_ADD_READER_CARD = "INSERT INTO Books_Readers(Book_ID, Reader_ID," +
             " Borrow_date, Status, Due_date, Comment) VALUES (?,?,?,?,?,?);";
 
@@ -30,7 +30,24 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
 
     private static final String SQL_GET_TWO_NEAREST_RETURN_DATE_ID = "SELECT ReaderCard_Id FROM Books_Readers WHERE" +
             " Book_id = ? AND Due_date > NOW() AND Return_date IS NULL ORDER BY Due_date ASC LIMIT 1;";
+    private static final String SQL_GET_ACTIVE_READER_CARD_COUNT_BY_BOOK_ID = "SELECT COUNT(ReaderCard_Id) FROM Books_Readers WHERE Book_Id = ? AND Return_date IS NULL;";
 
+    @Override
+    public int getActiveReaderCardsCount(int bookId) {
+        int count = 0;
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_ACTIVE_READER_CARD_COUNT_BY_BOOK_ID)) {
+                preparedStatement.setInt(1, bookId);
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                while(resultSet.next()){
+                    count = resultSet.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 
     @Override
     public int getNearestReturnReaderCardId(int bookId) {
@@ -90,6 +107,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_UPDATE_READER_CARD)) {
                 int index = 1;
+                preparedStatement.setString(index++, readerCard.getStatus());
                 preparedStatement.setTimestamp(index++, readerCard.getReturnDate());
                 preparedStatement.setString(index++, readerCard.getComment());
                 preparedStatement.setInt(index++, readerCard.getId());

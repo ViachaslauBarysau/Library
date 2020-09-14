@@ -16,7 +16,7 @@ CREATE TABLE Readers
 (
     ID       INTEGER NOT NULL AUTO_INCREMENT,
     Name    VARCHAR(255) NOT NULL,
-    Email VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL UNIQUE,
     Date_of_registration DATE,
     Phone_number BIGINT,
     PRIMARY KEY (ID)
@@ -41,7 +41,7 @@ CREATE TABLE Books_Readers
     Book_ID INTEGER NOT NULL,
     Reader_ID INTEGER NOT NULL,
     Borrow_date DATE NOT NULL,
-    Status VARCHAR,
+    Status VARCHAR NOT NULL,
     Due_date DATE NOT NULL,
     Return_date DATETIME,
     Comment VARCHAR,
@@ -224,11 +224,11 @@ VALUES (1, 1, '2019-11-27', 'returned', '2020-02-27', '2019-12-31 16:24:00'),
        (5, 1, '2018-01-29', 'returned', '2018-07-29', '2018-04-16 14:04:44'),
        (8, 8, '2016-09-27', 'returned', '2016-12-27', '2016-10-29 10:24:06');
 
-INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Due_date)
-VALUES (5, 2, '2020-08-24', '2020-11-24'),
-       (16, 1, '2020-08-21', '2020-11-21'),
-       (1, 8, '2020-09-08', '2020-12-08'),
-       (1, 3, '2020-07-10', '2020-10-10');
+INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Status, Due_date)
+VALUES (5, 2, '2020-08-24', 'borrowed', '2020-11-24'),
+       (16, 1, '2020-08-21', 'borrowed', '2020-11-21'),
+       (1, 8, '2020-09-08', 'borrowed', '2020-12-08'),
+       (1, 3, '2020-07-10', 'borrowed', '2020-10-10');
 
 INSERT INTO Books_Genres(Book_ID, Genre_ID)
 VALUES (1, 1),

@@ -20,25 +20,24 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
-    public void add(ReaderDto readerDto) {
-
+    public int insertUpdateReaderGetId(ReaderDto readerDto) {
+        insertUpdateReader(readerDto);
+        return getIdByEmail(readerDto.getEmail());
     }
 
-//    @Override
-//    public Map<Integer, ReaderDto> get(int bookId) {
-//        Map<Integer, ReaderEntity> readerEntities = readerRepository.get(bookId);
-//        Map<Integer, ReaderDto> readerDtos = new HashMap<>();
-//        for (Map.Entry<Integer, ReaderEntity> entry: readerEntities.entrySet()) {
-//            readerDtos.put(entry.getKey(), ReaderDto.builder()
-//                                            .id(entry.getValue().getId())
-//                                            .name(entry.getValue().getName())
-//                                            .email(entry.getValue().getEmail())
-//                                            .dateOfRegistration(entry.getValue().getDateOfRegistration())
-//                                            .phoneNumber(entry.getValue().getPhoneNumber())
-//                                            .build());
-//        }
-//        return readerDtos;
-//    }
+    @Override
+    public int getIdByEmail(String email) {
+        return readerRepository.getId(email);
+    }
+
+    @Override
+    public void insertUpdateReader(ReaderDto readerDto) {
+        ReaderEntity readerEntity = ReaderEntity.builder()
+                .email(readerDto.getEmail())
+                .name(readerDto.getName())
+                .build();
+        readerRepository.insertUpdate(readerEntity);
+    }
 
     @Override
     public List<String> getEmails(String pattern) {

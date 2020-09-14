@@ -1,17 +1,22 @@
 package by.itechart.libmngmt.service.impl;
 
 import by.itechart.libmngmt.dto.ReaderCardDto;
+import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
+import by.itechart.libmngmt.repository.ReaderRepository;
 import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
+import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderCardService;
+import by.itechart.libmngmt.service.ReaderService;
 
+import java.io.Reader;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderCardServiceImpl implements ReaderCardService {
-
+    private ReaderService readerService = ReaderServiceImpl.getInstance();
     private ReaderCardRepository readerCardRepository = ReaderCardRepositoryImpl.getInstance();
     private static ReaderCardServiceImpl instance = new ReaderCardServiceImpl();
 
@@ -82,5 +87,34 @@ public class ReaderCardServiceImpl implements ReaderCardService {
         readerCardRepository.update(readerCard);
     }
 
+    @Override
+    public void addOrUpdateReaderCard(ReaderCardDto readerCardDto) {
+        ReaderDto readerDto = ReaderDto.builder()
+                .email(readerCardDto.getReaderEmail())
+                .name(readerCardDto.getReaderName())
+                .build();
+        int readerId = readerService.insertUpdateReaderGetId(readerDto);
+        ReaderCardEntity readerCardEntity = ReaderCardEntity.builder()
+                .id(readerCardDto.getId())
+                .bookId(readerCardDto.getBookId())
+                .readerId(readerId)
+                .borrowDate(readerCardDto.getBorrowDate())
+                .dueDate(readerCardDto.getDueDate())
+                .returnDate(readerCardDto.getReturnDate())
+                .status(readerCardDto.getStatus())
+                .comment(readerCardDto.getComment())
+                .build();
+
+        if (readerCardEntity.getId() == 0) {
+            add(readerCardEntity);
+        } else {
+            update(readerCardEntity);
+        }
+    }
+
+    @Override
+    public int getBorrowBooksCount(int bookId) {
+        return readerCardRepository.getActiveReaderCardsCount(bookId);
+    }
 
 }

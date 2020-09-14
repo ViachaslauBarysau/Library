@@ -29,12 +29,6 @@ public class ReaderServlet extends HttpServlet {
             String pattern = req.getParameter("pattern");
             List<String> list = readerService.getEmails(pattern);
             json = new Gson().toJson(list);
-//        } else if (!(req.getParameter("email") == null)) {
-//            String email = req.getParameter("email");
-        } else {
-            String email = "pavlova@gmail.com";
-            String name = readerService.getNameByEmail(email);
-            json = new Gson().toJson(name);
         }
 
         PrintWriter out = resp.getWriter();
@@ -47,11 +41,13 @@ public class ReaderServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String email = "pavlova@gmail.com";
-        String test = req.getParameter("email");
-        System.out.println(test);
-        String name = readerService.getNameByEmail(email);
-        String json = new Gson().toJson(name);
+        String json = null;
+        if (!(req.getParameter("pattern") == null)) {
+            String pattern = req.getParameter("pattern");
+            List<String> list = readerService.getEmails(pattern);
+            json = new Gson().toJson(list);
+        }
+
         PrintWriter out = resp.getWriter();
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

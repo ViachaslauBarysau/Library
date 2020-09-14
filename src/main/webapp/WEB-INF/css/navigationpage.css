@@ -1,0 +1,16 @@
+body {
+    background-color: #E6E6E6;
+}
+body.modal-open {
+    overflow: hidden;
+    position: fixed;
+}
+
+ul {
+    font: 14px Verdana,sans-serif;
+}
+ul li {
+    display : inline-block ;
+    width : 100px;
+    /* эмуляция inline-block для IE6-7*/
+}

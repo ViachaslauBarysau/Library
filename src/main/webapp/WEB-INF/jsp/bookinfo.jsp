@@ -9,6 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache">
     <title>Title</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
@@ -20,105 +21,117 @@
 
 <form method="post" id="bookform" enctype="multipart/form-data">
 
-    <input type="text" size="60" name="id" value="${bookpagedto.bookDto.id}" hidden />
-    <input type="text" size="60" name="currentCover" value="${bookpagedto.bookDto.covers.get(0)}" hidden />
-    <p><img class="cover" id="cover" name="cover" src="images/${bookpagedto.bookDto.covers.get(0)}"></p>
+    <input type="text" class="form-control" size="60" name="id" value="${bookpagedto.bookDto.id}" hidden />
+    <input type="text" class="form-control" size="60" name="currentCover" value="${bookpagedto.bookDto.covers.get(0)}" hidden />
+    <p><img class="cover" class="form-control" id="cover" name="cover" src="images/${bookpagedto.bookDto.covers.get(0)}"></p>
     Choose image to change cover:
-    <p><input type="file" name="file" accept="image/jpeg, image/png" /></p>
+    <p><input type="file" class="form-control" name="file" accept="image/jpeg, image/png" /></p>
     Title
-    <p><input type="text" size="60" name="title" value="${bookpagedto.bookDto.title}" required /></p>
+    <p><input type="text" class="form-control" size="60" name="title" value="${bookpagedto.bookDto.title}" required /></p>
     Authors
     <c:if test="${empty bookpagedto.bookDto.authors}">
-        <p><input type="text" name="authors" size="60" required></p>
+        <p><input type="text" class="form-control" name="authors" size="60" required></p>
     </c:if>
     <c:forEach var="author"  items="${bookpagedto.bookDto.authors}" >
-        <p><input type="text" name="authors" size="60" value="${author}" required /></p>
+        <p><input type="text" class="form-control" name="authors" size="60" value="${author}" required /></p>
     </c:forEach>
     Publisher
-    <p><input type="text" name="publisher" size="60" value="${bookpagedto.bookDto.publisher}" required /></p>
+    <p><input type="text" class="form-control" name="publisher" size="60" value="${bookpagedto.bookDto.publisher}" required /></p>
     Publish date
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" name="publishDate" size="60" required /></p>
+            <p><input type="text" class="form-control" name="publishDate" size="60" required /></p>
         </c:when>
         <c:otherwise>
-            <p><input type="text" name="publishDate" size="60" value="${bookpagedto.bookDto.publishDate}" required /></p>
+            <p><input type="text" class="form-control" name="publishDate" size="60" value="${bookpagedto.bookDto.publishDate}" required /></p>
         </c:otherwise>
     </c:choose>
     Genres
     <c:if test="${empty bookpagedto.bookDto.genres}">
-        <p><input type="text" name="genres" size="60" required/></p>
+        <p><input type="text" class="form-control" name="genres" size="60" required/></p>
     </c:if>
     <c:forEach var="genre" items="${bookpagedto.bookDto.genres}">
-        <p><input type="text" name="genres" size="60" value="${genre}" required /></p>
+        <p><input type="text" class="form-control" name="genres" size="60" value="${genre}" required /></p>
     </c:forEach>
     Page count
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" name="pageCount" size="60" required /></p>
+            <p><input type="text" class="form-control" name="pageCount" size="60" required /></p>
         </c:when>
         <c:otherwise>
-            <p><input type="text" name="pageCount" size="60" value="${bookpagedto.bookDto.pageCount}" required /></p>
+            <p><input  type="text" class="form-control" name="pageCount" size="60" value="${bookpagedto.bookDto.pageCount}" required /></p>
         </c:otherwise>
     </c:choose>
     ISBN
-    <p><input type="text" name="ISBN" size="60" value="${bookpagedto.bookDto.ISBN}" required /></p>
+    <p><input type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.ISBN}" required /></p>
     Description
-    <p><textarea maxlength="400" name="description" cols="60" rows="12" required>
+    <p><textarea class="form-control" maxlength="420" name="description" cols="60" rows="12" required>
     ${bookpagedto.bookDto.description}
     </textarea></p>
     Total amount
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" size="60" id="totalAmount" name="totalAmount" equired /></p>
+            <p><input type="text" class="form-control" size="60" id="totalAmount" onchange="onAmountChange(this.value)" name="totalAmount" equired /></p>
         </c:when>
         <c:otherwise>
-            <p><input type="text" size="60" id="totalAmount" name="totalAmount" value="${bookpagedto.bookDto.totalAmount}" required /></p>
+            <p><input type="text" class="form-control" size="60" id="totalAmount" onchange="onAmountChange(this.value)" name="totalAmount" value="${bookpagedto.bookDto.totalAmount}" required /></p>
         </c:otherwise>
     </c:choose>
 
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" id="availableAmount" size="60" name="availableAmount" value="${bookpagedto.bookDto.availableAmount}" hidden /></p>
+            <p><input type="text" class="form-control" id="availableAmount" size="60" name="availableAmount" value="${bookpagedto.bookDto.availableAmount}" hidden /></p>
         </c:when>
         <c:otherwise>
-            <p><input type="text" id="availableAmount" size="60" name="availableAmount" value="${bookpagedto.bookDto.availableAmount}" hidden />
+            <p><input type="text" class="form-control" id="availableAmount" size="60" name="availableAmount" value="${bookpagedto.bookDto.availableAmount}" hidden />
             Status
-            <c:if test ="${bookpagedto.bookDto.availableAmount <= 0}">
-                <p><input type="text" id="bookstatus" size="60" value="Unavailable (expected to become available on ${bookpagedto.nearestAvailableDate})" readonly required /></p>
+            <c:if test ="${bookpagedto.bookDto.totalAmount == 0}">
+                <p><input type="text" class="form-control" id="bookstatus" size="60" value="Unavailable" readonly required /></p>
             </c:if>
-            <c:if test ="${bookpagedto.bookDto.availableAmount > 0}">
-                <p><input type="text" id="bookstatus" size="60" value="Available ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
+            <c:if test ="${bookpagedto.bookDto.totalAmount != 0}">
+                <c:if test ="${bookpagedto.bookDto.availableAmount <= 0}">
+                    <p><input type="text" class="form-control" id="bookstatus" size="60" value="Unavailable (expected to become available on ${bookpagedto.nearestAvailableDate})" readonly required /></p>
+                </c:if>
+                <c:if test ="${bookpagedto.bookDto.availableAmount > 0}">
+                    <p><input type="text" class="form-control" id="bookstatus" size="60" value="Available ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
+                </c:if>
             </c:if>
         </c:otherwise>
     </c:choose>
 
-
-<%--    <button type="submit" formaction="lib-app?command=ADD_EDIT_BOOK" />--%>
-    <button type="submit" formaction="javascript:sendForm()"/>
+    <button class="btn btn-primary" type="submit" formaction="javascript:sendForm()"/>
     Save
     </button>
-    <button formaction="lib-app?command=GET_BOOK_LIST&page=1" />
+    <button class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=1" />
     Dismiss
     </button>
 </form>
 
 Borrow Records List:
-<table border="1" id="table">
-    <tr>
-        <th>Email</th>
-        <th>Name</th>
-        <th>Borrow Date</th>
-        <th>Due Date</th>
-        <th>Return Date</th>
-    </tr>
+<table class="table table-striped" id="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Borrow Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+        </tr>
+    </thead>
     <c:forEach var="readerCard" items="${bookpagedto.readerCards}" >
         <tr id>
-            <td><a href="#" onclick="openReaderCard(${readerCard.id})" data-toggle="modal" data-target="#myModal" class="stretched-link">${readerCard.readerEmail}</a></td>
+
+                <c:if test="${empty readerCard.returnDate}">
+                    <td><a href="#" id="link${readerCard.id}" onclick="openExistingReaderCard(${readerCard.id})" data-toggle="modal" data-target="#myModal" class="stretched-link">${readerCard.readerEmail}</a></td>
+                </c:if>
+                <c:if test="${not empty readerCard.returnDate}">
+                    <td><a href="#" id="link${readerCard.id}" onclick="openClosedReaderCard(${readerCard.id})" data-toggle="modal" data-target="#myModal" class="stretched-link">${readerCard.readerEmail}</a></td>
+                </c:if>
+
             <td>${readerCard.readerName}</td>
             <td>${readerCard.borrowDate}</td>
             <td>${readerCard.dueDate}</td>
-            <td id="${readerCard.id}" >${readerCard.returnDate}</td>
+            <td id="rd${readerCard.id}" >${readerCard.returnDate}</td>
         </tr>
     </c:forEach>
 </table>
@@ -129,7 +142,7 @@ Borrow Records List:
 <%--    <p>Add the "fade" class to the modal container if you want the modal to fade in on open and fade out on close.</p>--%>
 
     <!-- Button to Open the Modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openReaderCard(0)">
+    <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openNewReaderCard()">
         Add
     </button>
 
@@ -141,23 +154,23 @@ Borrow Records List:
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">Borrow Record:</h4>
-                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <button type="button" class="close" onclick="closeModal()" data-dismiss="modal">×</button>
                 </div>
 
                 <!-- Modal body -->
                 <div class="modal-body">
 
                     <form>
-                        <p><input id="readerCardId" type="text" size="40"  hidden></p>
+                        <p><input id="readerCardId" type="text" size="40" hidden></p>
                         <p><input id="readerId" type="text" size="40"  hidden></p>
-                        Email:
-                        <p><input id="email" type="email" size="40"  required></p>
-                        Full name:
-                        <p><input id="name" type="text" size="40" required></p>
-                        Borrow date:
-                        <p><input id="borrowdate" type="text" size="40" readonly></p>
+                        <label id="emailLabel" for="email">Email:</label>
+                        <p><input id="email" class="form-control" type="email" size="40"  onkeyup="getEmailsByPattern(this.value)"  required></p>
+                        <label id="nameLabel" for="name">Full name:</label>
+                        <p><input id="name" class="form-control" type="text" size="40" required></p>
+                        <label id="borrowDateLabel" for="borrowdate">Borrow date:</label>
+                        <p><input id="borrowdate" class="form-control" type="text" size="40" readonly></p>
                         <label id="timeperiodlabel" for="timeperiod">Time period:</label>
-                        <p><select id="timeperiod" name="timeperiod" required>
+                        <p><select id="timeperiod" class="form-control" name="timeperiod" required>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -165,19 +178,17 @@ Borrow Records List:
                             <option value="12">12</option>
                         </select></p>
                         <label id="statuslabel" for="borrowingStatus">Choose status:</label>
-                        <p><select id="borrowingStatus" name="borrowingStatus">
-                            <option value="nostatus"></option>
+                        <p><select id="borrowingStatus" class="form-control" name="borrowingStatus" required>
+                            <option value="borrowed"></option>
                             <option value="returned">Returned</option>
                             <option value="damaged">Returned and damaged</option>
                             <option value="lost">Lost</option>
                         </select></p>
-                        Comment:
-                        <p><input id="comment" type="text" size="40"></p>
+                        <label id="commentlabel" for="comment">Comment:</label>
+                        <p><input id="comment" class="form-control" type="text" size="40"></p>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger" onclick="saveReaderCard()" data-dismiss="modal">Save</button>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <button type="button" id="saveButton" class="btn btn-primary" onclick="saveReaderCard()" data-dismiss="modal">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="closeModal()" data-dismiss="modal">Close</button>
                         </div>
                     </form>
                 </div>
@@ -185,6 +196,8 @@ Borrow Records List:
         </div>
     </div>
 </div>
+
+<div id="modalbackground"></div>
 
 </body>
 </html>

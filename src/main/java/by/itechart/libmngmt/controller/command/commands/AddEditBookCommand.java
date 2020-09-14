@@ -1,10 +1,8 @@
 package by.itechart.libmngmt.controller.command.commands;
 
-import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.dto.BookPageDto;
 import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.BookEntity;
-import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.service.BookManagementService;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.ReaderCardService;
@@ -17,7 +15,10 @@ import by.itechart.libmngmt.util.validator.ValidateExecutor;
 import javax.servlet.ServletException;
 import javax.servlet.http.Part;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 
@@ -33,6 +34,7 @@ public class AddEditBookCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
+
 
 
         int availableAmount = Integer.parseInt(request.getParameter("totalAmount"));
@@ -70,17 +72,39 @@ public class AddEditBookCommand extends LibraryCommand {
 
         }
 
-        int bookId = bookService.addEditBook(bookEntity);
-
-        ReaderCardEntity readerCardEntity = new ReaderCardEntity();
-        if (Integer.parseInt(request.getParameter("readerCardId")) > 0) {
-            readerCardEntity = ReaderCardEntity.builder()
+        if (Integer.parseInt(request.getParameter("readerCardId")) != -1) {
+            ReaderCardDto readerCardDto = ReaderCardDto.builder()
                     .id(Integer.parseInt(request.getParameter("readerCardId")))
-                    .returnDate(Timestamp.valueOf(request.getParameter("returnDate")))
+                    .bookId(Integer.parseInt(request.getParameter("id")))
+                    .readerId(Integer.parseInt(request.getParameter("readerId")))
+                    .readerEmail(request.getParameter("readerEmail"))
+                    .readerName(request.getParameter("readerName"))
+                    .status(request.getParameter("status"))
                     .comment(request.getParameter("comment"))
                     .build();
+
+            if (!request.getParameter("status").equals("borrowed")) {
+                readerCardDto.setReturnDate(Timestamp.valueOf(request.getParameter("returnDate")));
+            }
+
+            if (Integer.parseInt(request.getParameter("readerCardId")) > 0) {
+                try {
+                    java.util.Date borrowDate = new SimpleDateFormat("MMM dd, yyyy").parse(request.getParameter("borrowDate"));
+                    java.util.Date dueDate = new SimpleDateFormat("MMM dd, yyyy").parse(request.getParameter("dueDate"));
+                    readerCardDto.setBorrowDate(new java.sql.Date(borrowDate.getTime()));
+                    readerCardDto.setDueDate(new java.sql.Date(dueDate.getTime()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                readerCardDto.setBorrowDate(Date.valueOf(request.getParameter("borrowDate")));
+                readerCardDto.setDueDate(Date.valueOf(request.getParameter("dueDate")));
+            }
+
+            readerCardService.addOrUpdateReaderCard(readerCardDto);
         }
-        readerCardService.update(readerCardEntity);
+
+        int bookId = bookService.addEditBook(bookEntity);
 
         BookPageDto bookPageDto = bookManagementService.getBookPageDto(bookId);
         request.setAttribute("bookpagedto", bookPageDto);

@@ -6,10 +6,7 @@ import by.itechart.libmngmt.repository.BookRepository;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
 import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
-import by.itechart.libmngmt.service.AuthorService;
-import by.itechart.libmngmt.service.BookService;
-import by.itechart.libmngmt.service.CoverService;
-import by.itechart.libmngmt.service.GenreService;
+import by.itechart.libmngmt.service.*;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
 import java.sql.Connection;
@@ -18,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
-
+    private ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
     private BookRepository bookRepository = BookRepositoryImpl.getInstance();
     private AuthorService authorService = AuthorServiceImpl.getInstance();
     private GenreService genreService = GenreServiceImpl.getInstance();
@@ -95,14 +92,19 @@ public class BookServiceImpl implements BookService {
         bookRepository.update(book, connection);
     }
 
+
+
     @Override
     public int addEditBook(BookEntity book) {
+
         int bookId = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
             connection.setAutoCommit(false);
             if (book.getId()==0) {
                 bookId = addBookGetId(book, connection);
             } else {
+                int borrowedBooksAmount = readerCardService.getBorrowBooksCount(book.getId());
+                book.setAvailableAmount(book.getTotalAmount()-borrowedBooksAmount);
                 updateBook(book, connection);
                 bookId = book.getId();
             }

@@ -28,29 +28,71 @@ public class ReaderRepositoryImpl implements ReaderRepository {
     private static final String SQL_GET_READERS_EMAILS = "SELECT Email FROM Readers WHERE Email LIKE ?;";
     private static final String SQL_GET_READER_NAME_BY_EMAIL = "SELECT NAME FROM Readers WHERE Email = ?;";
 
+
+
+    public static final String SQL_INSERT_OR_UPDATE_READER = "INSERT INTO Readers (Email, Name) VALUES(?, ?) ON DUPLICATE KEY UPDATE Name = VALUES(name); ";
+    public static final String SQL_GET_READER_ID_BY_EMAIL = "SELECT ID FROM READERS WHERE EMAIL = ?;";
+
+
     @Override
-    public Map<Integer, ReaderEntity> get(int bookId) {
-        Map<Integer, ReaderEntity> resultMap = new HashMap<>();
+    public void insertUpdate (ReaderEntity readerEntity) {
         try (Connection connection = ConnectionHelper.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERS_BY_BOOKID)) {
-                preparedStatement.setInt(1, bookId);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_OR_UPDATE_READER)) {
+                int index = 1;
+                preparedStatement.setString(index++, readerEntity.getEmail());
+                preparedStatement.setString(index++, readerEntity.getName());
+                preparedStatement.execute();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public int getId(String email) {
+        int readerId = 0;
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READER_ID_BY_EMAIL)) {
+                preparedStatement.setString(1, email);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    resultMap.put(resultSet.getInt("ID"), ReaderEntity.builder()
-                                                .id(resultSet.getInt("ID"))
-                                                .name(resultSet.getString("Name"))
-                                                .email(resultSet.getString("Email"))
-                                                .dateOfRegistration(resultSet.getDate("Date_of_registration"))
-                                                .phoneNumber(resultSet.getLong("Phone_number"))
-                                                .build());
+                    readerId = resultSet.getInt("ID");
                 }
 
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return resultMap;
+        return readerId;
     }
+
+
+//    @Override
+//    public Map<Integer, ReaderEntity> get(int bookId) {
+//        Map<Integer, ReaderEntity> resultMap = new HashMap<>();
+//        try (Connection connection = ConnectionHelper.getConnection()) {
+//            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERS_BY_BOOKID)) {
+//                preparedStatement.setInt(1, bookId);
+//                final ResultSet resultSet = preparedStatement.executeQuery();
+//                while (resultSet.next()) {
+
+
+//                    resultMap.put(resultSet.getInt("ID"), ReaderEntity.builder()
+//                                                .id(resultSet.getInt("ID"))
+//                                                .name(resultSet.getString("Name"))
+//                                                .email(resultSet.getString("Email"))
+//                                                .dateOfRegistration(resultSet.getDate("Date_of_registration"))
+//                                                .phoneNumber(resultSet.getLong("Phone_number"))
+//                                                .build());
+//                }
+//
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return resultMap;
+//    }
 
     @Override
     public String getName(String email) {

@@ -17,27 +17,29 @@
 <form method="post">
 
 <%--    <input type="text" name="command" value="SEARCH_BOOK" size="40" hidden>--%>
-    Title
-    <p><input type="text" name="title" size="40" value="${title}"></p>
-    Authors
-    <p><input type="text" name="author" size="40" value="${author}"></p>
-    Genres
-    <p><input type="text" name="genre" size="40" value="${genre}"></p>
-    Description
-    <p><input type="text" name="description" size="40" value="${description}"></p>
+    <label id="titleLabel" for="title">Title:</label>
+    <p><input type="text" class="form-control" name="title" id="title" size="40" value="${title}"></p>
+    <label id="authorLabel" for="author">Authors:</label>
+    <p><input type="text" class="form-control" name="author" id="author"  size="40" value="${author}"></p>
+    <label id="genreLabel"  for="genre">Genres:</label>
+    <p><input type="text" class="form-control" name="genre" id="genre" size="40" value="${genre}"></p>
+    <label id="descriptionLabel" for="description">Description:</label>
+    <p><input type="text" class="form-control" name="description" id="description" size="40" value="${description}"></p>
 
-    <button type="submit" formaction="lib-app?command=SEARCH_BOOK"/>
+    <button type="submit" class="btn btn-primary"  formaction="lib-app?command=SEARCH_BOOK"/>
     Search
     </button>
-
-    <table>
-        <tr>
-            <th></th>
-            <th>Title</th>
-            <th>Authors</th>
-            <th>Publish date</th>
-            <th>Amount available</th>
-        </tr>
+    <p></p>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>Publish date</th>
+                <th>Amount available</th>
+            </tr>
+        </thead>
         <c:forEach var="book" items="${books}">
             <tr>
                 <td><input type="checkbox" name="bookid" value="${book.id}"></td>
@@ -56,23 +58,36 @@
         </c:forEach>
     </table>
 
-    <button type="submit" formaction="lib-app?command=ADD_BOOK_PAGE" />
+    <button type="submit" class="btn btn-primary" formaction="lib-app?command=ADD_BOOK_PAGE" />
     Add Book
     </button>
-    <button type="submit" formaction="lib-app?command=DELETE_SEARCHED_BOOK&page=${pageNumber}" />
+    <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_SEARCHED_BOOK&page=${pageNumber}" />
     Delete Book(-s)
     </button>
-    <c:if test ="${pageNumber > 1}">
-        <button type="submit" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber-1}" />
-        &lt;
-        </button>
+
+    <c:if test ="${not empty pageNumber}">
+        <c:if test ="${pageNumber > 1}">
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber-1}" />
+            &lt;
+            </button>
+            ${pageNumber}
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber+1}" disabled/>
+            &gt;
+            </button>
+        </c:if>
+        <c:if test ="${pageNumber < pageCount}">
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber-1}" disabled/>
+            &lt;
+            </button>
+            ${pageNumber}
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber+1}" />
+            &gt;
+            </button>
+        </c:if>
     </c:if>
-    page ${pageNumber}
-    <c:if test ="${pageNumber < pageCount}">
-        <button type="submit" formaction="lib-app?command=SEARCH_BOOK&page=${pageNumber+1}" />
-        &gt;
-        </button>
-    </c:if>
+
+
+
 </form>
 
 

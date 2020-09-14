@@ -18,4 +18,5 @@ public interface BookRepository {
     int getSearchPageCount(List<String> searchParams);
     int add(BookEntity book, Connection connection) throws SQLException;
     void update(BookEntity book, Connection connection) throws SQLException;
+
 }

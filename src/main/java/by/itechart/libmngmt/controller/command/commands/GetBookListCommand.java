@@ -31,9 +31,9 @@ public class GetBookListCommand extends LibraryCommand {
         }
 
         int pageCount = bookService.getPageCount();
-        if (pageNumber>pageCount) {
+        if (pageNumber > pageCount) {
             pageNumber = pageCount;
-        } else if (pageNumber<1) {
+        } else if (pageNumber < 1) {
             pageNumber = 1;
         }
 
