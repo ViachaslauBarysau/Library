@@ -228,7 +228,7 @@ INSERT INTO Books_Readers(Book_ID, Reader_ID, Borrow_date, Status, Due_date)
 VALUES (5, 2, '2020-08-24', 'borrowed', '2020-11-24'),
        (16, 1, '2020-08-21', 'borrowed', '2020-11-21'),
        (1, 8, '2020-09-08', 'borrowed', '2020-12-08'),
-       (1, 3, '2020-07-10', 'borrowed', '2020-10-10');
+       (1, 3, '2020-07-10', 'borrowed', '2020-09-14');
 
 INSERT INTO Books_Genres(Book_ID, Genre_ID)
 VALUES (1, 1),

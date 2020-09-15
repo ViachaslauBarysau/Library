@@ -1,10 +1,19 @@
 package by.itechart.libmngmt.util.validator;
 
+import by.itechart.libmngmt.service.impl.GenreServiceImpl;
+
 import javax.servlet.http.Part;
 
 public class ValidateExecutor {
+    private static ValidateExecutor instance;
 
-    public static String validateAndUploadFile(Part filePart) {
+    public static ValidateExecutor getInstance() {
+        if(instance == null){
+            instance = new ValidateExecutor();
+        }
+        return instance;
+    }
+    public String validateAndUploadFile(Part filePart) {
         String fileName = "";
         final int SIZE_VALIDATOR = 1;
         final int TYPE_VALIDATOR = 2;

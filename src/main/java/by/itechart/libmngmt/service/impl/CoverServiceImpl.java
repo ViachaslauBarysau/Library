@@ -11,10 +11,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class CoverServiceImpl implements CoverService {
-    private CoverRepository coverRepository = CoverRepositoryImpl.getInstance();
-    private static CoverServiceImpl instance = new CoverServiceImpl();
+    private final CoverRepository coverRepository = CoverRepositoryImpl.getInstance();
+    private static CoverServiceImpl instance;
 
     public static CoverServiceImpl getInstance() {
+        if(instance == null){
+            instance = new CoverServiceImpl();
+        }
         return instance;
     }
 

@@ -5,8 +5,6 @@ import by.itechart.libmngmt.repository.AuthorRepository;
 import by.itechart.libmngmt.repository.impl.AuthorRepositoryImpl;
 import by.itechart.libmngmt.service.AuthorService;
 
-
-import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,11 +12,13 @@ import java.util.List;
 
 public class AuthorServiceImpl implements AuthorService {
 
-    private AuthorRepository authorRepository = AuthorRepositoryImpl.getInstance();
-
-    private static AuthorServiceImpl instance = new AuthorServiceImpl();
+    private final AuthorRepository authorRepository = AuthorRepositoryImpl.getInstance();
+    private static AuthorServiceImpl instance;
 
     public static AuthorServiceImpl getInstance() {
+        if(instance == null){
+            instance = new AuthorServiceImpl();
+        }
         return instance;
     }
 

@@ -3,26 +3,26 @@ package by.itechart.libmngmt.service.impl;
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
-import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
-import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
 import by.itechart.libmngmt.service.*;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
-    private ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
-    private BookRepository bookRepository = BookRepositoryImpl.getInstance();
-    private AuthorService authorService = AuthorServiceImpl.getInstance();
-    private GenreService genreService = GenreServiceImpl.getInstance();
-    private CoverService coverService = CoverServiceImpl.getInstance();
-    private static BookServiceImpl instance = new BookServiceImpl();
+    private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
+    private final BookRepository bookRepository = BookRepositoryImpl.getInstance();
+    private final AuthorService authorService = AuthorServiceImpl.getInstance();
+    private final GenreService genreService = GenreServiceImpl.getInstance();
+    private final CoverService coverService = CoverServiceImpl.getInstance();
+    private static BookServiceImpl instance;
 
     public static BookServiceImpl getInstance() {
+        if(instance == null){
+            instance = new BookServiceImpl();
+        }
         return instance;
     }
 

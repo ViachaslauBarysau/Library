@@ -19,6 +19,5 @@ public class ReaderEntity {
     private String email;
     private Date dateOfRegistration;
     private Long phoneNumber;
-//    private List<ReaderCard> readerCards;
 
 }

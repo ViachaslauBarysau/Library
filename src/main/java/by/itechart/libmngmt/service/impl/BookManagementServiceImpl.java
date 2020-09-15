@@ -11,13 +11,15 @@ import java.util.List;
 
 
 public class BookManagementServiceImpl implements BookManagementService {
-    private BookService bookService = BookServiceImpl.getInstance();
-    private ReaderService readerService = ReaderServiceImpl.getInstance();
-    private ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
+    private final BookService bookService = BookServiceImpl.getInstance();
+    private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
 
-    private static BookManagementServiceImpl instance = new BookManagementServiceImpl();
+    private static BookManagementServiceImpl instance;
 
     public static BookManagementServiceImpl getInstance() {
+        if(instance == null){
+            instance = new BookManagementServiceImpl();
+        }
         return instance;
     }
 
@@ -34,7 +36,6 @@ public class BookManagementServiceImpl implements BookManagementService {
         }
         int nearestReturnReaderCardId = readerCardService.getNearestReturnReaderCardId(bookId);
 
-//        request.setAttribute("nearestAvailableDateID", );
         BookPageDto bookPageDto = BookPageDto.builder()
                 .bookDto(bookService.find(bookId))
                 .readerCards(readerCardService.get(bookId))

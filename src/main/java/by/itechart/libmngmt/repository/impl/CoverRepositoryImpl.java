@@ -1,19 +1,20 @@
 package by.itechart.libmngmt.repository.impl;
 
-import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.repository.CoverRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class CoverRepositoryImpl implements CoverRepository {
-    private static CoverRepositoryImpl instance = new CoverRepositoryImpl();
+    private static CoverRepositoryImpl instance;
     public static CoverRepositoryImpl getInstance() {
+        if(instance == null){
+            instance = new CoverRepositoryImpl();
+        }
         return instance;
     }
-
 
     private static final String SQL_DELETE_COVERS_BY_BOOK_ID = "DELETE FROM Covers WHERE Book_id = ?;";
     private static final String SQL_ADD_COVER = "INSERT INTO Covers (Book_id, Title) VALUES (?, ?);";

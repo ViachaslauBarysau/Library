@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 @WebServlet(urlPatterns = {"/rdr-crd"})
 public class ReaderCardServlet extends HttpServlet {
 
-    ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
+    private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

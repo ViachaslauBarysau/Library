@@ -1,20 +1,21 @@
 package by.itechart.libmngmt.controller.command.commands;
 
-import by.itechart.libmngmt.entity.BookEntity;
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.controller.command.LibraryCommand;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 public class DeleteBookCommand extends LibraryCommand {
-    private BookService bookService = BookServiceImpl.getInstance();
-    private static DeleteBookCommand instance = new DeleteBookCommand();
+    private final BookService bookService = BookServiceImpl.getInstance();
+    private static DeleteBookCommand instance;
 
     public static DeleteBookCommand getInstance() {
+        if(instance == null){
+            instance = new DeleteBookCommand();
+        }
         return instance;
     }
 
@@ -28,14 +29,17 @@ public class DeleteBookCommand extends LibraryCommand {
 
         }
 
+        int pageNumber = 1;
+
+        try {
+            pageNumber = Integer.parseInt(request.getParameter("page"));
+        } catch (Exception e) {
+
+        }
         int countOfPages = bookService.getPageCount();
-        int pageNumber = Math.min(countOfPages, Integer.parseInt(request.getParameter("page")));
-        List<BookEntity> pageOfBooks = bookService.getBookPage(pageNumber);
+        pageNumber = Math.min(countOfPages, pageNumber);
+//        List<BookEntity> pageOfBooks = bookService.getBookPage(pageNumber);
 
-        request.setAttribute("books", pageOfBooks);
-        request.setAttribute("pageCount", countOfPages);
-        request.setAttribute("pageNumber", pageNumber);
-
-        forward("mainpage");
+        response.sendRedirect(request.getContextPath() + "lib-app?command=GET_BOOK_LIST&page=" + pageNumber);
     }
 }

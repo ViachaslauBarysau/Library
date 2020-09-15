@@ -1,24 +1,21 @@
 package by.itechart.libmngmt.controller.command.commands;
 
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.dto.BookPageDto;
-import by.itechart.libmngmt.dto.ReaderCardDto;
-import by.itechart.libmngmt.dto.ReaderDto;
-import by.itechart.libmngmt.service.BookService;
-import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.controller.command.LibraryCommand;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class AddBookPageCommand extends LibraryCommand {
-    private BookService bookService = BookServiceImpl.getInstance();
-    private static AddBookPageCommand instance = new AddBookPageCommand();
+    private static AddBookPageCommand instance;
 
     public static AddBookPageCommand getInstance() {
+        if(instance == null){
+            instance = new AddBookPageCommand();
+        }
         return instance;
     }
 
@@ -31,7 +28,7 @@ public class AddBookPageCommand extends LibraryCommand {
         bookDto.setCovers(Arrays.asList("glass.jpg"));
         BookPageDto bookPageDto = BookPageDto.builder()
                 .bookDto(bookDto)
-                .readerCards(new ArrayList<ReaderCardDto>())
+                .readerCards(new ArrayList<>())
                 .build();
         request.setAttribute("bookpagedto", bookPageDto);
 

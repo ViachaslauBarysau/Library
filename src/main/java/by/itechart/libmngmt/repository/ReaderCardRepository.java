@@ -14,4 +14,5 @@ public interface ReaderCardRepository {
     void update(ReaderCardEntity readerCard);
     ReaderCardEntity getReaderCard(int readerCardId);
     int getActiveReaderCardsCount(int bookId);
+    List<ReaderCardEntity> getExpiringReaderCards(int days);
 }

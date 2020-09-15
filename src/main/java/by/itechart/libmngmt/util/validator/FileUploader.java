@@ -10,7 +10,8 @@ public class FileUploader {
 
     public static void uploadFile(Part filePart) {
         try (InputStream fileContent = filePart.getInputStream();
-             OutputStream outputStream = new FileOutputStream(new File(System.getProperty("uploadFolderPath") + filePart.getSubmittedFileName()));) {
+             OutputStream outputStream = new FileOutputStream(new File(System.getProperty("uploadFolderPath")
+                     + filePart.getSubmittedFileName()));) {
             int read = 0;
             byte[] bytes = new byte[1024];
             while ((read = fileContent.read(bytes)) != -1) {

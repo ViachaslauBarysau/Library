@@ -1,5 +1,6 @@
 package by.itechart.libmngmt.controller.command.commands;
 
+import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.dto.BookPageDto;
 import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.BookEntity;
@@ -8,7 +9,6 @@ import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.impl.BookManagementServiceImpl;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.service.impl.ReaderCardServiceImpl;
 import by.itechart.libmngmt.util.validator.ValidateExecutor;
 
@@ -23,23 +23,25 @@ import java.util.Arrays;
 
 
 public class AddEditBookCommand extends LibraryCommand {
-    private BookManagementService bookManagementService = BookManagementServiceImpl.getInstance();
-    private BookService bookService = BookServiceImpl.getInstance();
-    private ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
-    private final static AddEditBookCommand instance = new AddEditBookCommand();
+    private final ValidateExecutor validateExecutor= ValidateExecutor.getInstance();
+    private final BookManagementService bookManagementService = BookManagementServiceImpl.getInstance();
+    private final BookService bookService = BookServiceImpl.getInstance();
+    private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
+    private static AddEditBookCommand instance;
 
     public static AddEditBookCommand getInstance() {
+        if(instance == null){
+            instance = new AddEditBookCommand();
+        }
         return instance;
     }
 
     @Override
     public void process() throws ServletException, IOException {
 
-
-
         int availableAmount = Integer.parseInt(request.getParameter("totalAmount"));
         try {
-            availableAmount = (Integer.parseInt(request.getParameter("availableAmount")));
+            availableAmount = Integer.parseInt(request.getParameter("availableAmount"));
 
         } catch (Exception e) {
 
@@ -63,7 +65,7 @@ public class AddEditBookCommand extends LibraryCommand {
         if (filePart.getSubmittedFileName().equals("")) {
             bookEntity.setCovers(Arrays.asList(request.getParameter("currentCover")));
         } else {
-            String fileName = ValidateExecutor.validateAndUploadFile(filePart);
+            String fileName = validateExecutor.validateAndUploadFile(filePart);
             if (fileName.equals("")) {
                 bookEntity.setCovers(Arrays.asList(request.getParameter("currentCover")));
             } else {
@@ -103,6 +105,7 @@ public class AddEditBookCommand extends LibraryCommand {
 
             readerCardService.addOrUpdateReaderCard(readerCardDto);
         }
+
 
         int bookId = bookService.addEditBook(bookEntity);
 

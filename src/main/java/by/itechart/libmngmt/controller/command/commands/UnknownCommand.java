@@ -6,10 +6,12 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class UnknownCommand extends LibraryCommand {
-
-    private static UnknownCommand instance = new UnknownCommand();
+    private static UnknownCommand instance;
 
     public static UnknownCommand getInstance() {
+        if(instance == null){
+            instance = new UnknownCommand();
+        }
         return instance;
     }
 

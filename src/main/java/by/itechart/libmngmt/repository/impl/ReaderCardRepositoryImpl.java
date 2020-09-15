@@ -1,6 +1,5 @@
 package by.itechart.libmngmt.repository.impl;
 
-
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
@@ -10,9 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderCardRepositoryImpl implements ReaderCardRepository {
-    private static ReaderCardRepositoryImpl instance = new ReaderCardRepositoryImpl();
+    private static ReaderCardRepositoryImpl instance;
 
     public static ReaderCardRepositoryImpl getInstance() {
+        if(instance == null){
+            instance = new ReaderCardRepositoryImpl();
+        }
         return instance;
     }
 
@@ -30,7 +32,34 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
 
     private static final String SQL_GET_TWO_NEAREST_RETURN_DATE_ID = "SELECT ReaderCard_Id FROM Books_Readers WHERE" +
             " Book_id = ? AND Due_date > NOW() AND Return_date IS NULL ORDER BY Due_date ASC LIMIT 1;";
-    private static final String SQL_GET_ACTIVE_READER_CARD_COUNT_BY_BOOK_ID = "SELECT COUNT(ReaderCard_Id) FROM Books_Readers WHERE Book_Id = ? AND Return_date IS NULL;";
+    private static final String SQL_GET_ACTIVE_READER_CARD_COUNT_BY_BOOK_ID = "SELECT COUNT(ReaderCard_Id)" +
+            " FROM Books_Readers WHERE Book_Id = ? AND Return_date IS NULL;";
+    public static final String SQL_GET_EXPIRING_READER_CARDS = "SELECT Books.Title, Readers.Name, Readers.Email" +
+            " FROM Books LEFT JOIN Books_Readers ON Books.Id=Books_Readers.Book_Id" +
+            " LEFT JOIN Readers ON Books_Readers.Reader_Id=Readers.Id WHERE Due_Date - CURRENT_DATE = ? AND Return_Date IS NULL;";
+
+    @Override
+    public List<ReaderCardEntity> getExpiringReaderCards(int days) {
+        List<ReaderCardEntity> readerCardEntities = new ArrayList<>();
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_EXPIRING_READER_CARDS)) {
+                preparedStatement.setInt(1, days);
+                final ResultSet resultSet = preparedStatement.executeQuery();
+                while(resultSet.next()){
+                    readerCardEntities.add(ReaderCardEntity.builder()
+                    .bookTitle(resultSet.getString("Title"))
+                    .readerName(resultSet.getString("Name"))
+                    .readerEmail(resultSet.getString("Email"))
+                    .build());
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return readerCardEntities;
+    }
+
+
 
     @Override
     public int getActiveReaderCardsCount(int bookId) {

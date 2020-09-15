@@ -9,9 +9,11 @@ import java.util.List;
 
 public class AuthorRepositoryImpl implements AuthorRepository {
 
-
-    private static AuthorRepositoryImpl instance = new AuthorRepositoryImpl();
+    private static AuthorRepositoryImpl instance;
     public static AuthorRepositoryImpl getInstance() {
+        if(instance == null){
+            instance = new AuthorRepositoryImpl();
+        }
         return instance;
     }
 

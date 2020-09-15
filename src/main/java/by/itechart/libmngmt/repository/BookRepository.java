@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface BookRepository {
+
     List<BookEntity> findAll(int offset);
     int getPageCount();
     void delete(Object[] bookList);

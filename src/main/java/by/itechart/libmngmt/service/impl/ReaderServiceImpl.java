@@ -6,16 +6,17 @@ import by.itechart.libmngmt.repository.ReaderRepository;
 import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ReaderServiceImpl implements ReaderService {
 
-    ReaderRepository readerRepository = ReaderRepositoryImpl.getInstance();
-    private static ReaderServiceImpl instance = new ReaderServiceImpl();
+    private final ReaderRepository readerRepository = ReaderRepositoryImpl.getInstance();
+    private static ReaderServiceImpl instance;
 
     public static ReaderServiceImpl getInstance() {
+        if(instance == null){
+            instance = new ReaderServiceImpl();
+        }
         return instance;
     }
 

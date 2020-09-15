@@ -12,10 +12,13 @@ import java.util.List;
 
 @Data
 public class GetBookListCommand extends LibraryCommand {
-    private BookService bookService = BookServiceImpl.getInstance();
-    private static GetBookListCommand instance = new GetBookListCommand();
+    private final BookService bookService = BookServiceImpl.getInstance();
+    private static GetBookListCommand instance;
 
     public static GetBookListCommand getInstance() {
+        if(instance == null){
+            instance = new GetBookListCommand();
+        }
         return instance;
     }
 

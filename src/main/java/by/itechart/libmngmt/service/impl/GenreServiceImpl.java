@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenreServiceImpl implements GenreService {
-    private GenreRepository genreRepository = GenreRepositoryImpl.getInstance();
-    private static GenreServiceImpl instance = new GenreServiceImpl();
+    private final GenreRepository genreRepository = GenreRepositoryImpl.getInstance();
+    private static GenreServiceImpl instance;
 
     public static GenreServiceImpl getInstance() {
+        if(instance == null){
+            instance = new GenreServiceImpl();
+        }
         return instance;
     }
 

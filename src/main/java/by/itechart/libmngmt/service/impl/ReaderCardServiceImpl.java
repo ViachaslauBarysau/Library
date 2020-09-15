@@ -4,23 +4,23 @@ import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
-import by.itechart.libmngmt.repository.ReaderRepository;
 import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
-import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.ReaderService;
 
-import java.io.Reader;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderCardServiceImpl implements ReaderCardService {
-    private ReaderService readerService = ReaderServiceImpl.getInstance();
-    private ReaderCardRepository readerCardRepository = ReaderCardRepositoryImpl.getInstance();
-    private static ReaderCardServiceImpl instance = new ReaderCardServiceImpl();
+    private final ReaderService readerService = ReaderServiceImpl.getInstance();
+    private final ReaderCardRepository readerCardRepository = ReaderCardRepositoryImpl.getInstance();
+    private static ReaderCardServiceImpl instance;
 
     public static ReaderCardServiceImpl getInstance() {
+        if(instance == null){
+            instance = new ReaderCardServiceImpl();
+        }
         return instance;
     }
 
@@ -110,6 +110,11 @@ public class ReaderCardServiceImpl implements ReaderCardService {
         } else {
             update(readerCardEntity);
         }
+    }
+
+    @Override
+    public List<ReaderCardEntity> getExpiringReaderCards(int days) {
+        return readerCardRepository.getExpiringReaderCards(days);
     }
 
     @Override

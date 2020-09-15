@@ -5,17 +5,18 @@ import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
 
-
 import java.sql.*;
 import java.util.*;
 
 public class BookRepositoryImpl implements BookRepository {
 
-    private static BookRepositoryImpl instance = new BookRepositoryImpl();
+    private static BookRepositoryImpl instance;
     public static BookRepositoryImpl getInstance() {
+        if(instance == null){
+            instance = new BookRepositoryImpl();
+        }
         return instance;
     }
-
 
     private static final int BOOK_PAGE_COUNT = 10;
     private static final String SQL_DELETE_BOOKS_BY_IDS = "DELETE FROM Books WHERE id = ANY (?);";
@@ -32,16 +33,16 @@ public class BookRepositoryImpl implements BookRepository {
             " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
             " LEFT JOIN Books_Genres ON Books_Genres.Book_Id = Books.Id" +
             " LEFT JOIN Genres on Genres.Id=Books_Genres.Genre_Id" +
-            " WHERE Books.title LIKE ? AND name LIKE ? AND Genres.Title LIKE ? AND description LIKE ?" +
-            "  ORDER BY Books.Title ASC) ORDER BY Title ASC LIMIT ? OFFSET ?;";
+            " WHERE lower(Books.title) LIKE ? AND lower(name) LIKE ? AND lower(Genres.Title) LIKE ? AND" +
+            " lower(description) LIKE ? ORDER BY Books.Title ASC) ORDER BY Title ASC LIMIT ? OFFSET ?;";
 
     private static final String SQL_GET_SEARCH_PAGE_COUNT = "SELECT COUNT(ID) FROM (SELECT DISTINCT Books.ID" +
             " FROM Books LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
             " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
             " LEFT JOIN Books_Genres ON Books_Genres.Book_Id = Books.Id" +
             " LEFT JOIN Genres on Genres.Id=Books_Genres.Genre_Id" +
-            " WHERE Books.title LIKE ? AND name LIKE ? AND Genres.Title LIKE ? AND description LIKE ?);";
-
+            " WHERE lower(Books.title) LIKE ? AND lower(name) LIKE ? AND" +
+            " lower(Genres.Title) LIKE ? AND lower(description) LIKE ?);";
 
     private static final String SQL_GET_BOOK = "SELECT Books.*, Authors.Name, Genres.Title AS Genre," +
             " Covers.Title AS Cover FROM Books" +

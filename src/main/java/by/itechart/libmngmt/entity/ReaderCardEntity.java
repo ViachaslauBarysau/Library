@@ -17,12 +17,14 @@ public class ReaderCardEntity {
 
     private int id;
     private int bookId;
+    public String bookTitle;
     private int readerId;
     private String readerName;
     private String readerEmail;
     private Date borrowDate;
-    private String status;
+    private int timePeriod;
     private Date dueDate;
+    private String status;
     private Timestamp returnDate;
     private String comment;
 

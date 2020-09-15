@@ -1,8 +1,6 @@
 package by.itechart.libmngmt.controller;
 
-import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.ReaderService;
-import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.service.impl.ReaderServiceImpl;
 import com.google.gson.Gson;
 
@@ -13,14 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet(urlPatterns = {"/rdr"})
 public class ReaderServlet extends HttpServlet {
 
-    private ReaderService readerService = ReaderServiceImpl.getInstance();
+    private final ReaderService readerService = ReaderServiceImpl.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

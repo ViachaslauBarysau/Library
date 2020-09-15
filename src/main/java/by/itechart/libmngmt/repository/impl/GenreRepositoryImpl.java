@@ -9,8 +9,11 @@ import java.util.List;
 
 public class GenreRepositoryImpl implements GenreRepository {
 
-    private static GenreRepositoryImpl instance = new GenreRepositoryImpl();
+    private static GenreRepositoryImpl instance;
     public static GenreRepositoryImpl getInstance() {
+        if(instance == null){
+            instance = new GenreRepositoryImpl();
+        }
         return instance;
     }
 

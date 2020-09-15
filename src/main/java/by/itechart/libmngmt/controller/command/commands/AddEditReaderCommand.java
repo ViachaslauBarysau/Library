@@ -6,10 +6,13 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class AddEditReaderCommand extends LibraryCommand {
-    private static AddEditReaderCommand instance = new AddEditReaderCommand();
+    private static AddEditReaderCommand instance;
 
     public static AddEditReaderCommand getInstance() {
-        return instance;
+            if(instance == null){
+                instance = new AddEditReaderCommand();
+            }
+            return instance;
     }
 
     @Override

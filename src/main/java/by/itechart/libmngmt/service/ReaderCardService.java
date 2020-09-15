@@ -16,4 +16,5 @@ public interface ReaderCardService {
     List<Date> getNearestReturnDates(int bookId);
     int getNearestReturnReaderCardId(int bookId);
     int getBorrowBooksCount(int bookId);
+    List<ReaderCardEntity> getExpiringReaderCards(int days);
 }
