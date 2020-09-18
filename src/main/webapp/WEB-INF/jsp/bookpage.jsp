@@ -19,3 +19,7 @@
 
 </body>
 </html>
+
+<style>
+    <%@include file="/WEB-INF/css/bookpage.css"%>
+</style>

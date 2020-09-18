@@ -45,11 +45,11 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public List<Integer> getId(Object[] genres) {
+    public List<Integer> getId(List<String> genres) {
         List<Integer> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
-                Array genresArray = connection.createArrayOf("VARCHAR", genres);
+                Array genresArray = connection.createArrayOf("VARCHAR", genres.toArray());
                 preparedStatement.setArray(1, genresArray);
                 preparedStatement.executeQuery();
                 final ResultSet resultSet = preparedStatement.executeQuery();
@@ -64,10 +64,10 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public List<Integer> getId(Object[] genres, Connection connection) throws SQLException {
+    public List<Integer> getId(List<String> genres, Connection connection) throws SQLException {
         List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
-            Array genresArray = connection.createArrayOf("VARCHAR", genres);
+            Array genresArray = connection.createArrayOf("VARCHAR", genres.toArray());
             preparedStatement.setArray(1, genresArray);
             preparedStatement.executeQuery();
             final ResultSet resultSet = preparedStatement.executeQuery();

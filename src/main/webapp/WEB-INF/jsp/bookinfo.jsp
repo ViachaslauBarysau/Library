@@ -18,12 +18,15 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-
+${errors}
+<c:forEach var="error"  items="${errors}" >
+    <p>${error}</p>
+</c:forEach>
 <form method="post" id="bookform" enctype="multipart/form-data">
 
     <input type="text" class="form-control" size="60" name="id" value="${bookpagedto.bookDto.id}" hidden />
     <input type="text" class="form-control" size="60" name="currentCover" value="${bookpagedto.bookDto.covers.get(0)}" hidden />
-    <p><img class="cover" class="form-control" id="cover" name="cover" src="images/${bookpagedto.bookDto.covers.get(0)}"></p>
+    <p><img class="cover" class="form-control" id="cover" name="cover" src="images/${bookpagedto.bookDto.covers.get(0)}" ></p>
     Choose image to change cover:
     <p><input type="file" class="form-control" name="file" accept="image/jpeg, image/png" /></p>
     Title
@@ -40,10 +43,10 @@
     Publish date
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" class="form-control" name="publishDate" size="60" required /></p>
+            <p><input type="number" type="number" min="1900" max="2020" class="form-control" name="publishDate" size="60" required /></p>
         </c:when>
         <c:otherwise>
-            <p><input type="text" class="form-control" name="publishDate" size="60" value="${bookpagedto.bookDto.publishDate}" required /></p>
+            <p><input type="number" min="1900" max="2020" class="form-control" name="publishDate" size="60" value="${bookpagedto.bookDto.publishDate}" required /></p>
         </c:otherwise>
     </c:choose>
     Genres
@@ -56,14 +59,14 @@
     Page count
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" class="form-control" name="pageCount" size="60" required /></p>
+            <p><input type="number" min="1" max="9999" class="form-control" name="pageCount" size="60" required /></p>
         </c:when>
         <c:otherwise>
-            <p><input  type="text" class="form-control" name="pageCount" size="60" value="${bookpagedto.bookDto.pageCount}" required /></p>
+            <p><input  type="number" min="1" max="9999" class="form-control" name="pageCount" size="60" value="${bookpagedto.bookDto.pageCount}" required /></p>
         </c:otherwise>
     </c:choose>
     ISBN
-    <p><input type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.ISBN}" required /></p>
+    <p><input type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.isbn}" required /></p>
     Description
     <p><textarea class="form-control" maxlength="420" name="description" cols="60" rows="12" required>
     ${bookpagedto.bookDto.description}
@@ -71,10 +74,10 @@
     Total amount
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" class="form-control" size="60" id="totalAmount" onchange="onAmountChange(this.value)" name="totalAmount" equired /></p>
+            <p><input type="number" min="0" max="999" class="form-control" size="60" id="totalAmount" onchange="onAmountChange(this.value)" name="totalAmount" equired /></p>
         </c:when>
         <c:otherwise>
-            <p><input type="text" class="form-control" size="60" id="totalAmount" onchange="onAmountChange(this.value)" name="totalAmount" value="${bookpagedto.bookDto.totalAmount}" required /></p>
+            <p><input type="number" min="0" max="999" class="form-control" size="60" id="totalAmount" onchange="onAmountChange(this.value)" name="totalAmount" value="${bookpagedto.bookDto.totalAmount}" required /></p>
         </c:otherwise>
     </c:choose>
 
@@ -138,9 +141,6 @@ Borrow Records List:
 
 
 <div class="container">
-<%--    <h2>Fading Modal</h2>--%>
-<%--    <p>Add the "fade" class to the modal container if you want the modal to fade in on open and fade out on close.</p>--%>
-
     <!-- Button to Open the Modal -->
     <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openNewReaderCard()">
         Add
@@ -205,6 +205,5 @@ Borrow Records List:
     <%@include file="/WEB-INF/js/bookinfo.js"%>
 </script>
 <style>
-
     <%@include file="/WEB-INF/css/bookinfo.css"%>
 </style>

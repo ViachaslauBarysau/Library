@@ -17,3 +17,6 @@
 
 </body>
 </html>
+<style>
+    <%@include file="/WEB-INF/css/mainpage.css"%>
+</style>

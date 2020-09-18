@@ -17,7 +17,5 @@ public class ReaderDto {
     private int id;
     private String name;
     private String email;
-    private Date dateOfRegistration;
-    private Long phoneNumber;
 
 }

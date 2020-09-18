@@ -23,7 +23,7 @@
     <commons-io.version>2.6</commons-io.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
-    <javaee-api.version>8.0</javaee-api.version>
+    <javaee-api.version>8.0.1</javaee-api.version>
     <slf4j-api.version>1.7.30</slf4j-api.version>
     <logback-core.version>1.2.3</logback-core.version>
     <lombok.version>1.18.12</lombok.version>
@@ -37,6 +37,12 @@
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>1.7</version>
+    </dependency>
 
     <dependency>
       <groupId>org.antlr</groupId>

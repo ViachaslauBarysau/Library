@@ -18,3 +18,6 @@
 
 </body>
 </html>
+<style>
+    <%@include file="/WEB-INF/css/searchpage.css"%>
+</style>

@@ -392,6 +392,7 @@ async function sendForm() {
     form.append("readerName", editedReaderCardRecord.readerName);
     form.append("borrowDate", editedReaderCardRecord.borrowDate);
     form.append("dueDate", editedReaderCardRecord.dueDate);
+    form.append("timePeriod", editedReaderCardRecord.timePeriod)
     form.append("returnDate", editedReaderCardRecord.returnDate);
     form.append("status", editedReaderCardRecord.status);
     form.append("comment", editedReaderCardRecord.comment);

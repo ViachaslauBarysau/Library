@@ -22,7 +22,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
             " ON Readers.ID=Books_Readers.Reader_ID WHERE Book_id = ?;";
     private static final String SQL_UPDATE_READER_CARD = "UPDATE Books_Readers SET Status = ?, Return_date = ?, Comment = ? WHERE ReaderCard_ID = ?;";
     private static final String SQL_ADD_READER_CARD = "INSERT INTO Books_Readers(Book_ID, Reader_ID," +
-            " Borrow_date, Status, Due_date, Comment) VALUES (?,?,?,?,?,?);";
+            " Borrow_date, Time_Period, Status, Due_date, Comment) VALUES (?,?,?,?,?,?,?);";
 
     private static final String SQL_GET_READERCARD_BY_ID = "SELECT * FROM Books_Readers LEFT JOIN Readers" +
             " ON Readers.ID=Books_Readers.Reader_ID WHERE ReaderCard_ID = ?;";
@@ -120,6 +120,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
                 preparedStatement.setInt(index++, readerCard.getBookId());
                 preparedStatement.setInt(index++, readerCard.getReaderId());
                 preparedStatement.setDate(index++, readerCard.getBorrowDate());
+                preparedStatement.setInt(index++, readerCard.getTimePeriod());
                 preparedStatement.setString(index++, readerCard.getStatus());
                 preparedStatement.setDate(index++, readerCard.getDueDate());
                 preparedStatement.setString(index++, readerCard.getComment());
@@ -163,6 +164,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
                             .readerName(resultSet.getString("Name"))
                             .readerEmail(resultSet.getString("Email"))
                             .borrowDate(resultSet.getDate("Borrow_date"))
+                            .timePeriod(resultSet.getInt("Time_Period"))
                             .status(resultSet.getString("Status"))
                             .dueDate(resultSet.getDate("Due_date"))
                             .returnDate(resultSet.getTimestamp("Return_date"))
@@ -191,6 +193,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
                                 .readerName(resultSet.getString("Name"))
                                 .readerEmail(resultSet.getString("Email"))
                                 .borrowDate(resultSet.getDate("Borrow_date"))
+                                .timePeriod(resultSet.getInt("Time_Period"))
                                 .status(resultSet.getString("Status"))
                                 .dueDate(resultSet.getDate("Due_date"))
                                 .returnDate(resultSet.getTimestamp("Return_date"))

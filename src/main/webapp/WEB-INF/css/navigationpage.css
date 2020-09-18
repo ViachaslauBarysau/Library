@@ -12,5 +12,4 @@ ul {
 ul li {
     display : inline-block ;
     width : 100px;
-    /* эмуляция inline-block для IE6-7*/
 }

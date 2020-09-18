@@ -1,7 +1,6 @@
-package by.itechart.libmngmt.util.scheduler;
+package by.itechart.libmngmt.util.emailScheduler;
 
 
-import by.itechart.libmngmt.service.impl.GenreServiceImpl;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -18,13 +17,12 @@ public class EmailSender {
         return instance;
     }
 
-    private final static String LIBRARY_EMAIL = "";
+    private final static String LIBRARY_EMAIL = "librarystlab@gmail.com";
     private final static String EMAIL_SUBJECT = "Library notification.";
-    private final static String AUTHENTICATION_USERNAME = "";
-    private final static String AUTHENTICATION_PASSWORD = "";
+    private final static String AUTHENTICATION_USERNAME = "librarystlab@gmail.com";
+    private final static String AUTHENTICATION_PASSWORD = "123123nnn";
     private final static String HOST_NAME = "smtp.googlemail.com";
     private final static int PORT = 465;
-
 
     public void sendEmail(String readerEmail, String message) {
 

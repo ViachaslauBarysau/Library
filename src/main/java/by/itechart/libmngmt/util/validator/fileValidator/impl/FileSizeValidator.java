@@ -1,6 +1,6 @@
-package by.itechart.libmngmt.util.validator.impl;
+package by.itechart.libmngmt.util.validator.fileValidator.impl;
 
-import by.itechart.libmngmt.util.validator.Validator;
+import by.itechart.libmngmt.util.validator.fileValidator.Validator;
 
 public class FileSizeValidator implements Validator {
 

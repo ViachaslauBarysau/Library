@@ -11,7 +11,7 @@ public interface BookRepository {
 
     List<BookEntity> findAll(int offset);
     int getPageCount();
-    void delete(Object[] bookList);
+    void delete(List<Integer> bookList);
     BookEntity find(int bookId);
     List<BookEntity> search(List<String> searchParams, int limitOffset);
     int add(BookEntity book);

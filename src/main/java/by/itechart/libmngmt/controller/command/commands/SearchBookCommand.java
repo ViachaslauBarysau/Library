@@ -38,4 +38,5 @@ public class SearchBookCommand extends LibraryCommand {
         response.sendRedirect(request.getContextPath() + "lib-app?command=SEARCH_PAGE&title=" + title +
                 "&author=" + author + "&genre=" + genre + "&description=" + description +   "&page=" + pageNumber);
     }
+
 }

@@ -1,4 +1,4 @@
-package by.itechart.libmngmt.util.validator;
+package by.itechart.libmngmt.util.validator.fileValidator;
 
 import javax.servlet.http.Part;
 import java.io.File;
@@ -8,10 +8,10 @@ import java.io.OutputStream;
 
 public class FileUploader {
 
-    public static void uploadFile(Part filePart) {
+    public static void uploadFile(Part filePart, String fileName) {
         try (InputStream fileContent = filePart.getInputStream();
              OutputStream outputStream = new FileOutputStream(new File(System.getProperty("uploadFolderPath")
-                     + filePart.getSubmittedFileName()));) {
+                     + fileName));) {
             int read = 0;
             byte[] bytes = new byte[1024];
             while ((read = fileContent.read(bytes)) != -1) {

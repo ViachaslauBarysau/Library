@@ -18,7 +18,7 @@ public class BookDto {
     private String publisher;
     private int publishDate;
     private int pageCount;
-    private String ISBN;
+    private String isbn;
     private String description;
     private int totalAmount;
     private int availableAmount;

@@ -8,15 +8,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface BookService {
-    List<BookEntity> getBookPage(int pageNumber);
+    List<BookDto> getBookPage(int pageNumber);
+    List<BookDto> getAvailableBookPage(int pageNumber);
     int getPageCount();
-    void delete(Object[] booksList);
-    List<BookEntity> search(List<String> searchParams, int pageNumber);
-    int addEditBook(BookEntity book);
-    int addBookGetId(BookEntity book);
+    void delete(List<Integer> booksList);
+    List<BookDto> search(List<String> searchParams, int pageNumber);
+    int addEditBook(BookDto book);
+    int addBookGetId(BookDto book);
     BookDto find(int bookId);
     int getSearchPageCount(List<String> searchParams);
-    void updateBook(BookEntity book);
-    int addBookGetId(BookEntity book, Connection connection) throws SQLException;
-    void updateBook(BookEntity bookDto, Connection connection) throws SQLException;
+    void updateBook(BookDto book);
+    int addBookGetId(BookDto bookDto, Connection connection) throws SQLException;
+    void updateBook(BookDto bookDto, Connection connection) throws SQLException;
 }

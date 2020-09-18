@@ -21,9 +21,16 @@ public class BookPageCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
-        int bookId = Integer.parseInt(request.getParameter("id"));
-        BookPageDto bookPageDto = bookManagementService.getBookPageDto(bookId);
-        request.setAttribute("bookpagedto", bookPageDto);
-        forward("bookpage");
+        int bookId = 0;
+        try {
+            bookId = Integer.parseInt(request.getParameter("id"));
+            if (bookId > 0) {
+                BookPageDto bookPageDto = bookManagementService.getBookPageDto(bookId);
+                request.setAttribute("bookpagedto", bookPageDto);
+                forward("bookpage");
+            }
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/lib-app?command=ADD_BOOK_PAGE");
+        }
     }
 }

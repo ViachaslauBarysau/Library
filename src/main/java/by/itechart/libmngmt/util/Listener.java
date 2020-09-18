@@ -1,6 +1,6 @@
 package by.itechart.libmngmt.util;
 
-import by.itechart.libmngmt.util.scheduler.Trigger;
+import by.itechart.libmngmt.util.emailScheduler.Trigger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

@@ -21,8 +21,7 @@ public class ReaderRepositoryImpl implements ReaderRepository {
         return instance;
     }
 
-    private static final String SQL_ADD_READER = "INSERT INTO Readers (Name, Email, Date_of_registration," +
-            " Phone_number) VALUES (?,?,?,?);";
+    private static final String SQL_ADD_READER = "INSERT INTO Readers (Name, Email) VALUES (?,?);";
     private static final String SQL_GET_READERS_EMAILS = "SELECT Email FROM Readers WHERE Email LIKE ?;";
     private static final String SQL_GET_READER_NAME_BY_EMAIL = "SELECT NAME FROM Readers WHERE Email = ?;";
     public static final String SQL_INSERT_OR_UPDATE_READER = "INSERT INTO Readers (Email, Name) VALUES(?, ?)" +
@@ -108,8 +107,6 @@ public class ReaderRepositoryImpl implements ReaderRepository {
                 int index = 1;
                 preparedStatement.setString(index++, reader.getName());
                 preparedStatement.setString(index++, reader.getEmail());
-                preparedStatement.setDate(index++, reader.getDateOfRegistration());
-                preparedStatement.setLong(index++, reader.getPhoneNumber());
                 preparedStatement.execute();
             }
         } catch (SQLException e) {

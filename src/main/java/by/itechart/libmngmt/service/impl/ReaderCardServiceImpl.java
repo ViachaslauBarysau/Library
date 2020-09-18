@@ -7,6 +7,7 @@ import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.ReaderService;
+import by.itechart.libmngmt.util.converter.ReaderCardConverter;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -78,13 +79,13 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     }
 
     @Override
-    public void add(ReaderCardEntity readerCard) {
-        readerCardRepository.add(readerCard);
+    public void add(ReaderCardDto readerCardDto) {
+        readerCardRepository.add(ReaderCardConverter.convertToReaderCardEntity(readerCardDto));
     }
 
     @Override
-    public void update(ReaderCardEntity readerCard) {
-        readerCardRepository.update(readerCard);
+    public void update(ReaderCardDto readerCardDto) {
+        readerCardRepository.update(ReaderCardConverter.convertToReaderCardEntity(readerCardDto));
     }
 
     @Override
@@ -93,28 +94,25 @@ public class ReaderCardServiceImpl implements ReaderCardService {
                 .email(readerCardDto.getReaderEmail())
                 .name(readerCardDto.getReaderName())
                 .build();
-        int readerId = readerService.insertUpdateReaderGetId(readerDto);
-        ReaderCardEntity readerCardEntity = ReaderCardEntity.builder()
-                .id(readerCardDto.getId())
-                .bookId(readerCardDto.getBookId())
-                .readerId(readerId)
-                .borrowDate(readerCardDto.getBorrowDate())
-                .dueDate(readerCardDto.getDueDate())
-                .returnDate(readerCardDto.getReturnDate())
-                .status(readerCardDto.getStatus())
-                .comment(readerCardDto.getComment())
-                .build();
 
-        if (readerCardEntity.getId() == 0) {
-            add(readerCardEntity);
+        readerCardDto.setReaderId(readerService.insertUpdateReaderGetId(readerDto));
+
+        if (readerCardDto.getId() == 0) {
+            add(readerCardDto);
         } else {
-            update(readerCardEntity);
+            update(readerCardDto);
         }
     }
 
     @Override
-    public List<ReaderCardEntity> getExpiringReaderCards(int days) {
-        return readerCardRepository.getExpiringReaderCards(days);
+    public List<ReaderCardDto> getExpiringReaderCards(int days) {
+        List<ReaderCardEntity> readerCardEntities = readerCardRepository.getExpiringReaderCards(days);
+        List<ReaderCardDto> readerCardDtoList = new ArrayList<>();
+        for (ReaderCardEntity readerCardEntity : readerCardEntities
+             ) {
+            readerCardDtoList.add(ReaderCardConverter.convertToReaderCardDto(readerCardEntity));
+        }
+        return readerCardDtoList;
     }
 
     @Override

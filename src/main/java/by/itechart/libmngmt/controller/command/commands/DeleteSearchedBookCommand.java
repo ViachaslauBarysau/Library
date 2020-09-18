@@ -7,6 +7,8 @@ import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DeleteSearchedBookCommand extends LibraryCommand {
     private final BookService bookService = BookServiceImpl.getInstance();
@@ -22,11 +24,15 @@ public class DeleteSearchedBookCommand extends LibraryCommand {
     @Override
     public void process() throws ServletException, IOException {
         try {
-            Object[] booksIdsForDeleting = Arrays.stream(request.getParameterValues("bookid")).mapToInt(Integer::parseInt).boxed().toArray();
+            List<Integer> booksIdsForDeleting = Arrays.asList(request.getParameterValues("bookid")).stream()
+                    .mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
             bookService.delete(booksIdsForDeleting);
         } catch (Exception e) {
 
         }
+//        Object[] booksIdsForDeleting = Arrays.stream(request.getParameterValues("bookid")).mapToInt(Integer::parseInt).boxed().toArray();
+//        bookService.delete(booksIdsForDeleting);
+
 
         String title = request.getParameter("title");
         String author = request.getParameter("author");

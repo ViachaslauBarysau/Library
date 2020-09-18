@@ -94,11 +94,11 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
 
     @Override
-    public List<Integer> getId(Object[] names) {
+    public List<Integer> getId(List<String> names) {
         List<Integer> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
-                Array namesArray = connection.createArrayOf("VARCHAR", names);
+                Array namesArray = connection.createArrayOf("VARCHAR", names.toArray());
                 preparedStatement.setArray(1, namesArray);
                 final ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
@@ -113,10 +113,10 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     }
 
     @Override
-    public List<Integer> getId(Object[] names, Connection connection) throws SQLException {
+    public List<Integer> getId(List<String> names, Connection connection) throws SQLException {
         List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
-            Array namesArray = connection.createArrayOf("VARCHAR", names);
+            Array namesArray = connection.createArrayOf("VARCHAR", names.toArray());
             preparedStatement.setArray(1, namesArray);
             final ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {

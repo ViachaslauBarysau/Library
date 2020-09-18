@@ -31,8 +31,8 @@ public class GenreServiceImpl implements GenreService {
         ) {
             genreRepository.add(genre);
         }
-        Object[] genreTitles = bookDto.getGenres().toArray();
-        List<Integer> genreIDs = genreRepository.getId(genreTitles);
+
+        List<Integer> genreIDs = genreRepository.getId(bookDto.getGenres());
 
         genreRepository.deleteBooksGenresRecords(bookDto.getId());
 
@@ -55,8 +55,7 @@ public class GenreServiceImpl implements GenreService {
             genreRepository.add(genre, connection);
         }
 
-        Object[] genreTitles = bookDto.getGenres().toArray();
-        List<Integer> genreIDs = genreRepository.getId(genreTitles, connection);
+        List<Integer> genreIDs = genreRepository.getId(bookDto.getGenres(), connection);
 
         genreRepository.deleteBooksGenresRecords(bookDto.getId(), connection);
 

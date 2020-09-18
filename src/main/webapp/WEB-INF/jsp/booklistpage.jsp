@@ -71,7 +71,12 @@
             </button>
         </c:if>
     </c:if>
+
+    <span style="float:right"><input type="checkbox" name="hideunavailable"  align="right" onclick="">   Hide unavailable</span>
 </form>
 
 </body>
 </html>
+<script type="text/javascript">
+    <%@include file="/WEB-INF/js/booklistpage.js"%>
+</script>

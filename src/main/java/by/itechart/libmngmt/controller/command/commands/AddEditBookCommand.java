@@ -1,29 +1,27 @@
 package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.controller.command.LibraryCommand;
+import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.dto.BookPageDto;
 import by.itechart.libmngmt.dto.ReaderCardDto;
-import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookManagementService;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.impl.BookManagementServiceImpl;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.service.impl.ReaderCardServiceImpl;
-import by.itechart.libmngmt.util.validator.ValidateExecutor;
+import by.itechart.libmngmt.util.converter.RequestConverter;
+import by.itechart.libmngmt.util.validator.BookValidator;
+import by.itechart.libmngmt.util.validator.ReaderCardValidator;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Part;
 import java.io.IOException;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.List;
 
 public class AddEditBookCommand extends LibraryCommand {
-    private final ValidateExecutor validateExecutor= ValidateExecutor.getInstance();
+
     private final BookManagementService bookManagementService = BookManagementServiceImpl.getInstance();
     private final BookService bookService = BookServiceImpl.getInstance();
     private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
@@ -38,79 +36,52 @@ public class AddEditBookCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
+        boolean isReaderCardChanged = Integer.parseInt(request.getParameter("readerCardId")) != -1;
+        BookValidator bookValidator = new BookValidator();
+        bookValidator.validate(request);
+        String fileName = bookValidator.validateFile(request);
 
-        int availableAmount = Integer.parseInt(request.getParameter("totalAmount"));
-        try {
-            availableAmount = Integer.parseInt(request.getParameter("availableAmount"));
+        ReaderCardDto readerCardDto = new ReaderCardDto();
+        List<String> readerCardsErrorMessages = new ArrayList<>();
 
-        } catch (Exception e) {
-
+        if (isReaderCardChanged) {
+            ReaderCardValidator readerCardValidator = new ReaderCardValidator();
+            readerCardValidator.validate(request);
+            readerCardsErrorMessages = readerCardValidator.errorMessages;
+            readerCardDto = RequestConverter.convertToReaderCardDto(request);
         }
 
-        BookEntity bookEntity = BookEntity.builder()
-                .id(Integer.parseInt(request.getParameter("id")))
-                .title(request.getParameter("title"))
-                .publisher(request.getParameter("publisher"))
-                .publishDate(Integer.parseInt(request.getParameter("publishDate")))
-                .pageCount(Integer.parseInt(request.getParameter("pageCount")))
-                .genres(Arrays.asList(request.getParameterValues("genres")))
-                .authors(Arrays.asList(request.getParameterValues("authors")))
-                .ISBN(request.getParameter("ISBN"))
-                .description(request.getParameter("description"))
-                .totalAmount(Integer.parseInt(request.getParameter("totalAmount")))
-                .availableAmount(availableAmount)
-                .build();
+        List<String> errorMessages = new ArrayList<>(bookValidator.errorMessages);
+        errorMessages.addAll(readerCardsErrorMessages);
 
-        Part filePart = request.getPart("file");
-        if (filePart.getSubmittedFileName().equals("")) {
-            bookEntity.setCovers(Arrays.asList(request.getParameter("currentCover")));
+        if(errorMessages.size() < 1) {
+            if (Integer.parseInt(request.getParameter("readerCardId")) != -1) {
+                readerCardService.addOrUpdateReaderCard(readerCardDto);
+            }
+            BookDto bookDto = RequestConverter.convertToBookDto(request, fileName);
+
+            int bookId = bookService.addEditBook(bookDto);
+            response.sendRedirect(request.getContextPath() + "/lib-app?command=BOOK_PAGE&id=" + bookId);
         } else {
-            String fileName = validateExecutor.validateAndUploadFile(filePart);
-            if (fileName.equals("")) {
-                bookEntity.setCovers(Arrays.asList(request.getParameter("currentCover")));
+            request.setAttribute("errors", errorMessages);
+            if (Integer.parseInt(request.getParameter("id")) > 0) {
+                BookPageDto bookPageDto = bookManagementService
+                        .getBookPageDto(Integer.parseInt(request.getParameter("id")));
+                request.setAttribute("bookpagedto", bookPageDto);
+
             } else {
-                bookEntity.setCovers(Arrays.asList(fileName));
-            }
+                BookDto bookDto = new BookDto();
+                bookDto.setId(0);
+                bookDto.setCovers(Arrays.asList("glass.jpg"));
+                BookPageDto bookPageDto = BookPageDto.builder()
+                        .bookDto(bookDto)
+                        .readerCards(new ArrayList<>())
+                        .build();
+                request.setAttribute("bookpagedto", bookPageDto);
 
+            }
         }
-
-        if (Integer.parseInt(request.getParameter("readerCardId")) != -1) {
-            ReaderCardDto readerCardDto = ReaderCardDto.builder()
-                    .id(Integer.parseInt(request.getParameter("readerCardId")))
-                    .bookId(Integer.parseInt(request.getParameter("id")))
-                    .readerId(Integer.parseInt(request.getParameter("readerId")))
-                    .readerEmail(request.getParameter("readerEmail"))
-                    .readerName(request.getParameter("readerName"))
-                    .status(request.getParameter("status"))
-                    .comment(request.getParameter("comment"))
-                    .build();
-
-            if (!request.getParameter("status").equals("borrowed")) {
-                readerCardDto.setReturnDate(Timestamp.valueOf(request.getParameter("returnDate")));
-            }
-
-            if (Integer.parseInt(request.getParameter("readerCardId")) > 0) {
-                try {
-                    java.util.Date borrowDate = new SimpleDateFormat("MMM dd, yyyy").parse(request.getParameter("borrowDate"));
-                    java.util.Date dueDate = new SimpleDateFormat("MMM dd, yyyy").parse(request.getParameter("dueDate"));
-                    readerCardDto.setBorrowDate(new java.sql.Date(borrowDate.getTime()));
-                    readerCardDto.setDueDate(new java.sql.Date(dueDate.getTime()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                readerCardDto.setBorrowDate(Date.valueOf(request.getParameter("borrowDate")));
-                readerCardDto.setDueDate(Date.valueOf(request.getParameter("dueDate")));
-            }
-
-            readerCardService.addOrUpdateReaderCard(readerCardDto);
-        }
-
-
-        int bookId = bookService.addEditBook(bookEntity);
-
-        BookPageDto bookPageDto = bookManagementService.getBookPageDto(bookId);
-        request.setAttribute("bookpagedto", bookPageDto);
-        response.sendRedirect(request.getContextPath() + "/lib-app?command=BOOK_PAGE&id=" + bookId);
+        forward("bookpage");
     }
 }
+

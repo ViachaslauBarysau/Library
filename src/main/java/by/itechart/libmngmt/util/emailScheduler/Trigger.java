@@ -1,4 +1,4 @@
-package by.itechart.libmngmt.util.scheduler;
+package by.itechart.libmngmt.util.emailScheduler;
 
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;

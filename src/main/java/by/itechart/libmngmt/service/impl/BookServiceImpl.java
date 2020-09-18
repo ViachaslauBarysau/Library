@@ -6,9 +6,11 @@ import by.itechart.libmngmt.repository.BookRepository;
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
 import by.itechart.libmngmt.service.*;
 import by.itechart.libmngmt.util.ConnectionHelper;
+import by.itechart.libmngmt.util.converter.BookConverter;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
@@ -27,8 +29,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookEntity> getBookPage(int pageNumber) {
-        return bookRepository.findAll(pageNumber);
+    public List<BookDto> getBookPage(int pageNumber) {
+        List<BookEntity> bookEntities = bookRepository.findAll(pageNumber);
+
+        List<BookDto> bookDtoList = new ArrayList<>();
+        for (BookEntity bookEntity : bookEntities
+             ) {
+            bookDtoList.add(BookConverter.convertBookEntityToBookDto(bookEntity));
+        }
+        return bookDtoList;
     }
 
     @Override
@@ -37,7 +46,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void delete(Object[] booksList) {
+    public List<BookDto> getAvailableBookPage(int pageNumber) {
+        return null;
+    }
+
+    @Override
+    public void delete(List<Integer> booksList) {
         bookRepository.delete(booksList);
     }
 
@@ -45,15 +59,15 @@ public class BookServiceImpl implements BookService {
     public int getSearchPageCount(List<String> searchParams) {
 
         for (int index=0; index<searchParams.size(); index++){
-            searchParams.set(index, "%" + searchParams.get(index) + "%");
+            searchParams.set(index, "%" + searchParams.get(index).toLowerCase().trim() + "%");
         }
 
         return bookRepository.getSearchPageCount(searchParams);
     }
 
     @Override
-    public void updateBook(BookEntity book) {
-        bookRepository.update(book);
+    public void updateBook(BookDto bookDto) {
+        bookRepository.update(BookConverter.convertBookDtoToBookEntity(bookDto));
     }
 
     @Override
@@ -65,7 +79,7 @@ public class BookServiceImpl implements BookService {
                 .title(bookEntity.getTitle())
                 .publisher(bookEntity.getPublisher())
                 .publishDate(bookEntity.getPublishDate())
-                .ISBN(bookEntity.getISBN())
+                .isbn(bookEntity.getIsbn())
                 .description(bookEntity.getDescription())
                 .totalAmount(bookEntity.getTotalAmount())
                 .pageCount(bookEntity.getPageCount())
@@ -78,41 +92,45 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookEntity> search(List<String> searchParams, int pageNumber) {
+    public List<BookDto> search(List<String> searchParams, int pageNumber) {
 
         for (int index=0; index<searchParams.size(); index++){
             searchParams.set(index, "%" + searchParams.get(index) + "%");
         }
-        return bookRepository.search(searchParams, pageNumber);
+        List<BookEntity> bookEntities = bookRepository.search(searchParams, pageNumber);
+        List<BookDto> bookDtoList = new ArrayList<>();
+        for (BookEntity bookEntity : bookEntities
+        ) {
+            bookDtoList.add(BookConverter.convertBookEntityToBookDto(bookEntity));
+        }
+
+        return bookDtoList;
 
     }
 
     @Override
-    public void updateBook(BookEntity book, Connection connection) throws SQLException {
-        bookRepository.update(book, connection);
+    public void updateBook(BookDto bookDto, Connection connection) throws SQLException {
+        bookRepository.update(BookConverter.convertBookDtoToBookEntity(bookDto), connection);
     }
 
 
 
     @Override
-    public int addEditBook(BookEntity book) {
+    public int addEditBook(BookDto bookDto) {
 
         int bookId = 0;
+
         try (Connection connection = ConnectionHelper.getConnection()) {
             connection.setAutoCommit(false);
-            if (book.getId()==0) {
-                bookId = addBookGetId(book, connection);
+            if (bookDto.getId()==0) {
+                bookDto.setAvailableAmount(bookDto.getTotalAmount());
+                bookId = addBookGetId(bookDto, connection);
             } else {
-                int borrowedBooksAmount = readerCardService.getBorrowBooksCount(book.getId());
-                book.setAvailableAmount(book.getTotalAmount()-borrowedBooksAmount);
-                updateBook(book, connection);
-                bookId = book.getId();
+                int borrowedBooksAmount = readerCardService.getBorrowBooksCount(bookDto.getId());
+                bookDto.setAvailableAmount(bookDto.getTotalAmount()-borrowedBooksAmount);
+                updateBook(bookDto, connection);
+                bookId = bookDto.getId();
             }
-            BookDto bookDto = BookDto.builder().id(bookId)
-                    .authors(book.getAuthors())
-                    .covers(book.getCovers())
-                    .genres(book.getGenres())
-                    .build();
 
             authorService.add(bookDto, connection);
             genreService.add(bookDto, connection);
@@ -130,13 +148,13 @@ public class BookServiceImpl implements BookService {
 
 
     @Override
-    public int addBookGetId(BookEntity book) {
-        return bookRepository.add(book);
+    public int addBookGetId(BookDto bookDto) {
+        return bookRepository.add(BookConverter.convertBookDtoToBookEntity(bookDto));
     }
 
     @Override
-    public int addBookGetId(BookEntity book, Connection connection) throws SQLException {
-        return bookRepository.add(book, connection);
+    public int addBookGetId(BookDto bookDto, Connection connection) throws SQLException {
+        return bookRepository.add(BookConverter.convertBookDtoToBookEntity(bookDto), connection);
     }
 
 

@@ -5,6 +5,7 @@ import by.itechart.libmngmt.entity.ReaderEntity;
 import by.itechart.libmngmt.repository.ReaderRepository;
 import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderService;
+import by.itechart.libmngmt.util.converter.ReaderConverter;
 
 import java.util.List;
 
@@ -33,11 +34,7 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public void insertUpdateReader(ReaderDto readerDto) {
-        ReaderEntity readerEntity = ReaderEntity.builder()
-                .email(readerDto.getEmail())
-                .name(readerDto.getName())
-                .build();
-        readerRepository.insertUpdate(readerEntity);
+        readerRepository.insertUpdate(ReaderConverter.convertReaderDtoToReaderEntity(readerDto));
     }
 
     @Override

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @NoArgsConstructor
@@ -21,7 +23,7 @@ public class BookEntity {
     private int publishDate;
     private List<String> genres;
     private int pageCount;
-    private String ISBN;
+    private String isbn;
     private String description;
     private int totalAmount;
     private int availableAmount;

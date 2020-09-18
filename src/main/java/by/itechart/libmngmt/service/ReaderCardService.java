@@ -8,13 +8,13 @@ import java.util.List;
 
 
 public interface ReaderCardService {
-    void add(ReaderCardEntity readerCard);
-    void update(ReaderCardEntity readerCard);
+    void add(ReaderCardDto readerCard);
+    void update(ReaderCardDto readerCard);
     void addOrUpdateReaderCard(ReaderCardDto readerCard);
     List<ReaderCardDto> get(int bookId);
     ReaderCardDto getReaderCard(int readerCardId);
     List<Date> getNearestReturnDates(int bookId);
     int getNearestReturnReaderCardId(int bookId);
     int getBorrowBooksCount(int bookId);
-    List<ReaderCardEntity> getExpiringReaderCards(int days);
+    List<ReaderCardDto> getExpiringReaderCards(int days);
 }

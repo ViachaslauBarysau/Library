@@ -57,7 +57,6 @@ public class BookRepositoryImpl implements BookRepository {
     private static final String SQL_UPDATE_BOOK = "UPDATE Books SET Title=?, Publisher=?, Publish_date=?," +
             " Page_count=?, ISBN=?, Description=?, Total_amount=?, Available_amount=? WHERE Id=?;";
 
-
     @Override
     public void update(BookEntity book) {
         try (Connection connection = ConnectionHelper.getConnection()) {
@@ -67,14 +66,13 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setString(index++, book.getPublisher());
                 preparedStatement.setInt(index++, book.getPublishDate());
                 preparedStatement.setInt(index++, book.getPageCount());
-                preparedStatement.setString(index++, book.getISBN());
+                preparedStatement.setString(index++, book.getIsbn());
                 preparedStatement.setString(index++, book.getDescription());
                 preparedStatement.setInt(index++, book.getTotalAmount());
                 preparedStatement.setInt(index++, book.getAvailableAmount());
                 preparedStatement.setInt(index++, book.getId());
                 preparedStatement.execute();
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -98,7 +96,6 @@ public class BookRepositoryImpl implements BookRepository {
                     } else {
                         searchPageCount = booksCount/(BOOK_PAGE_COUNT) + 1;
                     }
-
                 }
             }
         } catch (SQLException e) {
@@ -115,7 +112,7 @@ public class BookRepositoryImpl implements BookRepository {
             preparedStatement.setString(index++, book.getPublisher());
             preparedStatement.setInt(index++, book.getPublishDate());
             preparedStatement.setInt(index++, book.getPageCount());
-            preparedStatement.setString(index++, book.getISBN());
+            preparedStatement.setString(index++, book.getIsbn());
             preparedStatement.setString(index++, book.getDescription());
             preparedStatement.setInt(index++, book.getTotalAmount());
             preparedStatement.setInt(index++, book.getAvailableAmount());
@@ -123,8 +120,6 @@ public class BookRepositoryImpl implements BookRepository {
             preparedStatement.execute();
         }
     }
-
-
 
     @Override
     public int add(BookEntity book, Connection connection) throws SQLException {
@@ -135,19 +130,16 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setString(index++, book.getPublisher());
                 preparedStatement.setInt(index++, book.getPublishDate());
                 preparedStatement.setInt(index++, book.getPageCount());
-                preparedStatement.setString(index++, book.getISBN());
+                preparedStatement.setString(index++, book.getIsbn());
                 preparedStatement.setString(index++, book.getDescription());
                 preparedStatement.setInt(index++, book.getTotalAmount());
                 preparedStatement.setInt(index++, book.getAvailableAmount());
                 preparedStatement.execute();
                 ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
                 while (resultSet.next()) {
                     id = resultSet.getInt(1);
                 }
-
             }
-
         return id;
     }
 
@@ -161,19 +153,16 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setString(index++, book.getPublisher());
                 preparedStatement.setInt(index++, book.getPublishDate());
                 preparedStatement.setInt(index++, book.getPageCount());
-                preparedStatement.setString(index++, book.getISBN());
+                preparedStatement.setString(index++, book.getIsbn());
                 preparedStatement.setString(index++, book.getDescription());
                 preparedStatement.setInt(index++, book.getTotalAmount());
                 preparedStatement.setInt(index++, book.getAvailableAmount());
                 preparedStatement.execute();
                 ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
                 while (resultSet.next()) {
                     id = resultSet.getInt(1);
                 }
-
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -202,14 +191,12 @@ public class BookRepositoryImpl implements BookRepository {
                         resultList.get(resultList.size()-1).getAuthors().add(resultSet.getString("Name"));
                     }
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return resultList;
     }
-
 
     @Override
     public BookEntity find(int bookId) {
@@ -225,7 +212,7 @@ public class BookRepositoryImpl implements BookRepository {
                                 .publishDate(resultSet.getInt("Publish_date"))
                                 .publisher(resultSet.getString("Publisher"))
                                 .pageCount(resultSet.getInt("Page_count"))
-                                .ISBN(resultSet.getString("Isbn"))
+                                .isbn(resultSet.getString("Isbn"))
                                 .description(resultSet.getString("Description"))
                                 .totalAmount(resultSet.getInt("Total_amount"))
                                 .availableAmount(resultSet.getInt("Available_amount"))
@@ -238,7 +225,6 @@ public class BookRepositoryImpl implements BookRepository {
                 Set<String> authors = new HashSet<>();
                 Set<String> genres = new HashSet<>();
                 Set<String> covers = new HashSet<>();
-
                 if (book != null) {
                     resultSet.beforeFirst();
                     while (resultSet.next()) {
@@ -253,7 +239,6 @@ public class BookRepositoryImpl implements BookRepository {
                         }
                     }
                 }
-
                 book.getAuthors().addAll(authors);
                 book.getGenres().addAll(genres);
                 book.getCovers().addAll(covers);
@@ -278,7 +263,6 @@ public class BookRepositoryImpl implements BookRepository {
                     } else {
                         PageCount = booksCount/(BOOK_PAGE_COUNT) + 1;
                     }
-
                 }
             }
         } catch (SQLException e) {
@@ -287,13 +271,12 @@ public class BookRepositoryImpl implements BookRepository {
         return PageCount;
     }
 
-
     @Override
-    public void delete(Object[] bookList) {
+    public void delete(List<Integer> bookList) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_BY_IDS)) {
 
-                Array booksArray = connection.createArrayOf("INTEGER", bookList);
+                Array booksArray = connection.createArrayOf("INTEGER", bookList.toArray());
                 preparedStatement.setArray(1, booksArray);
                 preparedStatement.execute();
             }

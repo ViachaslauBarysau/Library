@@ -1,6 +1,7 @@
 package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.controller.command.LibraryCommand;
+import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
@@ -40,8 +41,17 @@ public class GetBookListCommand extends LibraryCommand {
             pageNumber = 1;
         }
 
-        List<BookEntity> books = bookService.getBookPage(pageNumber);
 
+
+//        if (request.getParameter("hideunavailable") != null) {
+//            request.setAttribute("checkbox", "checked");
+//
+//        } else {
+//            List<BookDto> books = bookService.getBookPage(pageNumber);
+//            request.setAttribute("books", books);
+//        }
+
+        List<BookDto> books = bookService.getBookPage(pageNumber);
         request.setAttribute("books", books);
         request.setAttribute("pageCount", pageCount);
         request.setAttribute("pageNumber", pageNumber);

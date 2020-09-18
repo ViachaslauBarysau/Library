@@ -34,8 +34,7 @@ public class AuthorServiceImpl implements AuthorService {
             authorRepository.add(author);
         }
 
-        Object[] authorNames = bookDto.getAuthors().toArray();
-        List<Integer> authorIDs = authorRepository.getId(authorNames);
+        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors());
 
         authorRepository.deleteBooksAuthorsRecords(bookDto.getId());
 
@@ -55,8 +54,8 @@ public class AuthorServiceImpl implements AuthorService {
         ) {
             authorRepository.add(author, connection);
         }
-        Object[] authorNames = bookDto.getAuthors().toArray();
-        List<Integer> authorIDs = authorRepository.getId(authorNames, connection);
+
+        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors(), connection);
 
         authorRepository.deleteBooksAuthorsRecords(bookDto.getId(), connection);
 

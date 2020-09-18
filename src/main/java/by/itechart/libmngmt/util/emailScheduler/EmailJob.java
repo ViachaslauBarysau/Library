@@ -1,5 +1,6 @@
-package by.itechart.libmngmt.util.scheduler;
+package by.itechart.libmngmt.util.emailScheduler;
 
+import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.impl.ReaderCardServiceImpl;
@@ -22,17 +23,18 @@ public class EmailJob implements Job {
     public void execute(JobExecutionContext context)
             throws JobExecutionException {
 
-        List<ReaderCardEntity> sevenDaysBeforeReaderCards = readerCardService.getExpiringReaderCards(SEVEN_DAYS_BEFORE);
-        if (sevenDaysBeforeReaderCards != null) {        for (ReaderCardEntity readerCard : sevenDaysBeforeReaderCards
+        List<ReaderCardDto> sevenDaysBeforeReaderCards = readerCardService.getExpiringReaderCards(SEVEN_DAYS_BEFORE);
+        if (sevenDaysBeforeReaderCards != null) {
+            for (ReaderCardDto readerCard : sevenDaysBeforeReaderCards
         ) {
             emailSender.sendEmail(readerCard.getReaderEmail(),
                     letterTemplater.getMessageSevenDaysBefore(readerCard.getBookTitle(), readerCard.getReaderName()));
         }}
 
 
-        List<ReaderCardEntity> oneDayBeforeReaderCards = readerCardService.getExpiringReaderCards(ONE_DAY_BEFORE);
+        List<ReaderCardDto> oneDayBeforeReaderCards = readerCardService.getExpiringReaderCards(ONE_DAY_BEFORE);
         if (oneDayBeforeReaderCards != null) {
-            for (ReaderCardEntity readerCard : oneDayBeforeReaderCards
+            for (ReaderCardDto readerCard : oneDayBeforeReaderCards
             ) {
                 emailSender.sendEmail(readerCard.getReaderEmail(),
                         letterTemplater.getMessageOneDayBefore(readerCard.getBookTitle(), readerCard.getReaderName()));
@@ -41,9 +43,9 @@ public class EmailJob implements Job {
 
 
 
-        List<ReaderCardEntity> oneDayAfterReaderCards = readerCardService.getExpiringReaderCards(ONE_DAY_AFTER);
+        List<ReaderCardDto> oneDayAfterReaderCards = readerCardService.getExpiringReaderCards(ONE_DAY_AFTER);
         if (oneDayAfterReaderCards != null) {
-            for (ReaderCardEntity readerCard : oneDayAfterReaderCards
+            for (ReaderCardDto readerCard : oneDayAfterReaderCards
             ) {
                 emailSender.sendEmail(readerCard.getReaderEmail(),
                         letterTemplater.getMessageOneDayAfter(readerCard.getBookTitle(), readerCard.getReaderName()));

@@ -1,8 +1,8 @@
-package by.itechart.libmngmt.util.validator;
+package by.itechart.libmngmt.util.validator.fileValidator;
 
-import by.itechart.libmngmt.util.validator.impl.FileNameValidator;
-import by.itechart.libmngmt.util.validator.impl.FileSizeValidator;
-import by.itechart.libmngmt.util.validator.impl.FileTypeValidator;
+import by.itechart.libmngmt.util.validator.fileValidator.impl.FileNameValidator;
+import by.itechart.libmngmt.util.validator.fileValidator.impl.FileSizeValidator;
+import by.itechart.libmngmt.util.validator.fileValidator.impl.FileTypeValidator;
 
 public class ValidatorFactory {
 
