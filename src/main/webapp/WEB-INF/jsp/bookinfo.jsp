@@ -148,6 +148,7 @@ Borrow Records List:
 
     <!-- The Modal -->
     <div class="modal fade" id="myModal">
+        <div id="overlay" onclick="closeModal()"></div>
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -160,11 +161,16 @@ Borrow Records List:
                 <!-- Modal body -->
                 <div class="modal-body">
 
-                    <form>
+                    <form id="modal-form" onclick="closeAutocomplete()">
                         <p><input id="readerCardId" type="text" size="40" hidden></p>
                         <p><input id="readerId" type="text" size="40"  hidden></p>
                         <label id="emailLabel" for="email">Email:</label>
-                        <p><input id="email" class="form-control" type="email" size="40"  onkeyup="getEmailsByPattern(this.value)"  required></p>
+                        <p><input id="email" class="form-control" type="email" size="40" autocomplete="new-password"  onkeyup="getEmailsByPattern(this.value)"  required></p>
+                        <div id="autocomplete-container">
+                            <div id="autocomplete" class="hidden">
+                                <ul><li></li></ul>
+                            </div>
+                        </div>
                         <label id="nameLabel" for="name">Full name:</label>
                         <p><input id="name" class="form-control" type="text" size="40" required></p>
                         <label id="borrowDateLabel" for="borrowdate">Borrow date:</label>
@@ -187,7 +193,7 @@ Borrow Records List:
                         <label id="commentlabel" for="comment">Comment:</label>
                         <p><input id="comment" class="form-control" type="text" size="40"></p>
                         <div class="modal-footer">
-                            <button type="button" id="saveButton" class="btn btn-primary" onclick="saveReaderCard()" data-dismiss="modal">Save</button>
+                            <button type="submit" id="saveButton" class="btn btn-primary">Save</button>
                             <button type="button" class="btn btn-primary" onclick="closeModal()" data-dismiss="modal">Close</button>
                         </div>
                     </form>

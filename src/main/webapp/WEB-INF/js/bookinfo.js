@@ -99,11 +99,11 @@ function closeModal() {
 
 async function openExistingReaderCard(id) {
 
-    if (savePressedMarker == 0) {
-        saveButton.style.display = 'inline-block';
-    } else {
-        saveButton.style.display = 'none';
-    }
+    // if (savePressedMarker == 0) {
+    //     saveButton.style.display = 'inline-block';
+    // } else {
+    //     saveButton.style.display = 'none';
+    // }
 
     openModal();
 
@@ -140,7 +140,7 @@ async function openExistingReaderCard(id) {
 // });
 
 function openNewReaderCard() {
-    saveButton.style.display = 'inline-block';
+    // saveButton.style.display = 'inline-block';
     openModal();
 
     setNewReaderCardProperties();
@@ -159,7 +159,7 @@ function openNewReaderCard() {
 
 function opedEditedReaderCard() {
 
-    saveButton.style.display = 'inline-block';
+    // saveButton.style.display = 'inline-block';
     openModal();
     readerCardId.value = editedReaderCardRecord.id;
     readerId.value = editedReaderCardRecord.readerId;
@@ -176,22 +176,29 @@ function opedEditedReaderCard() {
     }
 
 }
+document.getElementById('modal-form').onsubmit = saveReaderCard
+function saveReaderCard(e) {
+    e.preventDefault()
+    var ele = document.getElementById("modal-form");
+    var chk_status = ele.checkValidity();
+    ele.reportValidity();
+    if (chk_status) {
+        console.log('valid')
+        document.getElementById("totalAmount").readOnly = true;
+        document.getElementById("availableAmount").readOnly = true;
+        // savePressedMarker = 1;
 
-function saveReaderCard() {
+        // addButton.hidden = true;
 
-    document.getElementById("totalAmount").readOnly = true;
-    document.getElementById("availableAmount").readOnly = true;
-    savePressedMarker = 1;
+        if (readerCardId.value == 0) {
+            saveNewReaderCard();
+        } else {
+            saveExistingReaderCard();
+        }
 
-    addButton.hidden = true;
-
-    if (readerCardId.value == 0) {
-        saveNewReaderCard();
-    } else {
-        saveExistingReaderCard();
+        closeModal();
     }
 
-    closeModal();
 }
 
 function changeStatusOnExistingReaderCard () {
@@ -327,6 +334,15 @@ function saveNewReaderCard() {
     tr.appendChild(td3);
     tr.appendChild(td4);
     tr.appendChild(td5);
+    // let tableRow = `<tr>
+    //     <td>
+    //         <a href="#" onclick="opedEditedReaderCard()" data-toggle="modal" data-target="#myModal" class="stretched-link">dirtyelegance8@gmail.com</a>
+    //     </td>
+    //     <td id="tdName">Viachaslau Barysau</td>
+    //     <td id="tdBorrowDate">2020-09-20</td>
+    //     <td id="tdDueDate">2020-10-20</td>
+    //     <td id="tdReturnDate"></td>
+    // </tr>`
 
     availableAmount.value = availableBooks - 1;
 
@@ -378,7 +394,7 @@ async function openClosedReaderCard(id) {
     timePeriodSelect.hidden = true;
     timePeriodLabel.hidden = true;
 
-    saveButton.style.display = 'none';
+    // saveButton.style.display = 'none';
 
 }
 
@@ -397,6 +413,8 @@ async function sendForm() {
     form.append("status", editedReaderCardRecord.status);
     form.append("comment", editedReaderCardRecord.comment);
 
+    form.append("borrowList", JSON.stringify([{name: "ivan"}, {name: "vasily"}]));
+
     let url = 'lib-app?command=ADD_EDIT_BOOK';
     let response = await fetch(url, {
         method: 'POST',
@@ -408,13 +426,37 @@ async function sendForm() {
 }
 
 async function getEmailsByPattern(pattern) {
+    let autocomplete = document.getElementById('autocomplete');
     if (pattern.length >=3) {
         console.log(pattern);
         let url = "rdr?pattern=" + pattern.toLowerCase();
         let response = await fetch(url);
         let emails = await response.json();
         console.log(emails);
+        let vars = ''
+        for (let i in emails) {
+            console.log(emails[i])
+            vars += '<li onclick="autocompleteEmail(\'' + emails[i] + '\')">' + emails[i] + '</li>'
+        }
+        console.log(vars)
+        autocomplete.classList.remove("hidden");
+        while (autocomplete.firstChild) {
+            autocomplete.removeChild(autocomplete.firstChild);
+        }
+        autocomplete.insertAdjacentHTML('beforeend', '<ul>' + vars + '</ul>');
+    } else {
+        autocomplete.classList.add("hidden");
     }
+}
+
+function autocompleteEmail(i) {
+    document.getElementById('email').value = i
+    closeAutocomplete()
+}
+
+function closeAutocomplete() {
+    let autocomplete = document.getElementById('autocomplete');
+    autocomplete.classList.add("hidden");
 }
 
 
