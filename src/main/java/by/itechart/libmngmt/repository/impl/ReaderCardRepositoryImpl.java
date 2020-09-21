@@ -43,8 +43,9 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
         List<ReaderCardEntity> readerCardEntities = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_EXPIRING_READER_CARDS)) {
-                preparedStatement.setInt(1, days);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setInt(index++, days);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while(resultSet.next()){
                     readerCardEntities.add(ReaderCardEntity.builder()
                     .bookTitle(resultSet.getString("Title"))
@@ -59,15 +60,14 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
         return readerCardEntities;
     }
 
-
-
     @Override
     public int getActiveReaderCardsCount(int bookId) {
         int count = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_ACTIVE_READER_CARD_COUNT_BY_BOOK_ID)) {
-                preparedStatement.setInt(1, bookId);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while(resultSet.next()){
                     count = resultSet.getInt(1);
                 }
@@ -83,8 +83,9 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
         int id = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_TWO_NEAREST_RETURN_DATE_ID)) {
-                preparedStatement.setInt(1, bookId);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     id = resultSet.getInt("ReaderCard_ID");
                 }
@@ -100,8 +101,9 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
         List<Date> resultList = new ArrayList();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_TWO_NEAREST_RETURN_DATES)) {
-                preparedStatement.setInt(1, bookId);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     resultList.add(resultSet.getDate("Due_date"));
                 }
@@ -126,7 +128,6 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
                 preparedStatement.setString(index++, readerCard.getComment());
                 preparedStatement.execute();
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -143,7 +144,6 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
                 preparedStatement.setInt(index++, readerCard.getId());
                 preparedStatement.execute();
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -154,8 +154,9 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
         ReaderCardEntity readerCardEntity = new ReaderCardEntity();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERCARD_BY_ID)) {
-                preparedStatement.setInt(1, readerCardId);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setInt(index++, readerCardId);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     readerCardEntity = ReaderCardEntity.builder()
                             .id(resultSet.getInt("ReaderCard_ID"))
@@ -183,8 +184,9 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
         List<ReaderCardEntity> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERCARDS_BY_BOOKID)) {
-                preparedStatement.setInt(1, bookId);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     resultList.add(ReaderCardEntity.builder()
                                 .id(resultSet.getInt("ReaderCard_ID"))

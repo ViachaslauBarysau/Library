@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class FileUploader {
-
     public static void uploadFile(Part filePart, String fileName) {
         try (InputStream fileContent = filePart.getInputStream();
              OutputStream outputStream = new FileOutputStream(new File(System.getProperty("uploadFolderPath")
@@ -21,5 +20,4 @@ public class FileUploader {
             e.printStackTrace();
         }
     }
-
 }

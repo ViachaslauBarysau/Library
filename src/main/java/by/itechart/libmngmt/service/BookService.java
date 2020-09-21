@@ -10,6 +10,7 @@ import java.util.List;
 public interface BookService {
     List<BookDto> getBookPage(int pageNumber);
     List<BookDto> getAvailableBookPage(int pageNumber);
+    int getAvailableBookPageCount();
     int getPageCount();
     void delete(List<Integer> booksList);
     List<BookDto> search(List<String> searchParams, int pageNumber);

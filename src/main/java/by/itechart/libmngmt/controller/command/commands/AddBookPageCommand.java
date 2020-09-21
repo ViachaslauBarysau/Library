@@ -19,10 +19,8 @@ public class AddBookPageCommand extends LibraryCommand {
         return instance;
     }
 
-
     @Override
     public void process() throws ServletException, IOException {
-
         BookDto bookDto = new BookDto();
         bookDto.setId(0);
         bookDto.setCovers(Arrays.asList("glass.jpg"));
@@ -31,7 +29,6 @@ public class AddBookPageCommand extends LibraryCommand {
                 .readerCards(new ArrayList<>())
                 .build();
         request.setAttribute("bookpagedto", bookPageDto);
-
         forward("bookpage");
     }
 }

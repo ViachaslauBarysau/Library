@@ -31,10 +31,8 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDto> getBookPage(int pageNumber) {
         List<BookEntity> bookEntities = bookRepository.findAll(pageNumber);
-
         List<BookDto> bookDtoList = new ArrayList<>();
-        for (BookEntity bookEntity : bookEntities
-             ) {
+        for (BookEntity bookEntity : bookEntities) {
             bookDtoList.add(BookConverter.convertBookEntityToBookDto(bookEntity));
         }
         return bookDtoList;
@@ -46,8 +44,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public int getAvailableBookPageCount() {
+        return bookRepository.getAvailableBookPageCount();
+    }
+
+    @Override
     public List<BookDto> getAvailableBookPage(int pageNumber) {
-        return null;
+        List<BookEntity> bookEntities = bookRepository.findAvailable(pageNumber);
+        List<BookDto> bookDtoList = new ArrayList<>();
+        for (BookEntity bookEntity : bookEntities) {
+            bookDtoList.add(BookConverter.convertBookEntityToBookDto(bookEntity));
+        }
+        return bookDtoList;
     }
 
     @Override
@@ -57,11 +65,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int getSearchPageCount(List<String> searchParams) {
-
         for (int index=0; index<searchParams.size(); index++){
             searchParams.set(index, "%" + searchParams.get(index).toLowerCase().trim() + "%");
         }
-
         return bookRepository.getSearchPageCount(searchParams);
     }
 
@@ -73,39 +79,21 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto find(int bookId) {
         BookEntity bookEntity = bookRepository.find(bookId);
-
-        BookDto bookDto = BookDto.builder()
-                .id(bookEntity.getId())
-                .title(bookEntity.getTitle())
-                .publisher(bookEntity.getPublisher())
-                .publishDate(bookEntity.getPublishDate())
-                .isbn(bookEntity.getIsbn())
-                .description(bookEntity.getDescription())
-                .totalAmount(bookEntity.getTotalAmount())
-                .pageCount(bookEntity.getPageCount())
-                .availableAmount(bookEntity.getAvailableAmount())
-                .authors(bookEntity.getAuthors())
-                .genres(bookEntity.getGenres())
-                .covers(bookEntity.getCovers())
-                .build();
+        BookDto bookDto = BookConverter.convertBookEntityToBookDto(bookEntity);
         return bookDto;
     }
 
     @Override
     public List<BookDto> search(List<String> searchParams, int pageNumber) {
-
-        for (int index=0; index<searchParams.size(); index++){
+        for (int index=0; index<searchParams.size(); index++) {
             searchParams.set(index, "%" + searchParams.get(index) + "%");
         }
         List<BookEntity> bookEntities = bookRepository.search(searchParams, pageNumber);
         List<BookDto> bookDtoList = new ArrayList<>();
-        for (BookEntity bookEntity : bookEntities
-        ) {
+        for (BookEntity bookEntity : bookEntities) {
             bookDtoList.add(BookConverter.convertBookEntityToBookDto(bookEntity));
         }
-
         return bookDtoList;
-
     }
 
     @Override
@@ -113,13 +101,9 @@ public class BookServiceImpl implements BookService {
         bookRepository.update(BookConverter.convertBookDtoToBookEntity(bookDto), connection);
     }
 
-
-
     @Override
     public int addEditBook(BookDto bookDto) {
-
         int bookId = 0;
-
         try (Connection connection = ConnectionHelper.getConnection()) {
             connection.setAutoCommit(false);
             if (bookDto.getId()==0) {
@@ -131,14 +115,11 @@ public class BookServiceImpl implements BookService {
                 updateBook(bookDto, connection);
                 bookId = bookDto.getId();
             }
-
             authorService.add(bookDto, connection);
             genreService.add(bookDto, connection);
             coverService.add(bookDto, connection);
             connection.commit();
-
             connection.setAutoCommit(true);
-
         }
              catch (SQLException e) {
             e.printStackTrace();

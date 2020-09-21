@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertyReader {
-
     private static final String PROPERTIES_PATH = "db.properties";
     private static Properties properties = new Properties();
     private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionHelper.class);
@@ -25,7 +24,6 @@ public class PropertyReader {
     }
 
     public static String getProperty(String propertyName) {
-
         return properties.getProperty(propertyName);
     }
 }

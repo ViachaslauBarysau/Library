@@ -35,7 +35,6 @@ public class BookManagementServiceImpl implements BookManagementService {
             nextNearestAvailableDate = nearestAvailableDateList.get(1);
         }
         int nearestReturnReaderCardId = readerCardService.getNearestReturnReaderCardId(bookId);
-
         BookPageDto bookPageDto = BookPageDto.builder()
                 .bookDto(bookService.find(bookId))
                 .readerCards(readerCardService.get(bookId))

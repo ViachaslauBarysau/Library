@@ -13,12 +13,9 @@ import java.util.stream.Stream;
 
 @Data
 public class FileNameValidator implements Validator {
-
     @Override
     public boolean validate(Object fileName) {
-
         List<String> fileList = getFileList();
-
         for (String existingFilename : fileList) {
             if (fileName.equals(existingFilename)) {
                 return false;
@@ -26,7 +23,6 @@ public class FileNameValidator implements Validator {
         }
         return true;
     }
-
 
     public List<String> getFileList() {
         try (Stream<Path> walk = Files.walk(Paths.get(System.getProperty("uploadFolderPath")))) {
@@ -37,8 +33,4 @@ public class FileNameValidator implements Validator {
         }
         return null;
     }
-
-
-
-
 }

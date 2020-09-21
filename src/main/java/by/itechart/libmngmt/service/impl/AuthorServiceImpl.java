@@ -24,43 +24,37 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void add(BookDto bookDto) {
-        List<String> allAuthorsList = authorRepository.get();
+        List<String> allAuthorsList = authorRepository.findAll();
         List<String> bookAuthorsList = new ArrayList<>();
         bookAuthorsList.addAll(bookDto.getAuthors());
         bookAuthorsList.removeAll(allAuthorsList);
-
         for (String author: bookAuthorsList
         ) {
             authorRepository.add(author);
         }
 
-        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors());
-
         authorRepository.deleteBooksAuthorsRecords(bookDto.getId());
 
-        for (int authorID: authorIDs
-             ) {
+        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors());
+        for (int authorID: authorIDs) {
             authorRepository.addBookAuthorRecord(bookDto.getId(), authorID);
         }
     }
 
     @Override
     public void add(BookDto bookDto, Connection connection) throws SQLException {
-        List<String> allAuthorsList = authorRepository.get(connection);
+        List<String> allAuthorsList = authorRepository.findAll(connection);
         List<String> bookAuthorsList = new ArrayList<>();
         bookAuthorsList.addAll(bookDto.getAuthors());
         bookAuthorsList.removeAll(allAuthorsList);
-        for (String author: bookAuthorsList
-        ) {
+        for (String author: bookAuthorsList) {
             authorRepository.add(author, connection);
         }
 
-        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors(), connection);
-
         authorRepository.deleteBooksAuthorsRecords(bookDto.getId(), connection);
 
-        for (int authorID: authorIDs
-        ) {
+        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors(), connection);
+        for (int authorID: authorIDs) {
             authorRepository.addBookAuthorRecord(bookDto.getId(), authorID, connection);
         }
     }

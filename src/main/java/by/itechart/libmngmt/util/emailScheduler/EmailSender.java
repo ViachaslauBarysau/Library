@@ -25,7 +25,6 @@ public class EmailSender {
     private final static int PORT = 465;
 
     public void sendEmail(String readerEmail, String message) {
-
         try {
             Email email = new SimpleEmail();
             email.setHostName(HOST_NAME);
@@ -40,7 +39,5 @@ public class EmailSender {
         } catch (EmailException e) {
             e.printStackTrace();
         }
-
     }
-
 }

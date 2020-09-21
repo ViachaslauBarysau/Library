@@ -30,10 +30,8 @@ public class BookValidator {
         validatePublishDate(request.getParameter("publishDate"));
         validatePublisher(request.getParameter("publisher"));
         validatePageCount(request.getParameter("pageCount"));
-        validateTotalAmount(request.getParameter("totalAmount"),
-                Integer.parseInt(request.getParameter("id")));
+        validateTotalAmount(request.getParameter("totalAmount"), Integer.parseInt(request.getParameter("id")));
     }
-
 
     private void validateTitle(String title) {
         if (title == null || title.isEmpty() || title.length() > 40) {
@@ -42,16 +40,13 @@ public class BookValidator {
     }
 
     private void validateAuthors(List<String> authors) {
-
         if (authors != null) {
             Set<String> authorsSet = new HashSet<>();
-            for (String authorName : authors
-                 ) {
+            for (String authorName : authors) {
                 if (authorName !=null && !authorName.isEmpty() && authorName.length() < 30
                         && authorName.matches(AUTHOR_GENRE_PATTERN)) {
                     authorsSet.add(authorName.toLowerCase());
                 }
-
             }
             if (authors.size() != authorsSet.size()) {
                 errorMessages.add("Author's name(s) is incorrect!");
@@ -64,8 +59,7 @@ public class BookValidator {
     private void validateGenres(List<String> genres) {
         if (genres != null) {
             Set<String> genresSet = new HashSet<>();
-            for (String genre : genres
-            ) {
+            for (String genre : genres) {
                 if (genre !=null && !genre.isEmpty() && genre.length() < 30 && genre.matches(AUTHOR_GENRE_PATTERN)) {
                     genresSet.add(genre.toLowerCase());
                 }
@@ -114,20 +108,16 @@ public class BookValidator {
     }
 
     public String validateFile(HttpServletRequest request) throws IOException, ServletException {
+        final int SIZE_VALIDATOR = 1;
+        final int TYPE_VALIDATOR = 2;
+        final int NAME_VALIDATOR = 3;
         Part filePart = request.getPart("file");
         String fileName = request.getParameter("currentCover");
-
         if (!filePart.getSubmittedFileName().equals("")) {
             fileName = request.getParameter("currentCover");
-
-            final int SIZE_VALIDATOR = 1;
-            final int TYPE_VALIDATOR = 2;
-            final int NAME_VALIDATOR = 3;
-
             Validator sizeValidator = ValidatorFactory.validatorCreate(SIZE_VALIDATOR);
             Validator typeValidator = ValidatorFactory.validatorCreate(TYPE_VALIDATOR);
             Validator nameValidator = ValidatorFactory.validatorCreate(NAME_VALIDATOR);
-
             if (sizeValidator.validate(filePart.getSize()) == false ||
                     typeValidator.validate(filePart.getContentType()) == false) {
                 errorMessages.add("Only jpeg/png up to 2Mb for image!");;
@@ -137,11 +127,8 @@ public class BookValidator {
                 while (!nameValidator.validate(fileName)) {
                     fileName = chars[random.nextInt(chars.length)] + fileName;
                 }
-
             }
-
         }
         return fileName;
     }
-
 }

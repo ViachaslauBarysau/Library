@@ -13,7 +13,6 @@ public class LibraryCommandFactory {
     static  {
         commands.put(LibraryCommandType.DELETE_BOOK, DeleteBookCommand.getInstance());
         commands.put(LibraryCommandType.ADD_EDIT_BOOK, AddEditBookCommand.getInstance());
-        commands.put(LibraryCommandType.ADD_EDIT_READER, AddEditReaderCommand.getInstance());
         commands.put(LibraryCommandType.BOOK_PAGE, BookPageCommand.getInstance());
         commands.put(LibraryCommandType.GET_BOOK_LIST, GetBookListCommand.getInstance());
         commands.put(LibraryCommandType.SEARCH_PAGE, SearchPageCommand.getInstance());

@@ -23,6 +23,7 @@ public class DeleteSearchedBookCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
+        final int MIN_PAGE_NUMBER = 1;
         try {
             List<Integer> booksIdsForDeleting = Arrays.asList(request.getParameterValues("bookid")).stream()
                     .mapToInt(Integer::parseInt).boxed().collect(Collectors.toList());
@@ -30,15 +31,12 @@ public class DeleteSearchedBookCommand extends LibraryCommand {
         } catch (Exception e) {
 
         }
-//        Object[] booksIdsForDeleting = Arrays.stream(request.getParameterValues("bookid")).mapToInt(Integer::parseInt).boxed().toArray();
-//        bookService.delete(booksIdsForDeleting);
-
 
         String title = request.getParameter("title");
         String author = request.getParameter("author");
         String genre = request.getParameter("genre");
         String description = request.getParameter("description");
-        int pageNumber = 1;
+        int pageNumber = MIN_PAGE_NUMBER;
         try {
             pageNumber = Integer.parseInt(request.getParameter("page"));
         } catch (Exception e) {

@@ -25,32 +25,26 @@ public class EmailJob implements Job {
 
         List<ReaderCardDto> sevenDaysBeforeReaderCards = readerCardService.getExpiringReaderCards(SEVEN_DAYS_BEFORE);
         if (sevenDaysBeforeReaderCards != null) {
-            for (ReaderCardDto readerCard : sevenDaysBeforeReaderCards
-        ) {
+            for (ReaderCardDto readerCard : sevenDaysBeforeReaderCards) {
             emailSender.sendEmail(readerCard.getReaderEmail(),
                     letterTemplater.getMessageSevenDaysBefore(readerCard.getBookTitle(), readerCard.getReaderName()));
-        }}
-
+            }
+        }
 
         List<ReaderCardDto> oneDayBeforeReaderCards = readerCardService.getExpiringReaderCards(ONE_DAY_BEFORE);
         if (oneDayBeforeReaderCards != null) {
-            for (ReaderCardDto readerCard : oneDayBeforeReaderCards
-            ) {
+            for (ReaderCardDto readerCard : oneDayBeforeReaderCards) {
                 emailSender.sendEmail(readerCard.getReaderEmail(),
                         letterTemplater.getMessageOneDayBefore(readerCard.getBookTitle(), readerCard.getReaderName()));
             }
         }
 
-
-
         List<ReaderCardDto> oneDayAfterReaderCards = readerCardService.getExpiringReaderCards(ONE_DAY_AFTER);
         if (oneDayAfterReaderCards != null) {
-            for (ReaderCardDto readerCard : oneDayAfterReaderCards
-            ) {
+            for (ReaderCardDto readerCard : oneDayAfterReaderCards) {
                 emailSender.sendEmail(readerCard.getReaderEmail(),
                         letterTemplater.getMessageOneDayAfter(readerCard.getBookTitle(), readerCard.getReaderName()));
             }
         }
-
     }
 }

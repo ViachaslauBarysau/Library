@@ -21,10 +21,16 @@ public class BookRepositoryImpl implements BookRepository {
     private static final int BOOK_PAGE_COUNT = 10;
     private static final String SQL_DELETE_BOOKS_BY_IDS = "DELETE FROM Books WHERE id = ANY (?);";
     private static final String SQL_GET_PAGE_COUNT = "SELECT COUNT(ID) FROM Books;";
+    private static final String SQL_GET_AVAILABLE_PAGE_COUNT = "SELECT COUNT(ID) FROM Books WHERE Available_amount>0;";
     private static final String SQL_GET_BOOK_PAGE = "SELECT Books.*, Authors.Name FROM Books" +
             " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
             " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
             " WHERE Book_ID IN (SELECT ID FROM BOOKS ORDER BY Title ASC LIMIT ? OFFSET ?) ORDER BY Title ASC;";
+    private static final String SQL_GET_AVAILABLE_BOOK_PAGE = "SELECT Books.*, Authors.Name FROM Books" +
+            " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
+            " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
+            " WHERE Book_ID IN (SELECT ID FROM BOOKS WHERE Available_amount >0 ORDER BY Title ASC LIMIT ? OFFSET ?)" +
+            " ORDER BY Title ASC;";
     private static final String SQL_SEARCH_BOOKS = "SELECT Books.*, Authors.Name FROM Books" +
             " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
             " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
@@ -35,7 +41,6 @@ public class BookRepositoryImpl implements BookRepository {
             " LEFT JOIN Genres on Genres.Id=Books_Genres.Genre_Id" +
             " WHERE lower(Books.title) LIKE ? AND lower(name) LIKE ? AND lower(Genres.Title) LIKE ? AND" +
             " lower(description) LIKE ? ORDER BY Books.Title ASC) ORDER BY Title ASC LIMIT ? OFFSET ?;";
-
     private static final String SQL_GET_SEARCH_PAGE_COUNT = "SELECT COUNT(ID) FROM (SELECT DISTINCT Books.ID" +
             " FROM Books LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
             " LEFT JOIN Authors ON Authors.Id=Books_Authors.Author_Id" +
@@ -43,7 +48,6 @@ public class BookRepositoryImpl implements BookRepository {
             " LEFT JOIN Genres on Genres.Id=Books_Genres.Genre_Id" +
             " WHERE lower(Books.title) LIKE ? AND lower(name) LIKE ? AND" +
             " lower(Genres.Title) LIKE ? AND lower(description) LIKE ?);";
-
     private static final String SQL_GET_BOOK = "SELECT Books.*, Authors.Name, Genres.Title AS Genre," +
             " Covers.Title AS Cover FROM Books" +
             " LEFT JOIN Books_Authors ON Books_Authors.Book_Id=Books.Id" +
@@ -88,7 +92,7 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setString(index++, searchParams.get(1));
                 preparedStatement.setString(index++, searchParams.get(2));
                 preparedStatement.setString(index++, searchParams.get(3));
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while(resultSet.next()){
                     int booksCount = resultSet.getInt(1);
                     if (booksCount% BOOK_PAGE_COUNT ==0) {
@@ -122,9 +126,61 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
+    public int getAvailableBookPageCount() {
+        int pageCount = 1;
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AVAILABLE_PAGE_COUNT)) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while(resultSet.next()){
+                    int booksCount = resultSet.getInt(1);
+                    if (booksCount% BOOK_PAGE_COUNT ==0) {
+                        pageCount = booksCount/(BOOK_PAGE_COUNT);
+                    } else {
+                        pageCount = booksCount/(BOOK_PAGE_COUNT) + 1;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return pageCount;
+    }
+
+    @Override
+    public List<BookEntity> findAvailable(int offset) {
+        List<BookEntity> resultList = new ArrayList<>();
+        try (Connection connection = ConnectionHelper.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AVAILABLE_BOOK_PAGE)) {
+                int index = 1;
+                preparedStatement.setInt(index++, BOOK_PAGE_COUNT);
+                preparedStatement.setInt(index++, (offset-1)* BOOK_PAGE_COUNT);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    if (resultList.isEmpty() || resultList.get(resultList.size()-1)
+                            .getId()!=resultSet.getInt("ID")) {
+                        resultList.add(BookEntity.builder()
+                                .id(resultSet.getInt("ID"))
+                                .title(resultSet.getString("Title"))
+                                .authors(new ArrayList<>(Arrays.asList(resultSet.getString("Name"))))
+                                .publishDate(resultSet.getInt("Publish_date"))
+                                .availableAmount(resultSet.getInt("Available_amount"))
+                                .build());
+                    } else {
+                        resultList.get(resultList.size()-1).getAuthors().add(resultSet.getString("Name"));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultList;
+    }
+
+    @Override
     public int add(BookEntity book, Connection connection) throws SQLException {
         int id = 0;
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement preparedStatement =
+                         connection.prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
                 int index = 1;
                 preparedStatement.setString(index++, book.getTitle());
                 preparedStatement.setString(index++, book.getPublisher());
@@ -147,7 +203,8 @@ public class BookRepositoryImpl implements BookRepository {
     public int add(BookEntity book) {
         int id = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement preparedStatement = connection
+                    .prepareStatement(SQL_ADD_BOOK, Statement.RETURN_GENERATED_KEYS)) {
                 int index = 1;
                 preparedStatement.setString(index++, book.getTitle());
                 preparedStatement.setString(index++, book.getPublisher());
@@ -177,9 +234,10 @@ public class BookRepositoryImpl implements BookRepository {
                 int index = 1;
                 preparedStatement.setInt(index++, BOOK_PAGE_COUNT);
                 preparedStatement.setInt(index++, (offset-1)* BOOK_PAGE_COUNT);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    if (resultList.isEmpty() || resultList.get(resultList.size()-1).getId()!=resultSet.getInt("ID")) {
+                    if (resultList.isEmpty() || resultList.get(resultList.size()-1)
+                            .getId()!=resultSet.getInt("ID")) {
                         resultList.add(BookEntity.builder()
                                 .id(resultSet.getInt("ID"))
                                 .title(resultSet.getString("Title"))
@@ -202,9 +260,10 @@ public class BookRepositoryImpl implements BookRepository {
     public BookEntity find(int bookId) {
         BookEntity book = null;
         try (Connection connection = ConnectionHelper.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_BOOK,
+                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
                 preparedStatement.setInt(1, bookId);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
                     while (resultSet.next()) {
                         book = BookEntity.builder()
                                 .id(resultSet.getInt("ID"))
@@ -251,33 +310,32 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public int getPageCount() {
-        int PageCount = 1;
+        int pageCount = 1;
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_PAGE_COUNT)) {
-
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while(resultSet.next()){
                     int booksCount = resultSet.getInt(1);
                     if (booksCount% BOOK_PAGE_COUNT ==0) {
-                        PageCount = booksCount/(BOOK_PAGE_COUNT);
+                        pageCount = booksCount/(BOOK_PAGE_COUNT);
                     } else {
-                        PageCount = booksCount/(BOOK_PAGE_COUNT) + 1;
+                        pageCount = booksCount/(BOOK_PAGE_COUNT) + 1;
                     }
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return PageCount;
+        return pageCount;
     }
 
     @Override
     public void delete(List<Integer> bookList) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_BY_IDS)) {
-
                 Array booksArray = connection.createArrayOf("INTEGER", bookList.toArray());
-                preparedStatement.setArray(1, booksArray);
+                int index = 1;
+                preparedStatement.setArray(index++, booksArray);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
@@ -297,9 +355,10 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setString(index++, searchParams.get(3));
                 preparedStatement.setInt(index++, BOOK_PAGE_COUNT);
                 preparedStatement.setInt(index++, (offset-1)* BOOK_PAGE_COUNT);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    if (resultList.isEmpty() || resultList.get(resultList.size()-1).getId()!=resultSet.getInt("ID")) {
+                    if (resultList.isEmpty() || resultList.get(resultList.size()-1)
+                            .getId()!=resultSet.getInt("ID")) {
                         resultList.add(BookEntity.builder()
                                 .id(resultSet.getInt("ID"))
                                 .title(resultSet.getString("Title"))
@@ -311,7 +370,6 @@ public class BookRepositoryImpl implements BookRepository {
                         resultList.get(resultList.size()-1).getAuthors().add(resultSet.getString("Name"));
                     }
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();

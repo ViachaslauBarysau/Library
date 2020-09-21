@@ -25,8 +25,7 @@ public class CoverServiceImpl implements CoverService {
     public void add(BookDto bookDto) {
         List<String> bookCoversList = bookDto.getCovers();
         coverRepository.delete(bookDto.getId());
-        for (String cover: bookCoversList
-        ) {
+        for (String cover: bookCoversList) {
             coverRepository.add(bookDto.getId(), cover);
         }
     }
@@ -35,8 +34,7 @@ public class CoverServiceImpl implements CoverService {
     public void add(BookDto bookDto, Connection connection) throws SQLException {
         List<String> bookCoversList = bookDto.getCovers();
         coverRepository.delete(bookDto.getId(), connection);
-        for (String cover: bookCoversList
-        ) {
+        for (String cover: bookCoversList) {
             coverRepository.add(bookDto.getId(), cover, connection);
         }
     }

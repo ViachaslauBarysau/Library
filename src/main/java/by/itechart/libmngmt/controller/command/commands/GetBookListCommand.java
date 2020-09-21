@@ -9,6 +9,7 @@ import lombok.Data;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,37 +26,38 @@ public class GetBookListCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
-
-        int pageNumber = 1;
-
+        final int MIN_PAGE_NUMBER = 1;
+        int pageNumber = MIN_PAGE_NUMBER;
+        int pageCount;
         try {
             pageNumber = Integer.parseInt(request.getParameter("page"));
         } catch (Exception e) {
 
         }
+        List<BookDto> books;
+        if (request.getParameter("hideunavailable") != null &&
+                !request.getParameter("hideunavailable").isEmpty()) {
+            request.setAttribute("hideUnavailable", "true");
+            pageCount = bookService.getAvailableBookPageCount();
+            pageNumber = setPageNumber(pageNumber, pageCount);
+            books = bookService.getAvailableBookPage(pageNumber);
+        } else {
+            pageCount = bookService.getPageCount();
+            pageNumber = setPageNumber(pageNumber, pageCount);
+            books = bookService.getBookPage(pageNumber);
+        }
+        request.setAttribute("books", books);
+        request.setAttribute("pageCount", pageCount);
+        request.setAttribute("pageNumber", pageNumber);
+        forward("mainpage");
+    }
 
-        int pageCount = bookService.getPageCount();
+    private int setPageNumber(int pageNumber, int pageCount) {
         if (pageNumber > pageCount) {
             pageNumber = pageCount;
         } else if (pageNumber < 1) {
             pageNumber = 1;
         }
-
-
-
-//        if (request.getParameter("hideunavailable") != null) {
-//            request.setAttribute("checkbox", "checked");
-//
-//        } else {
-//            List<BookDto> books = bookService.getBookPage(pageNumber);
-//            request.setAttribute("books", books);
-//        }
-
-        List<BookDto> books = bookService.getBookPage(pageNumber);
-        request.setAttribute("books", books);
-        request.setAttribute("pageCount", pageCount);
-        request.setAttribute("pageNumber", pageNumber);
-
-        forward("mainpage");
+        return pageNumber;
     }
 }

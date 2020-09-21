@@ -23,45 +23,38 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public void add(BookDto bookDto) {
-        List<String> allGenresList = genreRepository.get();
-        List<String> bookGenresList = new ArrayList<>();
-        bookGenresList =  bookDto.getGenres();
+        List<String> allGenresList = genreRepository.findAll();
+        List<String> bookGenresList =  new ArrayList<>();
+        bookGenresList.addAll(bookDto.getGenres());
         bookGenresList.removeAll(allGenresList);
-        for (String genre: bookGenresList
-        ) {
+        for (String genre: bookGenresList) {
             genreRepository.add(genre);
         }
 
+        genreRepository.deleteBooksGenres(bookDto.getId());
+
         List<Integer> genreIDs = genreRepository.getId(bookDto.getGenres());
-
-        genreRepository.deleteBooksGenresRecords(bookDto.getId());
-
-        for (int genreId: genreIDs
-        ) {
-            genreRepository.addBookGenreRecord(bookDto.getId(), genreId);
+        for (int genreId: genreIDs) {
+            genreRepository.addBookGenre(bookDto.getId(), genreId);
         }
     }
 
     @Override
     public void add(BookDto bookDto, Connection connection) throws SQLException {
 
-        List<String> allGenresList = genreRepository.get(connection);
+        List<String> allGenresList = genreRepository.findAll(connection);
         List<String> bookGenresList = new ArrayList<>();
         bookGenresList.addAll(bookDto.getGenres());
         bookGenresList.removeAll(allGenresList);
-
-        for (String genre: bookGenresList
-             ) {
+        for (String genre: bookGenresList) {
             genreRepository.add(genre, connection);
         }
 
+        genreRepository.deleteBooksGenres(bookDto.getId(), connection);
+
         List<Integer> genreIDs = genreRepository.getId(bookDto.getGenres(), connection);
-
-        genreRepository.deleteBooksGenresRecords(bookDto.getId(), connection);
-
-        for (int genreId: genreIDs
-        ) {
-            genreRepository.addBookGenreRecord(bookDto.getId(), genreId, connection);
+        for (int genreId: genreIDs) {
+            genreRepository.addBookGenre(bookDto.getId(), genreId, connection);
         }
     }
 }

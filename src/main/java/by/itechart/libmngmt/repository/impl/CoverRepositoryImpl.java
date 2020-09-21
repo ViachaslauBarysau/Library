@@ -23,8 +23,9 @@ public class CoverRepositoryImpl implements CoverRepository {
     public void add(int bookId, String title) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_COVER)) {
-                preparedStatement.setInt(1, bookId);
-                preparedStatement.setString(2, title);
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
+                preparedStatement.setString(index++, title);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
@@ -35,8 +36,9 @@ public class CoverRepositoryImpl implements CoverRepository {
     @Override
     public void add(int bookId, String title, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_COVER)) {
-            preparedStatement.setInt(1, bookId);
-            preparedStatement.setString(2, title);
+            int index = 1;
+            preparedStatement.setInt(index++, bookId);
+            preparedStatement.setString(index++, title);
             preparedStatement.execute();
         }
     }
@@ -45,7 +47,8 @@ public class CoverRepositoryImpl implements CoverRepository {
     public void delete(int bookId) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_COVERS_BY_BOOK_ID)) {
-                preparedStatement.setInt(1, bookId);
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
@@ -56,7 +59,8 @@ public class CoverRepositoryImpl implements CoverRepository {
     @Override
     public void delete(int bookId, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_COVERS_BY_BOOK_ID)) {
-            preparedStatement.setInt(1, bookId);
+            int index = 1;
+            preparedStatement.setInt(index++, bookId);
             preparedStatement.execute();
         }
     }

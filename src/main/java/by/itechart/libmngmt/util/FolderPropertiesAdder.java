@@ -12,7 +12,6 @@ public class FolderPropertiesAdder {
         }
         System.setProperty("uploadFolderPath", uploadPath);
     }
-
 }
 
 

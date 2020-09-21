@@ -5,12 +5,10 @@ import by.itechart.libmngmt.util.validator.fileValidator.impl.FileSizeValidator;
 import by.itechart.libmngmt.util.validator.fileValidator.impl.FileTypeValidator;
 
 public class ValidatorFactory {
-
     public static Validator validatorCreate(int validatorType) {
         final int SIZE_VALIDATOR = 1;
         final int TYPE_VALIDATOR = 2;
         final int NAME_VALIDATOR = 3;
-
         switch (validatorType) {
             case (SIZE_VALIDATOR): {
                 return new FileSizeValidator();
@@ -26,5 +24,4 @@ public class ValidatorFactory {
             }
         }
     }
-
 }

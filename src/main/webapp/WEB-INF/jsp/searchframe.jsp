@@ -59,10 +59,10 @@
     </table>
 
     <button type="submit" class="btn btn-primary" formaction="lib-app?command=ADD_BOOK_PAGE" />
-    Add Book
+    <label>Add Book</label>
     </button>
     <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_SEARCHED_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber}" />
-    Delete Book(-s)
+    <label>Delete Book(-s)</label>
     </button>
 
     <c:if test ="${not empty pageNumber}">
@@ -70,7 +70,7 @@
             <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber-1}" />
             &lt;
             </button>
-            ${pageNumber}
+            ${pageNumber} of ${pageCount}
             <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber+1}" disabled/>
             &gt;
             </button>
@@ -79,7 +79,7 @@
             <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber-1}" disabled/>
             &lt;
             </button>
-            ${pageNumber}
+            ${pageNumber} of ${pageCount}
             <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber+1}" />
             &gt;
             </button>

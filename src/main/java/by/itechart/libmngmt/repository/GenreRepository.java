@@ -6,14 +6,13 @@ import java.util.List;
 
 public interface GenreRepository {
     void add(String title);
-    List<String> get();
+    List<String> findAll();
     List<Integer> getId(List<String> genres);
-    void addBookGenreRecord(int bookId, int genreId);
-    void deleteBooksGenresRecords(int bookId);
-
+    void addBookGenre(int bookId, int genreId);
+    void deleteBooksGenres(int bookId);
     void add(String title, Connection connection) throws SQLException;
-    List<String> get(Connection connection) throws SQLException;
+    List<String> findAll(Connection connection) throws SQLException;
     List<Integer> getId(List<String> genres, Connection connection) throws SQLException;
-    void addBookGenreRecord(int bookId, int genreId, Connection connection) throws SQLException;
-    void deleteBooksGenresRecords(int bookId, Connection connection) throws SQLException;
+    void addBookGenre(int bookId, int genreId, Connection connection) throws SQLException;
+    void deleteBooksGenres(int bookId, Connection connection) throws SQLException;
 }

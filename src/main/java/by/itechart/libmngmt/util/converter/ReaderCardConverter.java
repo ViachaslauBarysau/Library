@@ -5,7 +5,6 @@ import by.itechart.libmngmt.entity.ReaderCardEntity;
 
 public class ReaderCardConverter {
     public static ReaderCardDto convertToReaderCardDto(ReaderCardEntity readerCardEntity) {
-
         ReaderCardDto readerCardDto = ReaderCardDto.builder()
                 .id(readerCardEntity.getId())
                 .bookId(readerCardEntity.getBookId())
@@ -20,12 +19,10 @@ public class ReaderCardConverter {
                 .status(readerCardEntity.getStatus())
                 .comment(readerCardEntity.getComment())
                 .build();
-
         return readerCardDto;
     }
 
     public static ReaderCardEntity convertToReaderCardEntity(ReaderCardDto readerCardDto) {
-
         ReaderCardEntity readerCardEntity = ReaderCardEntity.builder()
                 .id(readerCardDto.getId())
                 .bookId(readerCardDto.getBookId())
@@ -40,7 +37,6 @@ public class ReaderCardConverter {
                 .status(readerCardDto.getStatus())
                 .comment(readerCardDto.getComment())
                 .build();
-
         return readerCardEntity;
     }
 

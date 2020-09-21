@@ -39,11 +39,9 @@ public class RequestConverter {
                 .status(request.getParameter("status"))
                 .comment(request.getParameter("comment"))
                 .build();
-
         if (!request.getParameter("status").equals("borrowed")) {
             readerCardDto.setReturnDate(Timestamp.valueOf(request.getParameter("returnDate")));
         }
-
         if (Integer.parseInt(request.getParameter("readerCardId")) > 0) {
             try {
                 java.util.Date borrowDate = new SimpleDateFormat("MMM dd, yyyy")
@@ -59,7 +57,6 @@ public class RequestConverter {
             readerCardDto.setBorrowDate(Date.valueOf(request.getParameter("borrowDate")));
             readerCardDto.setDueDate(Date.valueOf(request.getParameter("dueDate")));
         }
-
         return readerCardDto;
     }
 

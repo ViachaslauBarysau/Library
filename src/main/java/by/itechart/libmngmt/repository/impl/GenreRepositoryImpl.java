@@ -25,10 +25,11 @@ public class GenreRepositoryImpl implements GenreRepository {
     private static final String SQL_DELETE_BOOKS_GENRES_RECORDS = "DELETE FROM Books_Genres WHERE Book_id = ?;";
 
     @Override
-    public void deleteBooksGenresRecords(int bookId) {
+    public void deleteBooksGenres(int bookId) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_GENRES_RECORDS)) {
-                preparedStatement.setInt(1, bookId);
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
@@ -37,9 +38,10 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public void deleteBooksGenresRecords(int bookId, Connection connection) throws SQLException {
+    public void deleteBooksGenres(int bookId, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_GENRES_RECORDS)) {
-            preparedStatement.setInt(1, bookId);
+            int index = 1;
+            preparedStatement.setInt(index++, bookId);
             preparedStatement.execute();
         }
     }
@@ -50,9 +52,10 @@ public class GenreRepositoryImpl implements GenreRepository {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
                 Array genresArray = connection.createArrayOf("VARCHAR", genres.toArray());
-                preparedStatement.setArray(1, genresArray);
+                int index = 1;
+                preparedStatement.setArray(index++, genresArray);
                 preparedStatement.executeQuery();
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     resultList.add(resultSet.getInt("ID"));
                 }
@@ -68,9 +71,10 @@ public class GenreRepositoryImpl implements GenreRepository {
         List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
             Array genresArray = connection.createArrayOf("VARCHAR", genres.toArray());
-            preparedStatement.setArray(1, genresArray);
+            int index = 1;
+            preparedStatement.setArray(index++, genresArray);
             preparedStatement.executeQuery();
-            final ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 resultList.add(resultSet.getInt("ID"));
             }
@@ -79,11 +83,12 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public void addBookGenreRecord(int bookId, int genreId) {
+    public void addBookGenre(int bookId, int genreId) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_GENRE_RECORD)) {
-                preparedStatement.setInt(1, bookId);
-                preparedStatement.setInt(2, genreId);
+                int index = 1;
+                preparedStatement.setInt(index++, bookId);
+                preparedStatement.setInt(index++, genreId);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
@@ -92,24 +97,24 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public void addBookGenreRecord(int bookId, int genreId, Connection connection) throws SQLException {
+    public void addBookGenre(int bookId, int genreId, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_GENRE_RECORD)) {
-            preparedStatement.setInt(1, bookId);
-            preparedStatement.setInt(2, genreId);
+            int index = 1;
+            preparedStatement.setInt(index++, bookId);
+            preparedStatement.setInt(index++, genreId);
             preparedStatement.execute();
         }
     }
 
     @Override
-    public List<String> get() {
+    public List<String> findAll() {
         List<String> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_TITLES)) {
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     resultList.add(resultSet.getString("Title"));
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,14 +123,13 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public List<String> get(Connection connection) throws SQLException {
+    public List<String> findAll(Connection connection) throws SQLException {
         List<String> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_TITLES)) {
-            final ResultSet resultSet = preparedStatement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 resultList.add(resultSet.getString("Title"));
             }
-
         }
         return resultList;
     }
@@ -134,7 +138,8 @@ public class GenreRepositoryImpl implements GenreRepository {
     public void add(String title) {
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_GENRE)) {
-                preparedStatement.setString(1, title);
+                int index = 1;
+                preparedStatement.setString(index++, title);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
@@ -145,7 +150,8 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
     public void add(String title, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_GENRE)) {
-            preparedStatement.setString(1, title);
+            int index = 1;
+            preparedStatement.setString(index++, title);
             preparedStatement.execute();
         }
     }

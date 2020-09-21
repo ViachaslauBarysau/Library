@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderCardValidator {
-
     public List<String> errorMessages = new ArrayList<>();
 
     public static final String USERNAME_PATTERN = "^[a-zA-Z\\s]*$";
@@ -28,5 +27,4 @@ public class ReaderCardValidator {
             errorMessages.add("Title is incorrect!");
         }
     }
-
 }

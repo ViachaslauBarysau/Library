@@ -6,7 +6,6 @@ import by.itechart.libmngmt.entity.BookEntity;
 public class BookConverter {
 
     public static BookDto convertBookEntityToBookDto(BookEntity bookEntity) {
-
         BookDto bookDto = BookDto.builder()
                 .id(bookEntity.getId())
                 .title(bookEntity.getTitle())
@@ -21,12 +20,10 @@ public class BookConverter {
                 .totalAmount(bookEntity.getTotalAmount())
                 .availableAmount(bookEntity.getAvailableAmount())
                 .build();
-
         return bookDto;
     }
 
     public static BookEntity convertBookDtoToBookEntity(BookDto bookDto) {
-
         BookEntity bookEntity = BookEntity.builder()
                 .id(bookDto.getId())
                 .title(bookDto.getTitle())
@@ -43,5 +40,4 @@ public class BookConverter {
                 .build();
         return bookEntity;
     }
-
 }

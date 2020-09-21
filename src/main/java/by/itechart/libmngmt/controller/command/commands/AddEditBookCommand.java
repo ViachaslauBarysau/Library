@@ -59,7 +59,6 @@ public class AddEditBookCommand extends LibraryCommand {
                 readerCardService.addOrUpdateReaderCard(readerCardDto);
             }
             BookDto bookDto = RequestConverter.convertToBookDto(request, fileName);
-
             int bookId = bookService.addEditBook(bookDto);
             response.sendRedirect(request.getContextPath() + "/lib-app?command=BOOK_PAGE&id=" + bookId);
         } else {
@@ -68,7 +67,6 @@ public class AddEditBookCommand extends LibraryCommand {
                 BookPageDto bookPageDto = bookManagementService
                         .getBookPageDto(Integer.parseInt(request.getParameter("id")));
                 request.setAttribute("bookpagedto", bookPageDto);
-
             } else {
                 BookDto bookDto = new BookDto();
                 bookDto.setId(0);
@@ -78,7 +76,6 @@ public class AddEditBookCommand extends LibraryCommand {
                         .readerCards(new ArrayList<>())
                         .build();
                 request.setAttribute("bookpagedto", bookPageDto);
-
             }
         }
         forward("bookpage");

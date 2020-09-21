@@ -24,7 +24,6 @@ public class ReaderCardServlet extends HttpServlet {
         int readerCardId = Integer.parseInt(req.getParameter("id"));
         ReaderCardDto readerCardDto = readerCardService.getReaderCard(readerCardId);
 
-
         String str = new Gson().toJson(readerCardDto);
 
         PrintWriter out = resp.getWriter();

@@ -53,26 +53,38 @@
 
     <c:if test ="${not empty pageNumber}">
         <c:if test ="${pageNumber > 1}">
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber-1}" />
+            <button type="submit" class="btn btn-primary"
+                    formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber-1}" />
             &lt;
             </button>
-            ${pageNumber}
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber+1}" disabled/>
+            ${pageNumber} of ${pageCount}
+            <button type="submit" class="btn btn-primary"
+                    formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber+1}" disabled/>
             &gt;
             </button>
         </c:if>
         <c:if test ="${pageNumber < pageCount}">
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber-1}" disabled/>
+            <button type="submit" class="btn btn-primary"
+                    formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber-1}" disabled/>
             &lt;
             </button>
-            ${pageNumber}
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber+1}" />
+            ${pageNumber} of ${pageCount}
+            <button type="submit" class="btn btn-primary"
+                    formaction="lib-app?command=GET_BOOK_LIST&page=${pageNumber+1}" />
             &gt;
             </button>
         </c:if>
     </c:if>
 
-    <span style="float:right"><input type="checkbox" name="hideunavailable"  align="right" onclick="">   Hide unavailable</span>
+    <c:if test ="${not empty hideUnavailable}">
+            <span style="float:right"><input type="checkbox" id="hide-unavailable" name="hideunavailable"  align="right"
+                                             onchange="hideUnavailable(this)" checked />   Hide unavailable</span>
+    </c:if>
+    <c:if test ="${empty hideUnavailable}">
+            <span style="float:right"><input type="checkbox" id="hide-unavailable" name="hideunavailable"  align="right"
+                                             onchange="hideUnavailable(this)" />   Hide unavailable</span>
+    </c:if>
+
 </form>
 
 </body>

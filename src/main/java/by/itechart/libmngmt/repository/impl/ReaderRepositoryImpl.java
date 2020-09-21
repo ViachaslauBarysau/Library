@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReaderRepositoryImpl implements ReaderRepository {
+public class  ReaderRepositoryImpl implements ReaderRepository {
     private static ReaderRepositoryImpl instance;
     public static ReaderRepositoryImpl getInstance() {
         if(instance == null){
@@ -28,7 +28,6 @@ public class ReaderRepositoryImpl implements ReaderRepository {
             " ON DUPLICATE KEY UPDATE Name = VALUES(name); ";
     public static final String SQL_GET_READER_ID_BY_EMAIL = "SELECT ID FROM READERS WHERE EMAIL = ?;";
 
-
     @Override
     public void insertUpdate (ReaderEntity readerEntity) {
         try (Connection connection = ConnectionHelper.getConnection()) {
@@ -43,18 +42,17 @@ public class ReaderRepositoryImpl implements ReaderRepository {
         }
     }
 
-
     @Override
     public int getId(String email) {
         int readerId = 0;
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READER_ID_BY_EMAIL)) {
-                preparedStatement.setString(1, email);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setString(index++, email);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     readerId = resultSet.getInt("ID");
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,18 +60,17 @@ public class ReaderRepositoryImpl implements ReaderRepository {
         return readerId;
     }
 
-
     @Override
     public String getName(String email) {
         String name = "";
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READER_NAME_BY_EMAIL)) {
-                preparedStatement.setString(1, email);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setString(index++, email);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     name = resultSet.getString("Name");
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -86,18 +83,17 @@ public class ReaderRepositoryImpl implements ReaderRepository {
         List<String> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERS_EMAILS)) {
-                preparedStatement.setString(1, searchParameter);
-                final ResultSet resultSet = preparedStatement.executeQuery();
+                int index = 1;
+                preparedStatement.setString(index++, searchParameter);
+                ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                         resultList.add(resultSet.getString("Email"));
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return resultList;
-
     }
 
     @Override

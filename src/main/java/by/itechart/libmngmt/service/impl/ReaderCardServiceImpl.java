@@ -7,8 +7,10 @@ import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.ReaderService;
+import by.itechart.libmngmt.util.converter.BookConverter;
 import by.itechart.libmngmt.util.converter.ReaderCardConverter;
 
+import javax.faces.convert.BooleanConverter;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,20 +31,8 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     public List<ReaderCardDto> get(int bookId) {
         List<ReaderCardEntity> readerCardEntities = readerCardRepository.get(bookId);
         List<ReaderCardDto> readerCardDtos = new ArrayList<>();
-        for (ReaderCardEntity readerCardEntity:readerCardEntities
-             ) {readerCardDtos.add(ReaderCardDto.builder()
-                .id(readerCardEntity.getId())
-                .bookId(readerCardEntity.getBookId())
-                .readerId(readerCardEntity.getReaderId())
-                .readerName(readerCardEntity.getReaderName())
-                .readerEmail(readerCardEntity.getReaderEmail())
-                .borrowDate(readerCardEntity.getBorrowDate())
-                .status(readerCardEntity.getStatus())
-                .dueDate(readerCardEntity.getDueDate())
-                .returnDate(readerCardEntity.getReturnDate())
-                .comment(readerCardEntity.getComment())
-                .build());
-
+        for (ReaderCardEntity readerCardEntity : readerCardEntities) {
+            readerCardDtos.add(ReaderCardConverter.convertToReaderCardDto(readerCardEntity));
         }
         return readerCardDtos;
     }
@@ -60,18 +50,7 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     @Override
     public ReaderCardDto getReaderCard(int readerCardId) {
         ReaderCardEntity readerCardEntity = readerCardRepository.getReaderCard(readerCardId);
-        ReaderCardDto readerCardDto = ReaderCardDto.builder()
-                .id(readerCardEntity.getId())
-                .bookId(readerCardEntity.getBookId())
-                .readerId(readerCardEntity.getReaderId())
-                .readerName(readerCardEntity.getReaderName())
-                .readerEmail(readerCardEntity.getReaderEmail())
-                .borrowDate(readerCardEntity.getBorrowDate())
-                .status(readerCardEntity.getStatus())
-                .dueDate(readerCardEntity.getDueDate())
-                .returnDate(readerCardEntity.getReturnDate())
-                .comment(readerCardEntity.getComment())
-                .build();
+        ReaderCardDto readerCardDto = ReaderCardConverter.convertToReaderCardDto(readerCardEntity);
         if (readerCardEntity.getComment() == null) {
             readerCardDto.setComment("");
         }
@@ -94,9 +73,7 @@ public class ReaderCardServiceImpl implements ReaderCardService {
                 .email(readerCardDto.getReaderEmail())
                 .name(readerCardDto.getReaderName())
                 .build();
-
         readerCardDto.setReaderId(readerService.insertUpdateReaderGetId(readerDto));
-
         if (readerCardDto.getId() == 0) {
             add(readerCardDto);
         } else {
@@ -108,8 +85,7 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     public List<ReaderCardDto> getExpiringReaderCards(int days) {
         List<ReaderCardEntity> readerCardEntities = readerCardRepository.getExpiringReaderCards(days);
         List<ReaderCardDto> readerCardDtoList = new ArrayList<>();
-        for (ReaderCardEntity readerCardEntity : readerCardEntities
-             ) {
+        for (ReaderCardEntity readerCardEntity : readerCardEntities) {
             readerCardDtoList.add(ReaderCardConverter.convertToReaderCardDto(readerCardEntity));
         }
         return readerCardDtoList;
