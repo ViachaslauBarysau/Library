@@ -3,17 +3,21 @@ package by.itechart.libmngmt.util.validator;
 import org.apache.commons.validator.routines.EmailValidator;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ReaderCardValidator {
-    public List<String> errorMessages = new ArrayList<>();
+    public Set<String> errorMessages = new HashSet<>();
 
     public static final String USERNAME_PATTERN = "^[a-zA-Z\\s]*$";
 
     public void validate(HttpServletRequest request) {
         validateEmail(request.getParameter("readerEmail"));
         validateUsername(request.getParameter("readerName"));
+    }
+
+    public void validate(String email, String userName) {
+        validateEmail(email);
+        validateUsername(userName);
     }
 
     public void validateEmail(String email) {

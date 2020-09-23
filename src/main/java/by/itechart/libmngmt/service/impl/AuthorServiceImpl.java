@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorServiceImpl implements AuthorService {
-
     private final AuthorRepository authorRepository = AuthorRepositoryImpl.getInstance();
     private static AuthorServiceImpl instance;
 
@@ -28,8 +27,7 @@ public class AuthorServiceImpl implements AuthorService {
         List<String> bookAuthorsList = new ArrayList<>();
         bookAuthorsList.addAll(bookDto.getAuthors());
         bookAuthorsList.removeAll(allAuthorsList);
-        for (String author: bookAuthorsList
-        ) {
+        for (String author: bookAuthorsList) {
             authorRepository.add(author);
         }
 
@@ -58,5 +56,4 @@ public class AuthorServiceImpl implements AuthorService {
             authorRepository.addBookAuthorRecord(bookDto.getId(), authorID, connection);
         }
     }
-
 }

@@ -3,7 +3,6 @@ package by.itechart.libmngmt.util.emailScheduler;
 import org.stringtemplate.v4.ST;
 
 public class LetterTemplater {
-
     private static LetterTemplater instance;
 
     public static LetterTemplater getInstance() {

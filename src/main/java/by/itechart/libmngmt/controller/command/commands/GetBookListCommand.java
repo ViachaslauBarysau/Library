@@ -2,19 +2,21 @@ package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.dto.BookDto;
-import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import lombok.Data;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 public class GetBookListCommand extends LibraryCommand {
+    private final static Logger logger = LogManager.getLogger(GetBookListCommand.class.getName());
     private final BookService bookService = BookServiceImpl.getInstance();
+    private final int MIN_PAGE_NUMBER = 1;
     private static GetBookListCommand instance;
 
     public static GetBookListCommand getInstance() {
@@ -26,13 +28,12 @@ public class GetBookListCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
-        final int MIN_PAGE_NUMBER = 1;
         int pageNumber = MIN_PAGE_NUMBER;
         int pageCount;
         try {
             pageNumber = Integer.parseInt(request.getParameter("page"));
         } catch (Exception e) {
-
+            logger.debug("Wrong page number!", e);
         }
         List<BookDto> books;
         if (request.getParameter("hideunavailable") != null &&
@@ -55,8 +56,8 @@ public class GetBookListCommand extends LibraryCommand {
     private int setPageNumber(int pageNumber, int pageCount) {
         if (pageNumber > pageCount) {
             pageNumber = pageCount;
-        } else if (pageNumber < 1) {
-            pageNumber = 1;
+        } else if (pageNumber < MIN_PAGE_NUMBER) {
+            pageNumber = MIN_PAGE_NUMBER;
         }
         return pageNumber;
     }

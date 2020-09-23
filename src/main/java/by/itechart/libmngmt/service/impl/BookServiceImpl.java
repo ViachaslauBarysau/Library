@@ -1,12 +1,16 @@
 package by.itechart.libmngmt.service.impl;
 
 import by.itechart.libmngmt.dto.BookDto;
+import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
+import by.itechart.libmngmt.repository.impl.AuthorRepositoryImpl;
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
 import by.itechart.libmngmt.service.*;
 import by.itechart.libmngmt.util.ConnectionHelper;
 import by.itechart.libmngmt.util.converter.BookConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookServiceImpl implements BookService {
+    private final static Logger logger = LogManager.getLogger(BookServiceImpl.class.getName());
     private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
     private final BookRepository bookRepository = BookRepositoryImpl.getInstance();
     private final AuthorService authorService = AuthorServiceImpl.getInstance();
@@ -109,7 +114,11 @@ public class BookServiceImpl implements BookService {
             if (bookDto.getId()==0) {
                 bookDto.setAvailableAmount(bookDto.getTotalAmount());
                 bookId = addBookGetId(bookDto, connection);
+                bookDto.setId(bookId);
             } else {
+                for (ReaderCardDto readerCardDto : bookDto.getReaderCardDtos()) {
+                    readerCardService.addOrUpdateReaderCard(readerCardDto, connection);
+                }
                 int borrowedBooksAmount = readerCardService.getBorrowBooksCount(bookDto.getId());
                 bookDto.setAvailableAmount(bookDto.getTotalAmount()-borrowedBooksAmount);
                 updateBook(bookDto, connection);
@@ -120,13 +129,11 @@ public class BookServiceImpl implements BookService {
             coverService.add(bookDto, connection);
             connection.commit();
             connection.setAutoCommit(true);
-        }
-             catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+             logger.debug("Adding/Editing book error!", e);
         }
         return bookId;
     }
-
 
     @Override
     public int addBookGetId(BookDto bookDto) {
@@ -137,6 +144,4 @@ public class BookServiceImpl implements BookService {
     public int addBookGetId(BookDto bookDto, Connection connection) throws SQLException {
         return bookRepository.add(BookConverter.convertBookDtoToBookEntity(bookDto), connection);
     }
-
-
 }

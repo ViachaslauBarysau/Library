@@ -13,11 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class BookPageDto {
-
     BookDto bookDto;
     List<ReaderCardDto> readerCards;
     Date nearestAvailableDate;
-    Date nextNearestAvailableDate;
-    int nearestAvailableDateID;
-
 }

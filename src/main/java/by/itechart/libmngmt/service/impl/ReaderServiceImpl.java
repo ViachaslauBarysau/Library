@@ -7,6 +7,7 @@ import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderService;
 import by.itechart.libmngmt.util.converter.ReaderConverter;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class ReaderServiceImpl implements ReaderService {
@@ -22,7 +23,7 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
-    public int insertUpdateReaderGetId(ReaderDto readerDto) {
+    public int insertUpdateReaderGetId(ReaderDto readerDto, Connection connection) {
         insertUpdateReader(readerDto);
         return getIdByEmail(readerDto.getEmail());
     }

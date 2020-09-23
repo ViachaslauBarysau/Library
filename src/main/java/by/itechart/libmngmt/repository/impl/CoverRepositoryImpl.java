@@ -2,12 +2,15 @@ package by.itechart.libmngmt.repository.impl;
 
 import by.itechart.libmngmt.repository.CoverRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CoverRepositoryImpl implements CoverRepository {
+    private final static Logger logger = LogManager.getLogger(CoverRepositoryImpl.class.getName());
     private static CoverRepositoryImpl instance;
     public static CoverRepositoryImpl getInstance() {
         if(instance == null){
@@ -29,7 +32,7 @@ public class CoverRepositoryImpl implements CoverRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding cover error!", e);
         }
     }
 
@@ -52,7 +55,7 @@ public class CoverRepositoryImpl implements CoverRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Deleting cover error!", e);
         }
     }
 

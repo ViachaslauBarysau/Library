@@ -4,7 +4,6 @@ import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
 
 public class BookConverter {
-
     public static BookDto convertBookEntityToBookDto(BookEntity bookEntity) {
         BookDto bookDto = BookDto.builder()
                 .id(bookEntity.getId())

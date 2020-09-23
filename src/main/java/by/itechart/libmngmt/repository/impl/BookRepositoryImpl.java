@@ -4,12 +4,14 @@ package by.itechart.libmngmt.repository.impl;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.*;
 
 public class BookRepositoryImpl implements BookRepository {
-
+    private final static Logger logger = LogManager.getLogger(BookRepositoryImpl.class.getName());
     private static BookRepositoryImpl instance;
     public static BookRepositoryImpl getInstance() {
         if(instance == null){
@@ -78,7 +80,7 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Updating book error!", e);
         }
     }
 
@@ -103,7 +105,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting search book results error!", e);
         }
         return searchPageCount;
     }
@@ -141,7 +143,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting available books page count error!", e);
         }
         return pageCount;
     }
@@ -171,7 +173,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting available books error!", e);
         }
         return resultList;
     }
@@ -221,7 +223,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding book error!", e);
         }
         return id;
     }
@@ -251,7 +253,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting books error!", e);
         }
         return resultList;
     }
@@ -303,7 +305,7 @@ public class BookRepositoryImpl implements BookRepository {
                 book.getCovers().addAll(covers);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting book error!", e);
         }
         return book;
     }
@@ -324,7 +326,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting book's page count error!", e);
         }
         return pageCount;
     }
@@ -339,7 +341,7 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Deleting books error!", e);
         }
     }
 
@@ -372,7 +374,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Searching books error!", e);
         }
         return resultList;
     }

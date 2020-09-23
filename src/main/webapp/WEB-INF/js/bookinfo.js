@@ -1,11 +1,7 @@
+let bookId = ${bookpagedto.bookDto.id};
 let readerCards = new Map();
 let mapKey = 0;
 let readerCardRecord = {};
-const availableBooks = ${bookpagedto.bookDto.availableAmount};
-const totalBooks = ${bookpagedto.bookDto.totalAmount};
-const nearestAvailableDate = '${bookpagedto.nearestAvailableDate}';
-const nextNearestAvailableDate = '${bookpagedto.nextNearestAvailableDate}';
-const nearestAvailableDateID = '${bookpagedto.nearestAvailableDateID}';
 const saveButton = document.getElementById('saveButton');
 const readerCardId = document.getElementById('readerCardId');
 const readerId = document.getElementById('readerId');
@@ -20,6 +16,7 @@ const availableAmount = document.getElementById('availableAmount');
 const totalAmount = document.getElementById('totalAmount');
 const bookStatus = document.getElementById('bookstatus');
 const comment = document.getElementById('comment');
+let modal = document.getElementById('myErrorModal');
 let returnDateValue;
 
 function getDateStringWithoutTime(date) {
@@ -89,23 +86,24 @@ function closeModal() {
     myModal.setAttribute('aria-hidden', 'true');
 }
 function openNewReaderCard() {
-
-    saveButton.style.display = 'inline-block';
-    saveButton.setAttribute('onclick', "saveNewReaderCard()");
-    openModal();
-    setNewReaderCardProperties();
-
-    readerCardId.value = 0;
-    readerId.value = 0;
-    email.value = "";
-    name.value = "";
-    comment.value = "";
-    let dueDate = new Date();
-    let fullDueDate = getDateStringWithoutTime(dueDate);
-    borrowDate.value = fullDueDate;
-    timePeriodSelect.value = "1";
-    borrowingStatus.value = "borrowed";
-
+    if (availableAmount.value == 0) {
+        modal.style.display = "block";
+    } else {
+        saveButton.style.display = 'inline-block';
+        saveButton.setAttribute('onclick', "saveNewReaderCard()");
+        openModal();
+        setNewReaderCardProperties();
+        readerCardId.value = 0;
+        readerId.value = 0;
+        email.value = "";
+        name.value = "";
+        comment.value = "";
+        let dueDate = new Date();
+        let fullDueDate = getDateStringWithoutTime(dueDate);
+        borrowDate.value = fullDueDate;
+        timePeriodSelect.value = "1";
+        borrowingStatus.value = "borrowed";
+    }
 }
 async function openExistingReaderCard(id) {
     setExistingReaderCardProperties();
@@ -113,7 +111,7 @@ async function openExistingReaderCard(id) {
     saveButton.setAttribute('onclick', 'saveExistingReaderCard(' + id + ')');
     openModal();
 
-    let url = 'rdr-crd?id=' + id;
+    let url = 'reader-card?id=' + id;
     let response = await fetch(url);
     readerCardRecord = await response.json();
 
@@ -156,70 +154,50 @@ function editCreatedReaderCard(index) {
     closeModal();
 }
 
-// function saveReaderCard() {
-//     e.preventDefault();
-//     let ele = document.getElementById("modal-form");
-//     let chk_status = ele.checkValidity();
-//     ele.reportValidity();
-//     if (chk_status) {
-//         console.log('valid')
-//         document.getElementById("totalAmount").readOnly = true;
-//         document.getElementById("availableAmount").readOnly = true;
-//             saveNewReaderCard();
-//         closeModal();
-//     }
-// }
-
 function changeStatusOnExistingReaderCard (id) {
     let returnDate = new Date();
     if (borrowingStatus.options[borrowingStatus.selectedIndex].value == "returned") {
-        document.getElementById("rd" + id).innerText = getDateStringWithTime(returnDate);
         returnDateValue = getDateStringWithTime(returnDate);
-        totalAmount.value = totalBooks;
-        availableAmount.value = availableBooks - 0 + 1;
-        bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
+        availableAmount.value++;
+        totalAmount.min--;
     } else if (borrowingStatus.options[borrowingStatus.selectedIndex].value == "damaged" ||
         borrowingStatus.options[borrowingStatus.selectedIndex].value == "lost") {
-        document.getElementById("rd" + id).innerText = getDateStringWithTime(returnDate);
         returnDateValue = getDateStringWithTime(returnDate);
-        totalAmount.value = totalBooks - 1;
-        availableAmount.value = availableBooks;
-        setBookStatus();
+        totalAmount.value--;
+        totalAmount.min--;
     } else {
-        totalAmount.value = totalBooks;
-        availableAmount.value = availableBooks;
         returnDateValue = "";
-        document.getElementById("rd" + id).innerText = "";
-        setBookStatus();
+
     }
+    document.getElementById("rd" + id).innerText = returnDateValue;
+    setBookStatus();
 }
 
 function setBookStatus() {
-
-    if (availableAmount.value > 0) {
-        bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
-    } else if (availableAmount.value == 0) {
-        if (totalAmount.value == 0) {
-            bookStatus.value = "Unavailable";
-        } else {
-            if (readerCardId.value == nearestAvailableDateID) {
-                if (!Boolean(returnDateValue)) {
-                    bookStatus.value = "Unavailable (expected to become available on " + nearestAvailableDate + ")";
-                } else {
-                    bookStatus.value = "Unavailable (expected to become available on " + nextNearestAvailableDate + ")";
-                }
-            } else {
-                bookStatus.value = "Unavailable (expected to become available on " + nearestAvailableDate + ")";
-            }
-        }
-    }
+    // if (availableAmount.value > 0) {
+    //     bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
+    // } else if (availableAmount.value == 0) {
+    //     if (totalAmount.value == 0) {
+    //         bookStatus.value = "Unavailable";
+    //     } else {
+    //         if (readerCardId.value == nearestAvailableDateID) {
+    //             if (!Boolean(returnDateValue)) {
+    //                 bookStatus.value = "Unavailable (expected to become available on " + nearestAvailableDate + ")";
+    //             } else {
+    //                 bookStatus.value = "Unavailable (expected to become available on " + nextNearestAvailableDate + ")";
+    //             }
+    //         } else {
+    //             bookStatus.value = "Unavailable (expected to become available on " + nearestAvailableDate + ")";
+    //         }
+    //     }
+    // }
 }
 
 function saveExistingReaderCard(id) {
     changeStatusOnExistingReaderCard(id);
     let readerCard = {
-        bookId : readerCardRecord['bookId'],
-        readerCardId : id,
+        bookId : bookId,
+        id : id,
         readerId : readerId.value,
         readerEmail : email.value,
         readerName : name.value,
@@ -238,8 +216,10 @@ function saveExistingReaderCard(id) {
 
 function openEditedExistingReaderCard(index) {
     setExistingReaderCardProperties();
+    if (readerCards.get(index).status == "returned" && availableAmount.value == 0) {
+        borrowingStatus.disabled = true;
+    }
     saveButton.style.display = 'inline-block';
-    saveButton.setAttribute('onclick', 'editCreatedReaderCard(' + index + ')');
     openModal();
     let readerCard = readerCards.get(index);
     readerCardId.value = readerCard.readerId;
@@ -266,7 +246,8 @@ function saveAddedReaderCard(index) {
         let fullDueDate = getDateStringWithoutTime(dueDate);
         document.getElementById('dueDate' + index).innerText = fullDueDate;
         let readerCard = {
-            readerCardId: 0,
+            bookId : bookId,
+            id: 0,
             readerEmail: email.value,
             readerName: name.value,
             borrowDate: fullDate,
@@ -276,29 +257,28 @@ function saveAddedReaderCard(index) {
             comment: comment.value
         }
         readerCards.set(index, readerCard);
+        availableAmount.value--;
+        totalAmount.min++;
         closeModal();
 }
 
 function changeStatusOnNewReaderCard() {
-    if (availableAmount.value == 0) {
-        if (!Boolean(nearestAvailableDate) || new Date(nearestAvailableDate) > new Date(editedReaderCardRecord.dueDate)) {
-            bookStatus.value = "Unavailable (expected to become available on " + editedReaderCardRecord.dueDate + ")";
-        } else {
-            bookStatus.value = "Unavailable (expected to become available on " + getDateStringWithoutTime(new Date(nearestAvailableDate)) + ")";
-        }
-    } else {
-        bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
-    }
+    // if (availableAmount.value == 0) {
+    //     if (!Boolean(nearestAvailableDate) || new Date(nearestAvailableDate) > new Date(editedReaderCardRecord.dueDate)) {
+    //         bookStatus.value = "Unavailable (expected to become available on " + editedReaderCardRecord.dueDate + ")";
+    //     } else {
+    //         bookStatus.value = "Unavailable (expected to become available on " + getDateStringWithoutTime(new Date(nearestAvailableDate)) + ")";
+    //     }
+    // } else {
+    //     bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
+    // }
 }
 
 function saveNewReaderCard() {
-
     let form = document.getElementById("modal-form");
     let chk_status = form.checkValidity();
     form.reportValidity();
     if (chk_status) {
-        document.getElementById("totalAmount").readOnly = true;
-        document.getElementById("availableAmount").readOnly = true;
         const table = document.getElementById("table");
         const tr = document.createElement("tr");
         table.appendChild(tr);
@@ -323,19 +303,49 @@ function saveNewReaderCard() {
 }
 
 function saveEditedReaderCard(index) {
-        let readerCard = readerCards.get(index);
-        changeStatusOnExistingReaderCard(readerCard.readerCardId);
-        readerCard.status = borrowingStatus.value;
-        readerCard.comment = comment.value;
-        readerCard.returnDate = returnDateValue;
-        closeModal();
+    let returnDate = new Date();
+    let readerCard = readerCards.get(index);
+    if (readerCard.status == "damaged" || readerCard.status == "lost") {
+        if (borrowingStatus.options[borrowingStatus.selectedIndex].value == "borrowed") {
+            totalAmount.value++;
+            totalAmount.min++;
+            returnDateValue = "";
+        } else if (borrowingStatus.options[borrowingStatus.selectedIndex].value == "returned") {
+            totalAmount.value++;
+            availableAmount.value++;
+            returnDateValue = getDateStringWithTime(returnDate);
+        }
+        document.getElementById("rd" + readerCard.id).innerText = returnDateValue;
+    } else if (readerCard.status == "returned") {
+        if (borrowingStatus.options[borrowingStatus.selectedIndex].value == "damaged" ||
+            borrowingStatus.options[borrowingStatus.selectedIndex].value == "lost") {
+            totalAmount.value--;
+            availableAmount.value--;
+            returnDateValue = getDateStringWithTime(returnDate);
+        } else if (borrowingStatus.options[borrowingStatus.selectedIndex].value == "borrowed") {
+            availableAmount.value--;
+            totalAmount.min++;
+            returnDateValue = "";
+        }
+
+        document.getElementById("rd" + readerCard.id).innerText = returnDateValue;
+    } else {
+        changeStatusOnExistingReaderCard(readerCard.id);
+    }
+    setBookStatus();
+    readerCard.status = borrowingStatus.value;
+    readerCard.comment = comment.value;
+    readerCard.returnDate = returnDateValue;
+    closeModal();
 }
 
+function changeStatusOnEditedReaderCard(index) {
 
+}
 
 async function openClosedReaderCard(id) {
     openModal();
-    let url = 'rdr-crd?id=' + id;
+    let url = 'reader-card?id=' + id;
     let response = await fetch(url);
     let readerCard = await response.json();
 
@@ -359,39 +369,47 @@ async function openClosedReaderCard(id) {
 }
 
 async function sendForm() {
-    let form = new FormData(document.getElementById("bookform"));
-    let obj = [];
-    readerCards.forEach((value, key)=>{
-        obj.push(value);
-    })
-    console.log(obj);
-    form.append("readerCards", JSON.stringify(obj));
+    let form = document.getElementById("bookform");
+    let chk_status = form.checkValidity();
 
-    let url = 'lib-app?command=ADD_EDIT_BOOK';
-    let response = await fetch(url, {
-        method: 'POST',
-        body: form
-    });
-    if (response.redirected) {
-        window.location.href = response.url;
+    form.reportValidity();
+    if (chk_status) {
+        let formData = new FormData(form);
+        let obj = [];
+        readerCards.forEach((value, key)=>{
+            obj.push(value);
+        })
+        console.log(obj);
+        formData.append("readerCards", JSON.stringify(obj));
+        let url = 'lib-app?command=ADD_BOOK';
+        if (bookId > 0) {
+            url = 'lib-app?command=EDIT_BOOK';
+        }
+        let response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+        if (response.redirected) {
+            window.location.href = response.url;
+        }
     }
 }
 
 async function getEmailsByPattern(pattern) {
     let autocomplete = document.getElementById('autocomplete');
     if (pattern.length >=3) {
-        let url = "rdr?pattern=" + pattern.toLowerCase();
+        let url = "reader?pattern=" + pattern.toLowerCase();
         let response = await fetch(url);
         let emails = await response.json();
         let vars = '';
         for (let i in emails) {
             vars += '<li onclick="autocompleteEmail(\'' + emails[i] + '\')">' + emails[i] + '</li>';
         }
-        autocomplete.classList.remove("hidden");
         while (autocomplete.firstChild) {
             autocomplete.removeChild(autocomplete.firstChild);
         }
-        autocomplete.insertAdjacentHTML('beforeend', '<ul>' + vars + '</ul>');
+            autocomplete.classList.remove("hidden");
+            autocomplete.insertAdjacentHTML('beforeend', '<ul>' + vars + '</ul>');
     } else {
         autocomplete.classList.add("hidden");
     }
@@ -399,7 +417,7 @@ async function getEmailsByPattern(pattern) {
 
 async  function autocompleteEmail(email) {
     document.getElementById('email').value = email;
-    let url = "rdr?email=" + email.toLowerCase();
+    let url = "reader?email=" + email.toLowerCase();
     let response = await fetch(url, {method: 'POST'});
     let readerName = await response.json();
     name.value = readerName;
@@ -412,11 +430,29 @@ function closeAutocomplete() {
 }
 
 function onAmountChange(count) {
-    let min = totalBooks - availableBooks;
-    if (+count <= min) {
-        count = totalAmount.value = min;
+    if (count < totalAmount.min) {
+        totalAmount.value = totalAmount.min;
+        availableAmount.value = 0;
+        console.log(totalAmount.value);
+    } else if (count > totalAmount.max) {
+        console.log(totalAmount.value);
+        totalAmount.value = totalAmount.max;
+        console.log(totalAmount.value);
+        availableAmount.value = totalAmount.value - totalAmount.min;
+    } else {
+        availableAmount.value = totalAmount.value - totalAmount.min;
     }
-    availableAmount.value = availableBooks - (totalBooks - count);
-    console.log(availableAmount.value);
 }
 
+window.onclick = function (event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", ready);
+function ready() {
+    totalAmount.min = totalAmount.value - availableAmount.value;
+}
+
+console.log(availableAmount.value)

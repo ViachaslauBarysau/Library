@@ -1,6 +1,5 @@
 package by.itechart.libmngmt.service.impl;
 
-
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.repository.CoverRepository;
 import by.itechart.libmngmt.repository.impl.CoverRepositoryImpl;

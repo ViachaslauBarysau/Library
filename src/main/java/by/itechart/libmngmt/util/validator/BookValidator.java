@@ -16,7 +16,6 @@ import java.util.*;
 
 
 public class BookValidator {
-    private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
     public List<String> errorMessages = new ArrayList<>();
 
     public static final String AUTHOR_GENRE_PATTERN = "^[a-zA-Z\\s]*$";
@@ -101,8 +100,7 @@ public class BookValidator {
     }
 
     private void validateTotalAmount(String totalAmount, int bookId) {
-        if (!totalAmount.matches(NUMBER_PATTERN) || Integer.parseInt(totalAmount) < 0 ||
-                Integer.parseInt(totalAmount) < readerCardService.getBorrowBooksCount(bookId)) {
+        if (!totalAmount.matches(NUMBER_PATTERN) || Integer.parseInt(totalAmount) < 0 ) {
             errorMessages.add("Total amount is not valid!");
         }
     }
@@ -114,7 +112,7 @@ public class BookValidator {
         Part filePart = request.getPart("file");
         String fileName = request.getParameter("currentCover");
         if (!filePart.getSubmittedFileName().equals("")) {
-            fileName = request.getParameter("currentCover");
+            fileName = filePart.getSubmittedFileName();
             Validator sizeValidator = ValidatorFactory.validatorCreate(SIZE_VALIDATOR);
             Validator typeValidator = ValidatorFactory.validatorCreate(TYPE_VALIDATOR);
             Validator nameValidator = ValidatorFactory.validatorCreate(NAME_VALIDATOR);

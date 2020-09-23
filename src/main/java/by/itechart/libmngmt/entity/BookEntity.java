@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @NoArgsConstructor
@@ -14,7 +12,6 @@ import java.util.List;
 @Data
 @Builder
 public class BookEntity {
-
     private int id;
     private List<String> covers;
     private String title;
@@ -27,5 +24,4 @@ public class BookEntity {
     private String description;
     private int totalAmount;
     private int availableAmount;
-
 }

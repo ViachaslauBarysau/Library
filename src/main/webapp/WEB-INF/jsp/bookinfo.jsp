@@ -73,7 +73,7 @@ ${errors}
     <label>ISBN:</label>
     <p><input type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.isbn}" required /></p>
     <label>Description:</label>
-    <p><textarea class="form-control" maxlength="420" name="description" cols="60" rows="12" required>
+    <p><textarea class="form-control" maxlength="980" name="description" cols="60" rows="12" required>
     ${bookpagedto.bookDto.description}
     </textarea></p>
     <label>Total amount:</label>
@@ -104,62 +104,71 @@ ${errors}
             </c:if>
             <c:if test ="${bookpagedto.bookDto.totalAmount != 0}">
                 <c:if test ="${bookpagedto.bookDto.availableAmount <= 0}">
-                    <p><input type="text" class="form-control" id="bookstatus" size="60" value="Unavailable
-                    (expected to become available on ${bookpagedto.nearestAvailableDate})" readonly required /></p>
+                    <p><input type="text" class="form-control" id="bookstatus" size="60" value="Unavailable (expected
+ to become available on ${bookpagedto.nearestAvailableDate})" readonly required /></p>
                 </c:if>
                 <c:if test ="${bookpagedto.bookDto.availableAmount > 0}">
                     <p><input type="text" class="form-control" id="bookstatus" size="60" value="Available
-                    ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
+ ${bookpagedto.bookDto.availableAmount} out of ${bookpagedto.bookDto.totalAmount}" readonly></p>
                 </c:if>
             </c:if>
         </c:otherwise>
     </c:choose>
-    <button class="btn btn-primary" type="submit" formaction="javascript:sendForm()"/>
-    <label>Save</label>
+    <button class="btn btn-primary" type="button" onclick="sendForm()"/>
+    Save
     </button>
     <button class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=1" />
-    <label>Dismiss</label>
+    Dismiss
     </button>
 </form>
-
-<label>Borrow Records List:</label>
-<table class="table table-striped" id="table">
-    <thead class="thead-dark">
-        <tr>
-            <th>Email</th>
-            <th>Name</th>
-            <th>Borrow Date</th>
-            <th>Due Date</th>
-            <th>Return Date</th>
-        </tr>
-    </thead>
-    <c:forEach var="readerCard" items="${bookpagedto.readerCards}" >
-        <tr>
-
-                <c:if test="${empty readerCard.returnDate}">
-                    <td><a href="#" id="email${readerCard.id}" onclick="openExistingReaderCard(${readerCard.id})"
-                    data-toggle="modal" data-target="#myModal" class="stretched-link">${readerCard.readerEmail}</a></td>
-                </c:if>
-                <c:if test="${not empty readerCard.returnDate}">
-                    <td><a href="#" id="link${readerCard.id}" onclick="openClosedReaderCard(${readerCard.id})"
-                    data-toggle="modal" data-target="#myModal" class="stretched-link">${readerCard.readerEmail}</a></td>
-                </c:if>
-
-            <td>${readerCard.readerName}</td>
-            <td>${readerCard.borrowDate}</td>
-            <td>${readerCard.dueDate}</td>
-            <td id="rd${readerCard.id}" >${readerCard.returnDate}</td>
-        </tr>
-    </c:forEach>
-</table>
-
+<c:choose>
+    <c:when test="${bookpagedto.bookDto.id == 0}">
+        <!-- Button to Open the Modal -->
+        <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
+                onclick="openNewReaderCard()" hidden />
+        Add
+        </button>
+    </c:when>
+    <c:otherwise>
+        <label>Borrow Records List:</label>
+        <table class="table table-striped" id="table">
+            <thead class="thead-dark">
+            <tr>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Borrow Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+            </tr>
+            </thead>
+            <c:forEach var="readerCard" items="${bookpagedto.readerCards}" >
+                <tr>
+                    <c:if test="${empty readerCard.returnDate}">
+                        <td><a href="#" id="email${readerCard.id}" onclick="openExistingReaderCard(${readerCard.id})"
+                               data-toggle="modal" data-target="#myModal"
+                               class="stretched-link">${readerCard.readerEmail}</a></td>
+                    </c:if>
+                    <c:if test="${not empty readerCard.returnDate}">
+                        <td><a href="#" id="link${readerCard.id}" onclick="openClosedReaderCard(${readerCard.id})"
+                               data-toggle="modal" data-target="#myModal"
+                               class="stretched-link">${readerCard.readerEmail}</a></td>
+                    </c:if>
+                    <td>${readerCard.readerName}</td>
+                    <td>${readerCard.borrowDate}</td>
+                    <td>${readerCard.dueDate}</td>
+                    <td id="rd${readerCard.id}" >${readerCard.returnDate}</td>
+                </tr>
+            </c:forEach>
+        </table>
+        <!-- Button to Open the Modal -->
+        <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
+                onclick="openNewReaderCard()" />
+        Add
+        </button>
+    </c:otherwise>
+</c:choose>
 
 <div class="container">
-    <!-- Button to Open the Modal -->
-    <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="openNewReaderCard()">
-        Add
-    </button>
-
     <!-- The Modal -->
     <div class="modal fade" id="myModal">
         <div id="overlay" onclick="closeModal()"></div>
@@ -209,13 +218,20 @@ ${errors}
                         <label id="commentlabel" for="comment">Comment:</label>
                         <p><input id="comment" class="form-control" type="text" size="40"></p>
                         <div class="modal-footer">
-                            <button type="button" id="saveButton" class="btn btn-primary" data-dismiss="modal" onclick="saveReaderCard()">Save</button>
-                            <button type="button" class="btn btn-primary" onclick="closeModal()" data-dismiss="modal">Close</button>
+                            <button type="button" id="saveButton" class="btn btn-primary"
+                                    data-dismiss="modal">Save</button>
+                            <button type="button" class="btn btn-primary" onclick="closeModal()"
+                                    data-dismiss="modal">Close</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div id="myErrorModal" class="modal">
+    <div class="modal-cont">
+        <p id="message" align="center">No books available!</p>
     </div>
 </div>
 </body>

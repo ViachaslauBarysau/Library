@@ -11,7 +11,9 @@ import by.itechart.libmngmt.util.converter.BookConverter;
 import by.itechart.libmngmt.util.converter.ReaderCardConverter;
 
 import javax.faces.convert.BooleanConverter;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,13 +40,8 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     }
 
     @Override
-    public List<Date> getNearestReturnDates(int bookId) {
+    public Date getNearestReturnDates(int bookId) {
         return readerCardRepository.getNearestReturnDates(bookId);
-    }
-
-    @Override
-    public int getNearestReturnReaderCardId(int bookId) {
-        return readerCardRepository.getNearestReturnReaderCardId(bookId);
     }
 
     @Override
@@ -58,26 +55,26 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     }
 
     @Override
-    public void add(ReaderCardDto readerCardDto) {
-        readerCardRepository.add(ReaderCardConverter.convertToReaderCardEntity(readerCardDto));
+    public void add(ReaderCardDto readerCardDto, Connection connection) throws SQLException {
+        readerCardRepository.add(ReaderCardConverter.convertToReaderCardEntity(readerCardDto), connection);
     }
 
     @Override
-    public void update(ReaderCardDto readerCardDto) {
-        readerCardRepository.update(ReaderCardConverter.convertToReaderCardEntity(readerCardDto));
+    public void update(ReaderCardDto readerCardDto, Connection connection) throws SQLException {
+        readerCardRepository.update(ReaderCardConverter.convertToReaderCardEntity(readerCardDto), connection);
     }
 
     @Override
-    public void addOrUpdateReaderCard(ReaderCardDto readerCardDto) {
+    public void addOrUpdateReaderCard(ReaderCardDto readerCardDto, Connection connection) throws SQLException {
         ReaderDto readerDto = ReaderDto.builder()
                 .email(readerCardDto.getReaderEmail())
                 .name(readerCardDto.getReaderName())
                 .build();
-        readerCardDto.setReaderId(readerService.insertUpdateReaderGetId(readerDto));
+        readerCardDto.setReaderId(readerService.insertUpdateReaderGetId(readerDto, connection));
         if (readerCardDto.getId() == 0) {
-            add(readerCardDto);
+            add(readerCardDto, connection);
         } else {
-            update(readerCardDto);
+            update(readerCardDto, connection);
         }
     }
 
@@ -95,5 +92,4 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     public int getBorrowBooksCount(int bookId) {
         return readerCardRepository.getActiveReaderCardsCount(bookId);
     }
-
 }

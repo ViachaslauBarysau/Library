@@ -14,7 +14,6 @@ import java.sql.Timestamp;
 @Data
 @Builder
 public class ReaderCardDto {
-
     private int id;
     private int bookId;
     public String bookTitle;
@@ -27,5 +26,4 @@ public class ReaderCardDto {
     private String status;
     private Timestamp returnDate;
     private String comment;
-
 }

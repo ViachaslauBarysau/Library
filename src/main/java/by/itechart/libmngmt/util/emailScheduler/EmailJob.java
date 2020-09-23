@@ -1,17 +1,14 @@
 package by.itechart.libmngmt.util.emailScheduler;
 
 import by.itechart.libmngmt.dto.ReaderCardDto;
-import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.impl.ReaderCardServiceImpl;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 import java.util.List;
 
 public class EmailJob implements Job {
-
     public static final int SEVEN_DAYS_BEFORE = 7;
     public static final int ONE_DAY_BEFORE = 1;
     public static final int ONE_DAY_AFTER = -1;
@@ -20,8 +17,7 @@ public class EmailJob implements Job {
     private final LetterTemplater letterTemplater = LetterTemplater.getInstance();
     private final EmailSender emailSender = EmailSender.getInstance();
 
-    public void execute(JobExecutionContext context)
-            throws JobExecutionException {
+    public void execute(JobExecutionContext context) {
 
         List<ReaderCardDto> sevenDaysBeforeReaderCards = readerCardService.getExpiringReaderCards(SEVEN_DAYS_BEFORE);
         if (sevenDaysBeforeReaderCards != null) {

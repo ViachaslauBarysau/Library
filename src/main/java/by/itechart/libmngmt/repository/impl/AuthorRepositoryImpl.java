@@ -2,13 +2,15 @@ package by.itechart.libmngmt.repository.impl;
 
 import by.itechart.libmngmt.repository.AuthorRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AuthorRepositoryImpl implements AuthorRepository {
-
+    private final static Logger logger = LogManager.getLogger(AuthorRepositoryImpl.class.getName());
     private static AuthorRepositoryImpl instance;
     public static AuthorRepositoryImpl getInstance() {
         if(instance == null){
@@ -26,7 +28,6 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
     @Override
     public void add(String name) {
-
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_AUTHOR)) {
                 int index = 1;
@@ -34,7 +35,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding author error!", e);
         }
     }
 
@@ -56,7 +57,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Deleting books_authors record error!", e);
         }
     }
 
@@ -79,7 +80,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding books_author record error!", e);
         }
     }
 
@@ -107,7 +108,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting authors IDs error!", e);
         }
         return resultList;
     }
@@ -138,7 +139,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding author error!", e);
         }
         return resultList;
     }

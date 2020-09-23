@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet(urlPatterns = {"/rdr"})
+@WebServlet(urlPatterns = {"/reader"})
 public class ReaderServlet extends HttpServlet {
 
     private final ReaderService readerService = ReaderServiceImpl.getInstance();
@@ -47,5 +47,4 @@ public class ReaderServlet extends HttpServlet {
         out.print(json);
         out.flush();
     }
-
 }

@@ -1,22 +1,22 @@
 package by.itechart.libmngmt.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertyReader {
+    private final static Logger logger = LogManager.getLogger(PropertyReader.class.getName());
     private static final String PROPERTIES_PATH = "db.properties";
     private static Properties properties = new Properties();
-    private final static Logger LOGGER = LoggerFactory.getLogger(ConnectionHelper.class);
 
     static {
         try (InputStream input = PropertyReader.class.getClassLoader().getResourceAsStream(PROPERTIES_PATH)) {
             properties.load(input);
         } catch (IOException e) {
-            LOGGER.error(e.toString());
+            logger.debug("Reading properties error!", e);
         }
     }
 

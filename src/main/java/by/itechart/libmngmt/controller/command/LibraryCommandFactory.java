@@ -1,18 +1,21 @@
 package by.itechart.libmngmt.controller.command;
 
 import by.itechart.libmngmt.controller.command.commands.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LibraryCommandFactory {
-
+    private final static Logger logger = LogManager.getLogger(LibraryCommandFactory.class.getName());
     private static final Map<LibraryCommandType, LibraryCommand> commands = new HashMap<>();
 
     static  {
         commands.put(LibraryCommandType.DELETE_BOOK, DeleteBookCommand.getInstance());
-        commands.put(LibraryCommandType.ADD_EDIT_BOOK, AddEditBookCommand.getInstance());
+        commands.put(LibraryCommandType.ADD_BOOK, AddBookCommand.getInstance());
+        commands.put(LibraryCommandType.EDIT_BOOK, EditBookCommand.getInstance());
         commands.put(LibraryCommandType.BOOK_PAGE, BookPageCommand.getInstance());
         commands.put(LibraryCommandType.GET_BOOK_LIST, GetBookListCommand.getInstance());
         commands.put(LibraryCommandType.SEARCH_PAGE, SearchPageCommand.getInstance());
@@ -25,9 +28,8 @@ public class LibraryCommandFactory {
         try {
             return commands.get(LibraryCommandType.valueOf(request.getParameter("command")));
         } catch (Exception e) {
+            logger.debug("Wrong command!", e);
             return UnknownCommand.getInstance();
         }
-
     }
-
 }

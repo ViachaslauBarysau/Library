@@ -1,13 +1,14 @@
 package by.itechart.libmngmt.util.emailScheduler;
 
-
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EmailSender {
-
+    private final static Logger logger = LogManager.getLogger(EmailSender.class.getName());
     private static EmailSender instance;
 
     public static EmailSender getInstance() {
@@ -37,7 +38,7 @@ public class EmailSender {
             email.addTo(readerEmail);
             email.send();
         } catch (EmailException e) {
-            e.printStackTrace();
+            logger.debug("Email sending error!", e);
         }
     }
 }

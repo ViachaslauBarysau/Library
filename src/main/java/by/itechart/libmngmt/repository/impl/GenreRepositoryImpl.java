@@ -2,13 +2,15 @@ package by.itechart.libmngmt.repository.impl;
 
 import by.itechart.libmngmt.repository.GenreRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenreRepositoryImpl implements GenreRepository {
-
+    private final static Logger logger = LogManager.getLogger(GenreRepositoryImpl.class.getName());
     private static GenreRepositoryImpl instance;
     public static GenreRepositoryImpl getInstance() {
         if(instance == null){
@@ -33,7 +35,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Deleting books_genres record error!", e);
         }
     }
 
@@ -61,7 +63,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting genres IDs record error!", e);
         }
         return resultList;
     }
@@ -92,7 +94,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding books_genres record error!", e);
         }
     }
 
@@ -117,7 +119,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting all genres error!", e);
         }
         return resultList;
     }
@@ -143,7 +145,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding genre record error!", e);
         }
     }
 
@@ -155,5 +157,4 @@ public class GenreRepositoryImpl implements GenreRepository {
             preparedStatement.execute();
         }
     }
-
 }

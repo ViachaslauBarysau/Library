@@ -12,7 +12,6 @@ import java.util.List;
 @Data
 @Builder
 public class BookDto {
-
     private int id;
     private String title;
     private String publisher;
@@ -25,6 +24,5 @@ public class BookDto {
     private List<String> authors;
     private List<String> genres;
     private List<String> covers;
-
-
+    private List<ReaderCardDto> readerCardDtos;
 }

@@ -6,7 +6,7 @@ CREATE TABLE Books
     Publish_date INTEGER NOT NULL,
     Page_count INTEGER NOT NULL,
     Isbn VARCHAR(255) NOT NULL,
-    Description VARCHAR(400),
+    Description VARCHAR(1000),
     Total_amount INTEGER NOT NULL,
     Available_amount INTEGER NOT NULL,
     PRIMARY KEY (ID)
@@ -80,14 +80,14 @@ CREATE TABLE Covers
 );
 
 INSERT INTO Books(Title, Publisher, Publish_date, Page_count, Isbn, Description, Total_amount, Available_amount)
-VALUES ('The Film Experience', 'Alpina', 2012, 512, '978-1319059514', 'Enjoy a more poignant film experience by diving' ||
+VALUES ('The Film Experience', 'Alpina', 2012, 512, '978-5-17-118208-3', 'Enjoy a more poignant film experience by diving' ||
         ' into the details which built modern-day cinema as Film Experience combines, technology, business, the visual ' ||
         'language of film, and its history into a single, cohesive presentation of this ever-evolving medium.', 2, 0),
        ('War and Peace', 'Alpina', 2008, 1225, '1319059511', 'The novel spans the period 1805 to 1820. ' ||
         'The era of Catherine the Great was still fresh in the minds of older people. Catherine had made ' ||
         'French the language of her royal court. For the next 100 years, it became a social requirement for' ||
         ' the Russian nobility to speak French and understand French culture', 3, 3),
-       ('The Captain''s Daughter', 'Alpina', 2004, 178, '978-0393934915', 'Pyotr Andreyich Grinyov (the narrative ' ||
+       ('The Captain''s Daughter', 'Alpina', 2004, 178, '87-11-07559-7', 'Pyotr Andreyich Grinyov (the narrative ' ||
         'is conducted on his behalf) is the only surviving child of a retired army officer. When Pyotr turns 17,' ||
         ' his father sends him into military service in Orenburg. En route Pyotr gets lost in a blizzard, but is ' ||
         'rescued by a mysterious man. As a token of his gratitude, Pyotr gives the guide his hareskin coat.', 1, 1),
@@ -95,7 +95,7 @@ VALUES ('The Film Experience', 'Alpina', 2012, 512, '978-1319059514', 'Enjoy a m
         'gentleman of middling social class and means. Chichikov arrives in a small town and turns on the charm to ' ||
         'woo key local officials and landowners. He reveals little about his past, or his purpose, as he sets about ' ||
         'carrying out his bizarre and mysterious plan to acquire "dead souls."', 5, 5),
-       ('Kashtanka ', 'Admire', 1999, 444, '978-1138743960', 'Based on a new translation and adapted especially for ' ||
+       ('Kashtanka ', 'Admire', 1999, 444, '0198526636', 'Based on a new translation and adapted especially for ' ||
         'young readers, Kashtanka is an enchanting introduction to the work of one of the world’s foremost authors.' ||
         ' Gennady Spirin’s award-winning illustrations bring new life to this adaptation of Anton Chekhov’s ' ||
         'charming adventure.', 1, 0),
@@ -103,7 +103,7 @@ VALUES ('The Film Experience', 'Alpina', 2012, 512, '978-1319059514', 'Enjoy a m
         'describes a green oak by the sea, on which a learned cat walks back and forth on a gold chain. When the ' ||
         'cat walks to the right, he sings - to the left he tells stories. In this magical place, ' ||
         'fairy tales come alive, including those common in Russian folktales.', 5, 5),
-       ('Mumu', 'Alpina', 2004, 522, '978-0761163237', 'The story opens in Moscow, at the home of an unnamed, wealthy, ' ||
+       ('Mumu', 'Alpina', 2004, 522, '0-471-19047-0', 'The story opens in Moscow, at the home of an unnamed, wealthy, ' ||
         'and elderly widow. Mean and spiteful, she has been abandoned by whatever living friends and relatives she ' ||
          'still has. The exposition then focuses on one of her porters, Gerasim, a man from the countryside.', 6, 6),
        ('Fathers and Sons', 'Peresvet', 2006, 814, '0761163239', 'Arkady Kirsanov has just graduated from the ' ||

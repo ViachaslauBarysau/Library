@@ -8,13 +8,11 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
 public class ReaderCardEntity {
-
     private int id;
     private int bookId;
     public String bookTitle;
@@ -27,5 +25,4 @@ public class ReaderCardEntity {
     private String status;
     private Timestamp returnDate;
     private String comment;
-
 }

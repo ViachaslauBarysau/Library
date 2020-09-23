@@ -4,6 +4,8 @@ package by.itechart.libmngmt.repository.impl;
 import by.itechart.libmngmt.entity.ReaderEntity;
 import by.itechart.libmngmt.repository.ReaderRepository;
 import by.itechart.libmngmt.util.ConnectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class  ReaderRepositoryImpl implements ReaderRepository {
+    private final static Logger logger = LogManager.getLogger(ReaderCardRepositoryImpl.class.getName());
     private static ReaderRepositoryImpl instance;
     public static ReaderRepositoryImpl getInstance() {
         if(instance == null){
@@ -38,7 +41,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Insert/update reader error!", e);
         }
     }
 
@@ -55,7 +58,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting reader ID error!", e);
         }
         return readerId;
     }
@@ -73,7 +76,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting reader name error!", e);
         }
         return name;
     }
@@ -91,7 +94,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Getting reader emails error!", e);
         }
         return resultList;
     }
@@ -106,7 +109,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("Adding reader error!", e);
         }
     }
 }

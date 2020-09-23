@@ -59,28 +59,33 @@
     </table>
 
     <button type="submit" class="btn btn-primary" formaction="lib-app?command=ADD_BOOK_PAGE" />
-    <label>Add Book</label>
+    Add Book
     </button>
-    <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_SEARCHED_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber}" />
-    <label>Delete Book(-s)</label>
+    <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_SEARCHED_BOOK&title=${title}
+    &author=${author}&genre=${genre}&description=${description}&page=${pageNumber}" />
+    Delete Book(-s)
     </button>
 
     <c:if test ="${not empty pageNumber}">
         <c:if test ="${pageNumber > 1}">
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber-1}" />
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}
+            &author=${author}&genre=${genre}&description=${description}&page=${pageNumber-1}" />
             &lt;
             </button>
             ${pageNumber} of ${pageCount}
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber+1}" disabled/>
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}
+            &author=${author}&genre=${genre}&description=${description}&page=${pageNumber+1}" disabled/>
             &gt;
             </button>
         </c:if>
         <c:if test ="${pageNumber < pageCount}">
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber-1}" disabled/>
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}
+            &author=${author}&genre=${genre}&description=${description}&page=${pageNumber-1}" disabled/>
             &lt;
             </button>
             ${pageNumber} of ${pageCount}
-            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}&author=${author}&genre=${genre}&description=${description}&page=${pageNumber+1}" />
+            <button type="submit" class="btn btn-primary" formaction="lib-app?command=SEARCH_BOOK&title=${title}
+            &author=${author}&genre=${genre}&description=${description}&page=${pageNumber+1}" />
             &gt;
             </button>
         </c:if>

@@ -2,16 +2,17 @@ package by.itechart.libmngmt.repository;
 
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 public interface ReaderCardRepository {
-    int getNearestReturnReaderCardId(int bookId);
-    List<Date> getNearestReturnDates(int bookId);
+    Date getNearestReturnDates(int bookId);
     List<ReaderCardEntity> get(int bookId);
-    void add(ReaderCardEntity readerCard);
-    void update(ReaderCardEntity readerCard);
+    void add(ReaderCardEntity readerCard, Connection connection) throws SQLException;
+    void update(ReaderCardEntity readerCard, Connection connection) throws SQLException;
     ReaderCardEntity getReaderCard(int readerCardId);
     int getActiveReaderCardsCount(int bookId);
     List<ReaderCardEntity> getExpiringReaderCards(int days);

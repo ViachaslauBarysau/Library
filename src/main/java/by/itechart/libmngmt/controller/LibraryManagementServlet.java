@@ -27,5 +27,4 @@ public class LibraryManagementServlet extends HttpServlet {
         command.init(getServletContext(), req, resp);
         command.process();
     }
-
 }
