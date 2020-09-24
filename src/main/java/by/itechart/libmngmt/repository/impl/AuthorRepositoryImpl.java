@@ -12,7 +12,7 @@ import java.util.List;
 public class AuthorRepositoryImpl implements AuthorRepository {
     private final static Logger logger = LogManager.getLogger(AuthorRepositoryImpl.class.getName());
     private static AuthorRepositoryImpl instance;
-    public static AuthorRepositoryImpl getInstance() {
+    public static synchronized AuthorRepositoryImpl getInstance() {
         if(instance == null){
             instance = new AuthorRepositoryImpl();
         }
@@ -95,7 +95,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     }
 
     @Override
-    public List<Integer> getId(List<String> names) {
+    public List<Integer> getAuthorIds(List<String> names) {
         List<Integer> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
@@ -114,7 +114,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     }
 
     @Override
-    public List<Integer> getId(List<String> names, Connection connection) throws SQLException {
+    public List<Integer> getAuthorIds(List<String> names, Connection connection) throws SQLException {
         List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
             Array namesArray = connection.createArrayOf("VARCHAR", names.toArray());

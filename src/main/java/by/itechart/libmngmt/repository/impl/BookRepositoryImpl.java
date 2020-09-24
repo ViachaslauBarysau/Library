@@ -11,9 +11,9 @@ import java.sql.*;
 import java.util.*;
 
 public class BookRepositoryImpl implements BookRepository {
-    private final static Logger logger = LogManager.getLogger(BookRepositoryImpl.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(BookRepositoryImpl.class.getName());
     private static BookRepositoryImpl instance;
-    public static BookRepositoryImpl getInstance() {
+    public static synchronized BookRepositoryImpl getInstance() {
         if(instance == null){
             instance = new BookRepositoryImpl();
         }
@@ -80,7 +80,7 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Updating book error!", e);
+            LOGGER.debug("Updating book error.", e);
         }
     }
 
@@ -105,7 +105,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting search book results error!", e);
+            LOGGER.debug("Getting search book results error.", e);
         }
         return searchPageCount;
     }
@@ -143,7 +143,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting available books page count error!", e);
+            LOGGER.debug("Getting available books page count error.", e);
         }
         return pageCount;
     }
@@ -158,8 +158,8 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.setInt(index++, (offset-1)* BOOK_PAGE_COUNT);
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
-                    if (resultList.isEmpty() || resultList.get(resultList.size()-1)
-                            .getId()!=resultSet.getInt("ID")) {
+                    if (resultList.isEmpty() ||
+                            resultList.get(resultList.size() - 1).getId() != resultSet.getInt("ID")) {
                         resultList.add(BookEntity.builder()
                                 .id(resultSet.getInt("ID"))
                                 .title(resultSet.getString("Title"))
@@ -173,7 +173,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting available books error!", e);
+            LOGGER.debug("Getting available books error.", e);
         }
         return resultList;
     }
@@ -223,7 +223,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Adding book error!", e);
+            LOGGER.debug("Adding book error.", e);
         }
         return id;
     }
@@ -253,7 +253,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting books error!", e);
+            LOGGER.debug("Getting books error.", e);
         }
         return resultList;
     }
@@ -305,7 +305,7 @@ public class BookRepositoryImpl implements BookRepository {
                 book.getCovers().addAll(covers);
             }
         } catch (SQLException e) {
-            logger.debug("Getting book error!", e);
+            LOGGER.debug("Getting book error.", e);
         }
         return book;
     }
@@ -326,7 +326,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting book's page count error!", e);
+            LOGGER.debug("Getting book's page count error.", e);
         }
         return pageCount;
     }
@@ -341,7 +341,7 @@ public class BookRepositoryImpl implements BookRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Deleting books error!", e);
+            LOGGER.debug("Deleting books error.", e);
         }
     }
 
@@ -374,7 +374,7 @@ public class BookRepositoryImpl implements BookRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Searching books error!", e);
+            LOGGER.debug("Searching books error.", e);
         }
         return resultList;
     }

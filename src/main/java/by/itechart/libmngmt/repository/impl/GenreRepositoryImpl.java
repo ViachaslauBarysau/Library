@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GenreRepositoryImpl implements GenreRepository {
-    private final static Logger logger = LogManager.getLogger(GenreRepositoryImpl.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(GenreRepositoryImpl.class.getName());
     private static GenreRepositoryImpl instance;
-    public static GenreRepositoryImpl getInstance() {
+    public static synchronized GenreRepositoryImpl getInstance() {
         if(instance == null){
             instance = new GenreRepositoryImpl();
         }
@@ -35,7 +35,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Deleting books_genres record error!", e);
+            LOGGER.debug("Deleting books_genres record error.", e);
         }
     }
 
@@ -49,7 +49,7 @@ public class GenreRepositoryImpl implements GenreRepository {
     }
 
     @Override
-    public List<Integer> getId(List<String> genres) {
+    public List<Integer> getGenreIds(List<String> genres) {
         List<Integer> resultList = new ArrayList<>();
         try (Connection connection = ConnectionHelper.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
@@ -63,13 +63,13 @@ public class GenreRepositoryImpl implements GenreRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting genres IDs record error!", e);
+            LOGGER.debug("Getting genres IDs record error.", e);
         }
         return resultList;
     }
 
     @Override
-    public List<Integer> getId(List<String> genres, Connection connection) throws SQLException {
+    public List<Integer> getGenreIds(List<String> genres, Connection connection) throws SQLException {
         List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
             Array genresArray = connection.createArrayOf("VARCHAR", genres.toArray());
@@ -94,7 +94,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Adding books_genres record error!", e);
+            LOGGER.debug("Adding books_genres record error.", e);
         }
     }
 
@@ -119,7 +119,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting all genres error!", e);
+            LOGGER.debug("Getting all genres error.", e);
         }
         return resultList;
     }
@@ -145,7 +145,7 @@ public class GenreRepositoryImpl implements GenreRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Adding genre record error!", e);
+            LOGGER.debug("Adding genre record error.", e);
         }
     }
 

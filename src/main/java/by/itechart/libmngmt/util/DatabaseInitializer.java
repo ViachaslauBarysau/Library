@@ -12,7 +12,7 @@ import java.io.Reader;
 import static by.itechart.libmngmt.util.ConnectionHelper.getConnection;
 
 public class DatabaseInitializer {
-    private final static Logger logger = LogManager.getLogger(DatabaseInitializer.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(DatabaseInitializer.class.getName());
     private static final String CLASSPATH_DB_INIT_SCRIPT_SQL = "src/main/resources/db_init_script.sql";
 
     public DatabaseInitializer() {
@@ -22,7 +22,7 @@ public class DatabaseInitializer {
         try (Reader reader = new BufferedReader(new FileReader(CLASSPATH_DB_INIT_SCRIPT_SQL))) {
             new ScriptRunner(getConnection()).runScript(reader);
         } catch (IOException e) {
-            logger.debug("Initializing database error!", e);
+            LOGGER.debug("Initializing database error.", e);
         }
     }
 }

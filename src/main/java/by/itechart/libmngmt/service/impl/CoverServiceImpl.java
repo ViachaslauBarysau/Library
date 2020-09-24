@@ -13,7 +13,7 @@ public class CoverServiceImpl implements CoverService {
     private final CoverRepository coverRepository = CoverRepositoryImpl.getInstance();
     private static CoverServiceImpl instance;
 
-    public static CoverServiceImpl getInstance() {
+    public static synchronized CoverServiceImpl getInstance() {
         if(instance == null){
             instance = new CoverServiceImpl();
         }

@@ -14,12 +14,12 @@ import java.util.List;
 
 @Data
 public class GetBookListCommand extends LibraryCommand {
-    private final static Logger logger = LogManager.getLogger(GetBookListCommand.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(GetBookListCommand.class.getName());
     private final BookService bookService = BookServiceImpl.getInstance();
     private final int MIN_PAGE_NUMBER = 1;
     private static GetBookListCommand instance;
 
-    public static GetBookListCommand getInstance() {
+    public static synchronized GetBookListCommand getInstance() {
         if(instance == null){
             instance = new GetBookListCommand();
         }
@@ -33,7 +33,7 @@ public class GetBookListCommand extends LibraryCommand {
         try {
             pageNumber = Integer.parseInt(request.getParameter("page"));
         } catch (Exception e) {
-            logger.debug("Wrong page number!", e);
+            LOGGER.debug("Wrong page number!", e);
         }
         List<BookDto> books;
         if (request.getParameter("hideunavailable") != null &&

@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchPageCommand extends LibraryCommand {
-    private final static Logger logger = LogManager.getLogger(SearchPageCommand.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(SearchPageCommand.class.getName());
     private final BookService bookService = BookServiceImpl.getInstance();
     private static SearchPageCommand instance;
     private final int MIN_PAGE_NUMBER = 1;
 
-    public static SearchPageCommand getInstance() {
+    public static synchronized SearchPageCommand getInstance() {
         if(instance == null){
             instance = new SearchPageCommand();
         }
@@ -32,7 +32,7 @@ public class SearchPageCommand extends LibraryCommand {
         try {
             pageNumber = Integer.parseInt(request.getParameter("page"));
         } catch (Exception e) {
-            logger.debug("Wrong page number!", e);
+            LOGGER.debug("Wrong page number.", e);
         }
 
         List<String> searchParams = new ArrayList<>();

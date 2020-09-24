@@ -2,9 +2,19 @@ package by.itechart.libmngmt.util.converter;
 
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
+import by.itechart.libmngmt.service.impl.BookManagementServiceImpl;
 
 public class BookConverter {
-    public static BookDto convertBookEntityToBookDto(BookEntity bookEntity) {
+    private static BookConverter instance;
+
+    public static synchronized BookConverter getInstance() {
+        if(instance == null){
+            instance = new BookConverter();
+        }
+        return instance;
+    }
+
+    public BookDto convertBookEntityToBookDto(BookEntity bookEntity) {
         BookDto bookDto = BookDto.builder()
                 .id(bookEntity.getId())
                 .title(bookEntity.getTitle())
@@ -22,7 +32,7 @@ public class BookConverter {
         return bookDto;
     }
 
-    public static BookEntity convertBookDtoToBookEntity(BookDto bookDto) {
+    public BookEntity convertBookDtoToBookEntity(BookDto bookDto) {
         BookEntity bookEntity = BookEntity.builder()
                 .id(bookDto.getId())
                 .title(bookDto.getTitle())

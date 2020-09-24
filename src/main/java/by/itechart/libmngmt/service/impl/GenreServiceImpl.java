@@ -14,7 +14,7 @@ public class GenreServiceImpl implements GenreService {
     private final GenreRepository genreRepository = GenreRepositoryImpl.getInstance();
     private static GenreServiceImpl instance;
 
-    public static GenreServiceImpl getInstance() {
+    public static synchronized GenreServiceImpl getInstance() {
         if(instance == null){
             instance = new GenreServiceImpl();
         }
@@ -33,7 +33,7 @@ public class GenreServiceImpl implements GenreService {
 
         genreRepository.deleteBooksGenres(bookDto.getId());
 
-        List<Integer> genreIDs = genreRepository.getId(bookDto.getGenres());
+        List<Integer> genreIDs = genreRepository.getGenreIds(bookDto.getGenres());
         for (int genreId: genreIDs) {
             genreRepository.addBookGenre(bookDto.getId(), genreId);
         }
@@ -52,7 +52,7 @@ public class GenreServiceImpl implements GenreService {
 
         genreRepository.deleteBooksGenres(bookDto.getId(), connection);
 
-        List<Integer> genreIDs = genreRepository.getId(bookDto.getGenres(), connection);
+        List<Integer> genreIDs = genreRepository.getGenreIds(bookDto.getGenres(), connection);
         for (int genreId: genreIDs) {
             genreRepository.addBookGenre(bookDto.getId(), genreId, connection);
         }

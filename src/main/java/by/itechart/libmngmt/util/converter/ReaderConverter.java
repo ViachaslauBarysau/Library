@@ -4,7 +4,16 @@ import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderEntity;
 
 public class ReaderConverter {
-    public static ReaderEntity convertReaderDtoToReaderEntity(ReaderDto readerDto) {
+    private static ReaderConverter instance;
+
+    public static synchronized ReaderConverter getInstance() {
+        if(instance == null){
+            instance = new ReaderConverter();
+        }
+        return instance;
+    }
+
+    public ReaderEntity convertReaderDtoToReaderEntity(ReaderDto readerDto) {
         ReaderEntity readerEntity = ReaderEntity.builder()
                 .id(readerDto.getId())
                 .email(readerDto.getEmail())

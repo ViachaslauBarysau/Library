@@ -10,10 +10,9 @@ import java.sql.Date;
 public class BookManagementServiceImpl implements BookManagementService {
     private final BookService bookService = BookServiceImpl.getInstance();
     private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
-
     private static BookManagementServiceImpl instance;
 
-    public static BookManagementServiceImpl getInstance() {
+    public static synchronized BookManagementServiceImpl getInstance() {
         if(instance == null){
             instance = new BookManagementServiceImpl();
         }
@@ -25,7 +24,7 @@ public class BookManagementServiceImpl implements BookManagementService {
         Date nearestAvailableDate = readerCardService.getNearestReturnDates(bookId);
         BookPageDto bookPageDto = BookPageDto.builder()
                 .bookDto(bookService.find(bookId))
-                .readerCards(readerCardService.get(bookId))
+                .readerCards(readerCardService.getAllReaderCards(bookId))
                 .nearestAvailableDate(nearestAvailableDate)
                 .build();
         return bookPageDto;

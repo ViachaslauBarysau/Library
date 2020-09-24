@@ -14,7 +14,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository = AuthorRepositoryImpl.getInstance();
     private static AuthorServiceImpl instance;
 
-    public static AuthorServiceImpl getInstance() {
+    public static synchronized AuthorServiceImpl getInstance() {
         if(instance == null){
             instance = new AuthorServiceImpl();
         }
@@ -33,7 +33,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         authorRepository.deleteBooksAuthorsRecords(bookDto.getId());
 
-        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors());
+        List<Integer> authorIDs = authorRepository.getAuthorIds(bookDto.getAuthors());
         for (int authorID: authorIDs) {
             authorRepository.addBookAuthorRecord(bookDto.getId(), authorID);
         }
@@ -51,7 +51,7 @@ public class AuthorServiceImpl implements AuthorService {
 
         authorRepository.deleteBooksAuthorsRecords(bookDto.getId(), connection);
 
-        List<Integer> authorIDs = authorRepository.getId(bookDto.getAuthors(), connection);
+        List<Integer> authorIDs = authorRepository.getAuthorIds(bookDto.getAuthors(), connection);
         for (int authorID: authorIDs) {
             authorRepository.addBookAuthorRecord(bookDto.getId(), authorID, connection);
         }

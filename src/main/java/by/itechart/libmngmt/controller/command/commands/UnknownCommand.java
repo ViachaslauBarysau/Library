@@ -8,7 +8,7 @@ import java.io.IOException;
 public class UnknownCommand extends LibraryCommand {
     private static UnknownCommand instance;
 
-    public static UnknownCommand getInstance() {
+    public static synchronized UnknownCommand getInstance() {
         if(instance == null){
             instance = new UnknownCommand();
         }

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LibraryCommandFactory {
-    private final static Logger logger = LogManager.getLogger(LibraryCommandFactory.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(LibraryCommandFactory.class.getName());
     private static final Map<LibraryCommandType, LibraryCommand> commands = new HashMap<>();
 
     static  {
@@ -28,7 +28,7 @@ public class LibraryCommandFactory {
         try {
             return commands.get(LibraryCommandType.valueOf(request.getParameter("command")));
         } catch (Exception e) {
-            logger.debug("Wrong command!", e);
+            LOGGER.debug("Wrong command.", e);
             return UnknownCommand.getInstance();
         }
     }

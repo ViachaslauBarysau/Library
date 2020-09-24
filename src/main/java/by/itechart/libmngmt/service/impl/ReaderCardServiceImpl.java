@@ -10,7 +10,6 @@ import by.itechart.libmngmt.service.ReaderService;
 import by.itechart.libmngmt.util.converter.BookConverter;
 import by.itechart.libmngmt.util.converter.ReaderCardConverter;
 
-import javax.faces.convert.BooleanConverter;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -18,11 +17,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReaderCardServiceImpl implements ReaderCardService {
+    private final ReaderCardConverter readerCardConverter = ReaderCardConverter.getInstance();
     private final ReaderService readerService = ReaderServiceImpl.getInstance();
     private final ReaderCardRepository readerCardRepository = ReaderCardRepositoryImpl.getInstance();
     private static ReaderCardServiceImpl instance;
 
-    public static ReaderCardServiceImpl getInstance() {
+    public static synchronized ReaderCardServiceImpl getInstance() {
         if(instance == null){
             instance = new ReaderCardServiceImpl();
         }
@@ -30,11 +30,21 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     }
 
     @Override
-    public List<ReaderCardDto> get(int bookId) {
-        List<ReaderCardEntity> readerCardEntities = readerCardRepository.get(bookId);
+    public List<ReaderCardDto> getActiveReaderCards(int bookId) {
+        List<ReaderCardEntity> readerCardEntities = readerCardRepository.getActiveReaderCards(bookId);
         List<ReaderCardDto> readerCardDtos = new ArrayList<>();
         for (ReaderCardEntity readerCardEntity : readerCardEntities) {
-            readerCardDtos.add(ReaderCardConverter.convertToReaderCardDto(readerCardEntity));
+            readerCardDtos.add(readerCardConverter.convertToReaderCardDto(readerCardEntity));
+        }
+        return readerCardDtos;
+    }
+
+    @Override
+    public List<ReaderCardDto> getAllReaderCards(int bookId) {
+        List<ReaderCardEntity> readerCardEntities = readerCardRepository.getAllReaderCards(bookId);
+        List<ReaderCardDto> readerCardDtos = new ArrayList<>();
+        for (ReaderCardEntity readerCardEntity : readerCardEntities) {
+            readerCardDtos.add(readerCardConverter.convertToReaderCardDto(readerCardEntity));
         }
         return readerCardDtos;
     }
@@ -47,7 +57,7 @@ public class ReaderCardServiceImpl implements ReaderCardService {
     @Override
     public ReaderCardDto getReaderCard(int readerCardId) {
         ReaderCardEntity readerCardEntity = readerCardRepository.getReaderCard(readerCardId);
-        ReaderCardDto readerCardDto = ReaderCardConverter.convertToReaderCardDto(readerCardEntity);
+        ReaderCardDto readerCardDto = readerCardConverter.convertToReaderCardDto(readerCardEntity);
         if (readerCardEntity.getComment() == null) {
             readerCardDto.setComment("");
         }
@@ -56,12 +66,12 @@ public class ReaderCardServiceImpl implements ReaderCardService {
 
     @Override
     public void add(ReaderCardDto readerCardDto, Connection connection) throws SQLException {
-        readerCardRepository.add(ReaderCardConverter.convertToReaderCardEntity(readerCardDto), connection);
+        readerCardRepository.add(readerCardConverter.convertToReaderCardEntity(readerCardDto), connection);
     }
 
     @Override
     public void update(ReaderCardDto readerCardDto, Connection connection) throws SQLException {
-        readerCardRepository.update(ReaderCardConverter.convertToReaderCardEntity(readerCardDto), connection);
+        readerCardRepository.update(readerCardConverter.convertToReaderCardEntity(readerCardDto), connection);
     }
 
     @Override
@@ -83,7 +93,7 @@ public class ReaderCardServiceImpl implements ReaderCardService {
         List<ReaderCardEntity> readerCardEntities = readerCardRepository.getExpiringReaderCards(days);
         List<ReaderCardDto> readerCardDtoList = new ArrayList<>();
         for (ReaderCardEntity readerCardEntity : readerCardEntities) {
-            readerCardDtoList.add(ReaderCardConverter.convertToReaderCardDto(readerCardEntity));
+            readerCardDtoList.add(readerCardConverter.convertToReaderCardDto(readerCardEntity));
         }
         return readerCardDtoList;
     }

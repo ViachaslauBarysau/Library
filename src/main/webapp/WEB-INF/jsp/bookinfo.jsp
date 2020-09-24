@@ -28,79 +28,91 @@ ${errors}
     <p><img class="cover" class="form-control" id="cover" name="cover"
             src="images/${bookpagedto.bookDto.covers.get(0)}" ></p>
     <label>Choose image to change cover:</label>
-    <p><input type="file" class="form-control" name="file" accept="image/jpeg, image/png" /></p>
+    <input type="file" class="form-control" name="file" accept="image/jpeg, image/png" />
     <label>Title:</label>
-    <p><input type="text" class="form-control" size="60" name="title" value="${bookpagedto.bookDto.title}"
-              required /></p>
+    <input type="text" class="form-control" size="60" name="title" value="${bookpagedto.bookDto.title}"
+              required />
     <label>Authors:</label>
+    <div>
     <c:if test="${empty bookpagedto.bookDto.authors}">
-        <p><input type="text" class="form-control" name="authors" size="60" required></p>
+        <span name="span-authors"><input type="text" class="form-control" name="authors" size="60" required>
+        <img class="remove" src="images/minus_PNG41.png" alt="deleteAuthor" width="40" onclick="deleteAuthor(this)"></span>
     </c:if>
     <c:forEach var="author"  items="${bookpagedto.bookDto.authors}" >
-        <p><input type="text" class="form-control" name="authors" size="60" value="${author}" required /></p>
+        <span name="span-authors"><input type="text" class="form-control" name="authors" size="60" value="${author}" required />
+            <img class="remove" src="images/minus_PNG41.png" alt="deleteAuthor" width="40" onclick="deleteAuthor(this)"></span>
     </c:forEach>
+    </div>
+    <div><img class="add-field" src="images/n8mnMsJKMVg1.png" alt="addAuthor" width="50" onclick="addAuthorField()"></div>
     <label>Publisher:</label>
-    <p><input type="text" class="form-control" name="publisher" size="60" value="${bookpagedto.bookDto.publisher}"
-              required /></p>
+    <div>
+    <input type="text" class="form-control" name="publisher" size="60" value="${bookpagedto.bookDto.publisher}"
+              required />
+    </div>
     <label>Publish date:</label>
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="number" type="number" min="1900" max="2020" class="form-control" name="publishDate"
-                      size="60" required /></p>
+            <input type="number" type="number" min="1900" max="2020" class="form-control" name="publishDate"
+                      size="60" required />
         </c:when>
         <c:otherwise>
-            <p><input type="number" min="1900" max="2020" class="form-control" name="publishDate" size="60"
-                      value="${bookpagedto.bookDto.publishDate}" required /></p>
+            <input type="number" min="1900" max="2020" class="form-control" name="publishDate" size="60"
+                      value="${bookpagedto.bookDto.publishDate}" required />
         </c:otherwise>
     </c:choose>
     <label>Genres:</label>
+    <div>
     <c:if test="${empty bookpagedto.bookDto.genres}">
-        <p><input type="text" class="form-control" name="genres" size="60" required/></p>
+        <span name="span-genres"><input type="text" class="form-control" name="genres" size="60" required/>
+        <img class="remove" src="images/minus_PNG41.png" alt="deleteGenre" width="40" onclick="deleteGenre(this)"></span>
     </c:if>
     <c:forEach var="genre" items="${bookpagedto.bookDto.genres}">
-        <p><input type="text" class="form-control" name="genres" size="60" value="${genre}" required /></p>
+        <span name="span-genres"><input type="text" class="form-control" name="genres" size="60" value="${genre}" required />
+        <img class="remove" src="images/minus_PNG41.png" alt="deleteGenre" width="40" onclick="deleteGenre(this)"></span>
     </c:forEach>
+    </div>
+    <div><img class="add-field" src="images/n8mnMsJKMVg1.png" alt="addGenre" width="50" onclick="addGenreField()"></div>
     <label>Page count:</label>
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="number" min="1" max="9999" class="form-control" name="pageCount" size="60" required /></p>
+            <input type="number" min="1" max="9999" class="form-control" name="pageCount" size="60" required />
         </c:when>
         <c:otherwise>
-            <p><input  type="number" min="1" max="9999" class="form-control" name="pageCount" size="60"
-                       value="${bookpagedto.bookDto.pageCount}" required /></p>
+            <input  type="number" min="1" max="9999" class="form-control" name="pageCount" size="60"
+                       value="${bookpagedto.bookDto.pageCount}" required />
         </c:otherwise>
     </c:choose>
     <label>ISBN:</label>
-    <p><input type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.isbn}" required /></p>
+    <input type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.isbn}" required />
     <label>Description:</label>
-    <p><textarea class="form-control" maxlength="980" name="description" cols="60" rows="12" required>
+    <textarea class="form-control" maxlength="980" name="description" cols="60" rows="12" required>
     ${bookpagedto.bookDto.description}
-    </textarea></p>
+    </textarea>
     <label>Total amount:</label>
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="number" min="0" max="999" class="form-control" size="60" id="totalAmount"
-                      onchange="onAmountChange(this.value)" name="totalAmount" equired /></p>
+            <input type="number" min="0" max="999" class="form-control" size="60" id="totalAmount"
+                      onchange="onAmountChange(this.value)" name="totalAmount" equired />
         </c:when>
         <c:otherwise>
-            <p><input type="number" min="0" max="999" class="form-control" size="60" id="totalAmount"
+            <input type="number" min="0" max="999" class="form-control" size="60" id="totalAmount"
                       onchange="onAmountChange(this.value)" name="totalAmount"
-                      value="${bookpagedto.bookDto.totalAmount}" required /></p>
+                      value="${bookpagedto.bookDto.totalAmount}" required />
         </c:otherwise>
     </c:choose>
 
     <c:choose>
         <c:when test="${bookpagedto.bookDto.id == 0}">
-            <p><input type="text" class="form-control" id="availableAmount" size="60" name="availableAmount"
-                      value="${bookpagedto.bookDto.availableAmount}" hidden /></p>
+            <input type="text" class="form-control" id="availableAmount" size="60" name="availableAmount"
+                      value="${bookpagedto.bookDto.availableAmount}" hidden />
         </c:when>
         <c:otherwise>
-            <p><input type="text" class="form-control" id="availableAmount" size="60" name="availableAmount"
+            <input type="text" class="form-control" id="availableAmount" size="60" name="availableAmount"
             value="${bookpagedto.bookDto.availableAmount}" hidden />
             <label>Status:</label>
             <c:if test ="${bookpagedto.bookDto.totalAmount == 0}">
-                <p><input type="text" class="form-control" id="bookstatus" size="60" value="Unavailable"
-                          readonly required /></p>
+                <input type="text" class="form-control" id="bookstatus" size="60" value="Unavailable"
+                          readonly required />
             </c:if>
             <c:if test ="${bookpagedto.bookDto.totalAmount != 0}">
                 <c:if test ="${bookpagedto.bookDto.availableAmount <= 0}">
@@ -125,7 +137,7 @@ ${errors}
     <c:when test="${bookpagedto.bookDto.id == 0}">
         <!-- Button to Open the Modal -->
         <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
-                onclick="openNewReaderCard()" hidden />
+                onclick="createNewReaderCard()" hidden />
         Add
         </button>
     </c:when>
@@ -160,9 +172,15 @@ ${errors}
                 </tr>
             </c:forEach>
         </table>
+        <c:if test="${empty bookpagedto.readerCards}">
+            <div id="records-message" align="center">No borrow records yet.</div>
+        </c:if>
+        <c:if test="${not empty bookpagedto.readerCards}">
+            <div id="records-message" align="center" hidden>No borrow records yet.</div>
+        </c:if>
         <!-- Button to Open the Modal -->
         <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
-                onclick="openNewReaderCard()" />
+                onclick="createNewReaderCard()" />
         Add
         </button>
     </c:otherwise>
@@ -234,6 +252,7 @@ ${errors}
         <p id="message" align="center">No books available!</p>
     </div>
 </div>
+<div id="snackbar"></div>
 </body>
 </html>
 <script type="text/javascript">

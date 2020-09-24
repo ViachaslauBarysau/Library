@@ -6,7 +6,7 @@ import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 public class Trigger {
-    final static Logger logger = LogManager.getLogger(EmailSender.class.getName());
+    final static Logger LOGGER = LogManager.getLogger(EmailSender.class.getName());
 
     public static void startScheduler() {
         JobDetail job = JobBuilder.newJob(EmailJob.class).build();
@@ -19,7 +19,7 @@ public class Trigger {
             scheduler.start();
             scheduler.scheduleJob(job, trigger);
         } catch (SchedulerException e) {
-            logger.debug("Scheduler error!", e);
+            LOGGER.debug("Scheduler error.", e);
         }
     }
 }

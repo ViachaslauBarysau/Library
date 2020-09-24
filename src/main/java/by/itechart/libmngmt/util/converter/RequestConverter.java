@@ -6,7 +6,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 public class RequestConverter {
-    public static BookDto convertToBookDto(HttpServletRequest request, String fileName) {
+    private static RequestConverter instance;
+
+    public static synchronized RequestConverter getInstance() {
+        if(instance == null){
+            instance = new RequestConverter();
+        }
+        return instance;
+    }
+
+    public BookDto convertToBookDto(HttpServletRequest request, String fileName) {
         BookDto bookDto = BookDto.builder()
                 .id(Integer.parseInt(request.getParameter("id")))
                 .title(request.getParameter("title"))
@@ -18,6 +27,7 @@ public class RequestConverter {
                 .isbn(request.getParameter("ISBN"))
                 .description(request.getParameter("description"))
                 .totalAmount(Integer.parseInt(request.getParameter("totalAmount")))
+                .availableAmount(Integer.parseInt(request.getParameter("availableAmount")))
                 .covers(Arrays.asList(fileName))
                 .build();
         return bookDto;

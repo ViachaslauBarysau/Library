@@ -2,11 +2,8 @@ package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.dto.BookDto;
-import by.itechart.libmngmt.dto.BookPageDto;
 import by.itechart.libmngmt.dto.ReaderCardDto;
-import by.itechart.libmngmt.service.BookManagementService;
 import by.itechart.libmngmt.service.BookService;
-import by.itechart.libmngmt.service.impl.BookManagementServiceImpl;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.util.converter.RequestConverter;
 import by.itechart.libmngmt.util.validator.BookValidator;
@@ -18,16 +15,18 @@ import com.google.gson.GsonBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class EditBookCommand extends LibraryCommand {
-    private final BookManagementService bookManagementService = BookManagementServiceImpl.getInstance();
+    private final FileUploader fileUploader = FileUploader.getInstance();
+    private final RequestConverter requestConverter = RequestConverter.getInstance();
     private final BookService bookService = BookServiceImpl.getInstance();
     private static EditBookCommand instance;
 
-    public static EditBookCommand getInstance() {
+    public static synchronized EditBookCommand getInstance() {
         if (instance == null) {
             instance = new EditBookCommand();
         }
@@ -40,33 +39,37 @@ public class EditBookCommand extends LibraryCommand {
         bookValidator.validate(request);
         String fileName = bookValidator.validateFile(request);
         List<String> readerCardsErrorMessages = validateReaderCards(request);
-        List<String> errorMessages = bookValidator.errorMessages;
+        List<String> errorMessages = bookValidator.getErrorMessages();
         errorMessages.addAll(readerCardsErrorMessages);
         if (errorMessages.size() < 1) {
-            BookDto bookDto = RequestConverter.convertToBookDto(request, fileName);
+            BookDto bookDto = requestConverter.convertToBookDto(request, fileName);
             bookDto.setReaderCardDtos(getReaderCards(request));
             bookService.addEditBook(bookDto);
-            FileUploader.uploadFile(request.getPart("file"), fileName);
+            if (!request.getPart("file").equals("")) {
+                fileUploader.uploadFile(request.getPart("file"), fileName);
+            }
             response.sendRedirect(request.getContextPath() + "/lib-app?command=BOOK_PAGE&id=" +
                     request.getParameter("id"));
         } else {
-            request.setAttribute("errors", errorMessages);
-            BookPageDto bookPageDto = bookManagementService
-                    .getBookPageDto(Integer.parseInt(request.getParameter("id")));
-            request.setAttribute("bookpagedto", bookPageDto);
-            forward("bookpage");
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+            String errors = gson.toJson(errorMessages);
+            PrintWriter out = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            out.print(errors);
+            out.flush();
         }
     }
 
     private List<String> validateReaderCards(HttpServletRequest request) {
         List<String> readerCardsErrorMessages = new ArrayList<>();
         if (request.getParameter("readerCards") != null && !request.getParameter("readerCards").isEmpty()) {
-            List<ReaderCardDto> readerCards = getReaderCards(request);
             ReaderCardValidator readerCardValidator = new ReaderCardValidator();
+            List<ReaderCardDto> readerCards = getReaderCards(request);
             for (ReaderCardDto readerCardDto : readerCards) {
                 readerCardValidator.validate(readerCardDto.getReaderEmail(), readerCardDto.getReaderName());
             }
-            readerCardsErrorMessages.addAll(readerCardValidator.errorMessages);
+            readerCardsErrorMessages.addAll(readerCardValidator.getErrorMessages());
         }
         return readerCardsErrorMessages;
     }

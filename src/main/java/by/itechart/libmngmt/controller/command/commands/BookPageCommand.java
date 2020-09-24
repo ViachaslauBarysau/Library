@@ -11,11 +11,11 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class BookPageCommand extends LibraryCommand {
-    private final static Logger logger = LogManager.getLogger(BookPageCommand.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(BookPageCommand.class.getName());
     private final BookManagementService bookManagementService = BookManagementServiceImpl.getInstance();
     private static BookPageCommand instance;
 
-    public static BookPageCommand getInstance() {
+    public static synchronized BookPageCommand getInstance() {
         if(instance == null){
             instance = new BookPageCommand();
         }
@@ -24,16 +24,17 @@ public class BookPageCommand extends LibraryCommand {
 
     @Override
     public void process() throws ServletException, IOException {
-        int bookId = 0;
         try {
-            bookId = Integer.parseInt(request.getParameter("id"));
+            int bookId = Integer.parseInt(request.getParameter("id"));
             if (bookId > 0) {
                 BookPageDto bookPageDto = bookManagementService.getBookPageDto(bookId);
                 request.setAttribute("bookpagedto", bookPageDto);
                 forward("bookpage");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/lib-app?command=ADD_BOOK_PAGE");
             }
         } catch (Exception e) {
-            logger.debug("Wrong book page!", e);
+            LOGGER.debug("Wrong book page.", e);
             response.sendRedirect(request.getContextPath() + "/lib-app?command=ADD_BOOK_PAGE");
         }
     }

@@ -10,9 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class CoverRepositoryImpl implements CoverRepository {
-    private final static Logger logger = LogManager.getLogger(CoverRepositoryImpl.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(CoverRepositoryImpl.class.getName());
     private static CoverRepositoryImpl instance;
-    public static CoverRepositoryImpl getInstance() {
+    public static synchronized CoverRepositoryImpl getInstance() {
         if(instance == null){
             instance = new CoverRepositoryImpl();
         }
@@ -32,7 +32,7 @@ public class CoverRepositoryImpl implements CoverRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Adding cover error!", e);
+            LOGGER.debug("Adding cover error.", e);
         }
     }
 
@@ -55,7 +55,7 @@ public class CoverRepositoryImpl implements CoverRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Deleting cover error!", e);
+            LOGGER.debug("Deleting cover error.", e);
         }
     }
 

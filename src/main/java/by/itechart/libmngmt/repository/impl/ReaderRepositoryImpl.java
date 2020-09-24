@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class  ReaderRepositoryImpl implements ReaderRepository {
-    private final static Logger logger = LogManager.getLogger(ReaderCardRepositoryImpl.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(ReaderCardRepositoryImpl.class.getName());
     private static ReaderRepositoryImpl instance;
-    public static ReaderRepositoryImpl getInstance() {
+    public static synchronized ReaderRepositoryImpl getInstance() {
         if(instance == null){
             instance = new ReaderRepositoryImpl();
         }
@@ -41,7 +41,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Insert/update reader error!", e);
+            LOGGER.debug("Insert/update reader error.", e);
         }
     }
 
@@ -58,7 +58,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting reader ID error!", e);
+            LOGGER.debug("Getting reader ID error.", e);
         }
         return readerId;
     }
@@ -76,7 +76,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting reader name error!", e);
+            LOGGER.debug("Getting reader name error.", e);
         }
         return name;
     }
@@ -94,7 +94,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting reader emails error!", e);
+            LOGGER.debug("Getting reader emails error.", e);
         }
         return resultList;
     }
@@ -109,7 +109,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Adding reader error!", e);
+            LOGGER.debug("Adding reader error.", e);
         }
     }
 }

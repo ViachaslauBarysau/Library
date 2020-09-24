@@ -1,6 +1,5 @@
 package by.itechart.libmngmt.util.validator.fileValidator.impl;
 
-import by.itechart.libmngmt.util.emailScheduler.EmailSender;
 import by.itechart.libmngmt.util.validator.fileValidator.Validator;
 import lombok.Data;
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +15,12 @@ import java.util.stream.Stream;
 
 @Data
 public class FileNameValidator implements Validator {
-    private final static Logger logger = LogManager.getLogger(FileNameValidator.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(FileNameValidator.class.getName());
+
+    private static String apply(Path x) {
+        return x.getFileName().toString();
+    }
+
     @Override
     public boolean validate(Object fileName) {
         List<String> fileList = getFileList();
@@ -30,10 +34,11 @@ public class FileNameValidator implements Validator {
 
     public List<String> getFileList() {
         try (Stream<Path> walk = Files.walk(Paths.get(System.getProperty("uploadFolderPath")))) {
-            return (walk.filter(Files::isRegularFile)
-                    .map(x -> x.getFileName().toString()).collect(Collectors.toList()));
+            return walk.filter(Files::isRegularFile)
+                    .map(FileNameValidator::apply)
+                    .collect(Collectors.toList());
         } catch (IOException e) {
-            logger.debug("Getting file list error!", e);
+            LOGGER.debug("Getting file list error.", e);
         }
         return null;
     }

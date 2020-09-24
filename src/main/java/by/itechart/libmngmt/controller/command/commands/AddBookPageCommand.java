@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class AddBookPageCommand extends LibraryCommand {
     private static AddBookPageCommand instance;
 
-    public static AddBookPageCommand getInstance() {
+    public static synchronized AddBookPageCommand getInstance() {
         if(instance == null){
             instance = new AddBookPageCommand();
         }

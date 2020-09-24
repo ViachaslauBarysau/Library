@@ -8,22 +8,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class EmailSender {
-    private final static Logger logger = LogManager.getLogger(EmailSender.class.getName());
-    private static EmailSender instance;
-
-    public static EmailSender getInstance() {
-        if(instance == null){
-            instance = new EmailSender();
-        }
-        return instance;
-    }
-
+    private final static Logger LOGGER = LogManager.getLogger(EmailSender.class.getName());
     private final static String LIBRARY_EMAIL = "librarystlab@gmail.com";
     private final static String EMAIL_SUBJECT = "Library notification.";
     private final static String AUTHENTICATION_USERNAME = "librarystlab@gmail.com";
     private final static String AUTHENTICATION_PASSWORD = "123123nnn";
     private final static String HOST_NAME = "smtp.googlemail.com";
     private final static int PORT = 465;
+    private static EmailSender instance;
+
+    public static synchronized EmailSender getInstance() {
+        if(instance == null){
+            instance = new EmailSender();
+        }
+        return instance;
+    }
 
     public void sendEmail(String readerEmail, String message) {
         try {
@@ -38,7 +37,7 @@ public class EmailSender {
             email.addTo(readerEmail);
             email.send();
         } catch (EmailException e) {
-            logger.debug("Email sending error!", e);
+            LOGGER.debug("Email sending error.", e);
         }
     }
 }

@@ -4,7 +4,16 @@ import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 
 public class ReaderCardConverter {
-    public static ReaderCardDto convertToReaderCardDto(ReaderCardEntity readerCardEntity) {
+    private static ReaderCardConverter instance;
+
+    public static synchronized ReaderCardConverter getInstance() {
+        if(instance == null){
+            instance = new ReaderCardConverter();
+        }
+        return instance;
+    }
+
+    public ReaderCardDto convertToReaderCardDto(ReaderCardEntity readerCardEntity) {
         ReaderCardDto readerCardDto = ReaderCardDto.builder()
                 .id(readerCardEntity.getId())
                 .bookId(readerCardEntity.getBookId())
@@ -22,7 +31,7 @@ public class ReaderCardConverter {
         return readerCardDto;
     }
 
-    public static ReaderCardEntity convertToReaderCardEntity(ReaderCardDto readerCardDto) {
+    public ReaderCardEntity convertToReaderCardEntity(ReaderCardDto readerCardDto) {
         ReaderCardEntity readerCardEntity = ReaderCardEntity.builder()
                 .id(readerCardDto.getId())
                 .bookId(readerCardDto.getBookId())

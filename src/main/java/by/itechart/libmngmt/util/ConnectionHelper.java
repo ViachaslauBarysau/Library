@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class ConnectionHelper {
-    private final static Logger logger = LogManager.getLogger(ConnectionHelper.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(ConnectionHelper.class.getName());
     private static final String DB_DRIVER = PropertyReader.getProperty("jdbc.driverClassName");
     private static final String DB_URL = PropertyReader.getProperty("jdbc.url");
     private static final String DB_USERNAME = PropertyReader.getProperty("jdbc.username");
@@ -23,7 +23,7 @@ public class ConnectionHelper {
             Class.forName(DB_DRIVER);
             connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_USERPASSWORD);
         } catch (ClassNotFoundException | SQLException e) {
-            logger.debug("Getting connection error!", e);
+            LOGGER.debug("Getting connection error.", e);
         }
         return connection;
     }

@@ -12,12 +12,12 @@ import java.io.IOException;
 
 @Data
 public class SearchBookCommand extends LibraryCommand {
-    private final static Logger logger = LogManager.getLogger(SearchBookCommand.class.getName());
+    private final static Logger LOGGER = LogManager.getLogger(SearchBookCommand.class.getName());
     private final BookService bookService = BookServiceImpl.getInstance();
     private final int MIN_PAGE_NUMBER = 1;
     private static SearchBookCommand instance;
 
-    public static SearchBookCommand getInstance() {
+    public static synchronized SearchBookCommand getInstance() {
         if(instance == null){
             instance = new SearchBookCommand();
         }
@@ -30,7 +30,7 @@ public class SearchBookCommand extends LibraryCommand {
         try {
             pageNumber = Integer.parseInt(request.getParameter("page"));
         } catch (Exception e) {
-            logger.debug("Wrong page number!", e);
+            LOGGER.debug("Wrong page number.", e);
         }
         String title = request.getParameter("title");
         String author = request.getParameter("author");

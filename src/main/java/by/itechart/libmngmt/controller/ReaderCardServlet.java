@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.util.List;
 
 @WebServlet(urlPatterns = {"/reader-card"})
 public class ReaderCardServlet extends HttpServlet {
@@ -36,6 +37,15 @@ public class ReaderCardServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        int bookId = Integer.parseInt(req.getParameter("bookid"));
+        List<ReaderCardDto> readerCardDtos = readerCardService.getActiveReaderCards(bookId);
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        String str = gson.toJson(readerCardDtos);
+
+        PrintWriter out = resp.getWriter();
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        out.print(str);
+        out.flush();
     }
 }

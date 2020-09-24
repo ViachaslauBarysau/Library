@@ -63,17 +63,19 @@ function setCreatedReaderCardProperties() {
     borrowingStatus.hidden = true;
     borrowingStatus.disabled = false;
     comment.readOnly = false;
-
 }
 
 function openModal() {
-    let body = document.body;
-    body.classList.add('modal-open');
-    body.setAttribute('style', "display:block; padding-right: 17px;");
-    let myModal = document.getElementById("myModal");
-    myModal.classList.add('show');
-    myModal.setAttribute('style', "display:block; padding-right: 17px;");
-    myModal.removeAttribute('aria-hidden');
+    let chk_status = totalAmount.checkValidity();
+    if (chk_status) {
+        let body = document.body;
+        body.classList.add('modal-open');
+        body.setAttribute('style', "display:block; padding-right: 17px;");
+        let myModal = document.getElementById("myModal");
+        myModal.classList.add('show');
+        myModal.setAttribute('style', "display:block; padding-right: 17px;");
+        myModal.removeAttribute('aria-hidden');
+    }
 }
 
 function closeModal() {
@@ -85,7 +87,7 @@ function closeModal() {
     myModal.setAttribute('style', 'display: none;');
     myModal.setAttribute('aria-hidden', 'true');
 }
-function openNewReaderCard() {
+function createNewReaderCard() {
     if (availableAmount.value == 0) {
         modal.style.display = "block";
     } else {
@@ -136,6 +138,7 @@ function openCreatedReaderCard(index) {
     name.value = readerCard.readerName;
     borrowDate.value = readerCard.borrowDate;
     borrowingStatus.value = readerCard.status;
+    timePeriodSelect.value = readerCard.timePeriod;
     comment.value = readerCard.comment;
     setCreatedReaderCardProperties();
 }
@@ -151,6 +154,7 @@ function editCreatedReaderCard(index) {
     readerCard.comment = comment.value;
     document.getElementById("dueDate" + index).innerText = fullDueDate;
     readerCards.set(index, readerCard);
+    setBookStatus();
     closeModal();
 }
 
@@ -173,24 +177,45 @@ function changeStatusOnExistingReaderCard (id) {
     setBookStatus();
 }
 
-function setBookStatus() {
-    // if (availableAmount.value > 0) {
-    //     bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
-    // } else if (availableAmount.value == 0) {
-    //     if (totalAmount.value == 0) {
-    //         bookStatus.value = "Unavailable";
-    //     } else {
-    //         if (readerCardId.value == nearestAvailableDateID) {
-    //             if (!Boolean(returnDateValue)) {
-    //                 bookStatus.value = "Unavailable (expected to become available on " + nearestAvailableDate + ")";
-    //             } else {
-    //                 bookStatus.value = "Unavailable (expected to become available on " + nextNearestAvailableDate + ")";
-    //             }
-    //         } else {
-    //             bookStatus.value = "Unavailable (expected to become available on " + nearestAvailableDate + ")";
-    //         }
-    //     }
-    // }
+async function setBookStatus() {
+    if (availableAmount.value > 0) {
+        bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
+    } else if (availableAmount.value == 0) {
+        if (totalAmount.value == 0) {
+            bookStatus.value = "Unavailable";
+        } else {
+            bookStatus.value = "Unavailable (expected to become available on " + await getNearestAvailableDate() + ")";
+        }
+    }
+}
+
+async function getNearestAvailableDate() {
+    let url = 'reader-card?bookid=' + bookId;
+    let response = await fetch(url, {
+        method: 'POST'
+    });
+    let readerCardsFromDB = await response.json();
+    let nearestDate = new Date('3000-12-31');
+    readerCardsFromDB.forEach(readerCardFromDB => {
+        if (new Date(readerCardFromDB.dueDate) < nearestDate) {
+            let readerCardUpdated = false;
+            readerCards.forEach(readerCardUI => {
+                if (readerCardsFromDB.id == readerCardUI.id) {
+                    readerCardUpdated = true;
+                }
+            })
+            if (!readerCardUpdated) {
+                nearestDate = new Date(readerCardFromDB.dueDate);
+            }
+        }
+    })
+    readerCards.forEach(readerCardUI => {
+        if ((readerCardUI.returnDate == null || readerCardUI.returnDate) &&
+            new Date(readerCardUI.dueDate) < nearestDate) {
+            nearestDate = new Date(readerCardUI.dueDate);
+        }
+    })
+    return getDateStringWithoutTime(nearestDate);
 }
 
 function saveExistingReaderCard(id) {
@@ -248,33 +273,23 @@ function saveAddedReaderCard(index) {
         let readerCard = {
             bookId : bookId,
             id: 0,
-            readerEmail: email.value,
-            readerName: name.value,
-            borrowDate: fullDate,
-            timePeriod: timePeriodSelect.options[timePeriodSelect.selectedIndex].value,
-            dueDate: fullDueDate,
-            status: "borrowed",
-            comment: comment.value
+            readerEmail : email.value,
+            readerName : name.value,
+            borrowDate : fullDate,
+            timePeriod:  timePeriodSelect.options[timePeriodSelect.selectedIndex].value,
+            dueDate : fullDueDate,
+            status : "borrowed",
+            comment : comment.value,
         }
         readerCards.set(index, readerCard);
         availableAmount.value--;
         totalAmount.min++;
+        setBookStatus();
         closeModal();
 }
 
-function changeStatusOnNewReaderCard() {
-    // if (availableAmount.value == 0) {
-    //     if (!Boolean(nearestAvailableDate) || new Date(nearestAvailableDate) > new Date(editedReaderCardRecord.dueDate)) {
-    //         bookStatus.value = "Unavailable (expected to become available on " + editedReaderCardRecord.dueDate + ")";
-    //     } else {
-    //         bookStatus.value = "Unavailable (expected to become available on " + getDateStringWithoutTime(new Date(nearestAvailableDate)) + ")";
-    //     }
-    // } else {
-    //     bookStatus.value = "Available " + availableAmount.value + " out of " + totalAmount.value;
-    // }
-}
-
 function saveNewReaderCard() {
+    document.getElementById("records-message").hidden = true;
     let form = document.getElementById("modal-form");
     let chk_status = form.checkValidity();
     form.reportValidity();
@@ -327,7 +342,6 @@ function saveEditedReaderCard(index) {
             totalAmount.min++;
             returnDateValue = "";
         }
-
         document.getElementById("rd" + readerCard.id).innerText = returnDateValue;
     } else {
         changeStatusOnExistingReaderCard(readerCard.id);
@@ -337,10 +351,6 @@ function saveEditedReaderCard(index) {
     readerCard.comment = comment.value;
     readerCard.returnDate = returnDateValue;
     closeModal();
-}
-
-function changeStatusOnEditedReaderCard(index) {
-
 }
 
 async function openClosedReaderCard(id) {
@@ -371,15 +381,13 @@ async function openClosedReaderCard(id) {
 async function sendForm() {
     let form = document.getElementById("bookform");
     let chk_status = form.checkValidity();
-
     form.reportValidity();
     if (chk_status) {
-        let formData = new FormData(form);
         let obj = [];
         readerCards.forEach((value, key)=>{
             obj.push(value);
         })
-        console.log(obj);
+        let formData = new FormData(form);
         formData.append("readerCards", JSON.stringify(obj));
         let url = 'lib-app?command=ADD_BOOK';
         if (bookId > 0) {
@@ -388,11 +396,26 @@ async function sendForm() {
         let response = await fetch(url, {
             method: 'POST',
             body: formData
-        });
+        })
         if (response.redirected) {
             window.location.href = response.url;
+        } else {
+            let errors = await response.json();
+            showErrors(errors);
         }
     }
+}
+
+function showErrors(errors) {
+    let snackbar = document.getElementById("snackbar");
+    snackbar.innerHTML = "";
+    errors.forEach((element) => {
+        snackbar.insertAdjacentHTML('beforeend', '<p>' + element + '</p>')
+    })
+    snackbar.className = "show";
+    setTimeout(function(){
+        snackbar.className = snackbar.className.replace("show", "");
+        }, 3000);
 }
 
 async function getEmailsByPattern(pattern) {
@@ -430,17 +453,10 @@ function closeAutocomplete() {
 }
 
 function onAmountChange(count) {
-    if (count < totalAmount.min) {
-        totalAmount.value = totalAmount.min;
-        availableAmount.value = 0;
-        console.log(totalAmount.value);
-    } else if (count > totalAmount.max) {
-        console.log(totalAmount.value);
-        totalAmount.value = totalAmount.max;
-        console.log(totalAmount.value);
-        availableAmount.value = totalAmount.value - totalAmount.min;
-    } else {
-        availableAmount.value = totalAmount.value - totalAmount.min;
+    let chk_status = totalAmount.checkValidity();
+    if (chk_status) {
+        availableAmount.value = totalAmount.value - totalAmount.min
+        setBookStatus();
     }
 }
 
@@ -450,9 +466,35 @@ window.onclick = function (event) {
     }
 }
 
+function deleteAuthor(element) {
+    if (document.getElementsByName("span-authors").length > 1) {
+        element.parentNode.remove();
+    }
+}
+
+function deleteGenre(element) {
+    if (document.getElementsByName("span-genres").length > 1) {
+        element.parentNode.remove();
+    }
+}
+
+function addGenreField() {
+    if (document.getElementsByName("span-genres").length < 5) {
+        let newElement = document.getElementsByName("span-genres")[0].cloneNode(true);
+        newElement.firstChild.value = "";
+        document.getElementsByName("span-genres")[0].parentNode.appendChild(newElement);
+    }
+}
+
+function addAuthorField() {
+    if (document.getElementsByName("span-authors").length < 5) {
+        let newElement = document.getElementsByName("span-authors")[0].cloneNode(true);
+        newElement.firstChild.value = "";
+        document.getElementsByName("span-authors")[0].parentNode.appendChild(newElement);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", ready);
 function ready() {
     totalAmount.min = totalAmount.value - availableAmount.value;
 }
-
-console.log(availableAmount.value)

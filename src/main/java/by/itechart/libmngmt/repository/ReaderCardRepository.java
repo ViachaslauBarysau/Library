@@ -10,7 +10,8 @@ import java.util.Map;
 
 public interface ReaderCardRepository {
     Date getNearestReturnDates(int bookId);
-    List<ReaderCardEntity> get(int bookId);
+    List<ReaderCardEntity> getAllReaderCards(int bookId);
+    List<ReaderCardEntity> getActiveReaderCards(int bookId);
     void add(ReaderCardEntity readerCard, Connection connection) throws SQLException;
     void update(ReaderCardEntity readerCard, Connection connection) throws SQLException;
     ReaderCardEntity getReaderCard(int readerCardId);
