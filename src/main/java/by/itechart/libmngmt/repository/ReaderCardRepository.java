@@ -15,6 +15,5 @@ public interface ReaderCardRepository {
     void add(ReaderCardEntity readerCard, Connection connection) throws SQLException;
     void update(ReaderCardEntity readerCard, Connection connection) throws SQLException;
     ReaderCardEntity getReaderCard(int readerCardId);
-    int getActiveReaderCardsCount(int bookId);
     List<ReaderCardEntity> getExpiringReaderCards(int days);
 }

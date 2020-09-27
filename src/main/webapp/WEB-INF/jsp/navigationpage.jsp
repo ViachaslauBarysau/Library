@@ -9,7 +9,6 @@
 <html>
 <head>
     <title>Title</title>
-    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
@@ -17,9 +16,6 @@
 
 <nav class="navbar navbar-expand-sm bg-light navbar-light">
     <a class="navbar-brand" href="lib-app?command=GET_BOOK_LIST&page=1">Library Management</a>
-<%--    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">--%>
-<%--        <span class="navbar-toggler-icon"></span>--%>
-<%--    </button>--%>
     <div id="navbarNav">
         <ul class="navbar-nav">
             <li class="nav-item active">
@@ -34,10 +30,6 @@
 
 </body>
 </html>
-<script type="text/javascript">
-    <%@include file="/WEB-INF/js/navigationpage.js"%>
-</script>
 <style>
-
     <%@include file="/WEB-INF/css/navigationpage.css"%>
 </style>

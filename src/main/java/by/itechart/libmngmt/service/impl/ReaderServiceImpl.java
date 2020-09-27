@@ -1,26 +1,33 @@
 package by.itechart.libmngmt.service.impl;
 
 import by.itechart.libmngmt.dto.ReaderDto;
-import by.itechart.libmngmt.entity.ReaderEntity;
 import by.itechart.libmngmt.repository.ReaderRepository;
 import by.itechart.libmngmt.repository.impl.ReaderRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderService;
-import by.itechart.libmngmt.util.converter.ReaderCardConverter;
 import by.itechart.libmngmt.util.converter.ReaderConverter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReaderServiceImpl implements ReaderService {
-    private final ReaderConverter readerConverter = ReaderConverter.getInstance();
-    private final ReaderRepository readerRepository = ReaderRepositoryImpl.getInstance();
-    private static ReaderServiceImpl instance;
+    private ReaderConverter readerConverter = ReaderConverter.getInstance();
+    private ReaderRepository readerRepository = ReaderRepositoryImpl.getInstance();
+    private static volatile ReaderServiceImpl instance;
 
     public static synchronized ReaderServiceImpl getInstance() {
-        if(instance == null){
-            instance = new ReaderServiceImpl();
+        ReaderServiceImpl localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ReaderServiceImpl.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ReaderServiceImpl();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
@@ -41,7 +48,8 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public List<String> getEmails(String pattern) {
-        return readerRepository.getEmails(pattern + "%");
+        String refactoredPattern = pattern + "%";
+        return readerRepository.getEmails(refactoredPattern);
     }
 
     @Override

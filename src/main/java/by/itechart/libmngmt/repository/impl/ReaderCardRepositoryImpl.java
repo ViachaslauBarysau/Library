@@ -2,7 +2,9 @@ package by.itechart.libmngmt.repository.impl;
 
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
-import by.itechart.libmngmt.util.ConnectionHelper;
+import by.itechart.libmngmt.util.ConnectionPool;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,14 +12,23 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReaderCardRepositoryImpl implements ReaderCardRepository {
-    private final static Logger LOGGER = LogManager.getLogger(ReaderCardRepositoryImpl.class.getName());
-    private static ReaderCardRepositoryImpl instance;
+    private static final Logger LOGGER = LogManager.getLogger(ReaderCardRepositoryImpl.class.getName());
+    private ConnectionPool connectionPool = ConnectionPool.getInstance();
+    private static volatile ReaderCardRepositoryImpl instance;
+
     public static synchronized ReaderCardRepositoryImpl getInstance() {
-        if(instance == null){
-            instance = new ReaderCardRepositoryImpl();
+        ReaderCardRepositoryImpl localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ReaderCardRepositoryImpl.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ReaderCardRepositoryImpl();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     private static final String SQL_GET_READERCARDS_BY_BOOKID = "SELECT * FROM Books_Readers LEFT JOIN Readers" +
@@ -32,8 +43,6 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
             " ON Readers.ID=Books_Readers.Reader_ID WHERE ReaderCard_ID = ?;";
     private static final String SQL_GET_NEAREST_RETURN_DATE = "SELECT Due_date FROM Books_Readers WHERE" +
             " Book_id = ? AND Due_date > NOW() AND Return_date IS NULL ORDER BY Due_date ASC LIMIT 1;";
-    private static final String SQL_GET_ACTIVE_READER_CARD_COUNT_BY_BOOK_ID = "SELECT COUNT(ReaderCard_Id)" +
-            " FROM Books_Readers WHERE Book_Id = ? AND Return_date IS NULL;";
     public static final String SQL_GET_EXPIRING_READER_CARDS = "SELECT Books.Title, Readers.Name, Readers.Email" +
             " FROM Books LEFT JOIN Books_Readers ON Books.Id=Books_Readers.Book_Id" +
             " LEFT JOIN Readers ON Books_Readers.Reader_Id=Readers.Id WHERE Due_Date - CURRENT_DATE = ?" +
@@ -42,17 +51,17 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     @Override
     public List<ReaderCardEntity> getExpiringReaderCards(int days) {
         List<ReaderCardEntity> readerCardEntities = new ArrayList<>();
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_EXPIRING_READER_CARDS)) {
                 int index = 1;
                 preparedStatement.setInt(index++, days);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                while(resultSet.next()){
+                while (resultSet.next()) {
                     readerCardEntities.add(ReaderCardEntity.builder()
-                    .bookTitle(resultSet.getString("Title"))
-                    .readerName(resultSet.getString("Name"))
-                    .readerEmail(resultSet.getString("Email"))
-                    .build());
+                            .bookTitle(resultSet.getString("Title"))
+                            .readerName(resultSet.getString("Name"))
+                            .readerEmail(resultSet.getString("Email"))
+                            .build());
                 }
             }
         } catch (SQLException e) {
@@ -62,28 +71,9 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     }
 
     @Override
-    public int getActiveReaderCardsCount(int bookId) {
-        int count = 0;
-        try (Connection connection = ConnectionHelper.getConnection()) {
-            try (PreparedStatement preparedStatement =
-                         connection.prepareStatement(SQL_GET_ACTIVE_READER_CARD_COUNT_BY_BOOK_ID)) {
-                int index = 1;
-                preparedStatement.setInt(index++, bookId);
-                ResultSet resultSet = preparedStatement.executeQuery();
-                while(resultSet.next()){
-                    count = resultSet.getInt(1);
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.debug("Getting expired reader cards error.", e);
-        }
-        return count;
-    }
-
-    @Override
     public Date getNearestReturnDates(int bookId) {
         Date resultDate = null;
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_NEAREST_RETURN_DATE)) {
                 int index = 1;
                 preparedStatement.setInt(index++, bookId);
@@ -101,15 +91,15 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     @Override
     public void add(ReaderCardEntity readerCard, Connection connection) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_READER_CARD);
-            int index = 1;
-            preparedStatement.setInt(index++, readerCard.getBookId());
-            preparedStatement.setInt(index++, readerCard.getReaderId());
-            preparedStatement.setDate(index++, readerCard.getBorrowDate());
-            preparedStatement.setInt(index++, readerCard.getTimePeriod());
-            preparedStatement.setString(index++, readerCard.getStatus());
-            preparedStatement.setDate(index++, readerCard.getDueDate());
-            preparedStatement.setString(index++, readerCard.getComment());
-            preparedStatement.execute();
+        int index = 1;
+        preparedStatement.setInt(index++, readerCard.getBookId());
+        preparedStatement.setInt(index++, readerCard.getReaderId());
+        preparedStatement.setDate(index++, readerCard.getBorrowDate());
+        preparedStatement.setInt(index++, readerCard.getTimePeriod());
+        preparedStatement.setString(index++, readerCard.getStatus());
+        preparedStatement.setDate(index++, readerCard.getDueDate());
+        preparedStatement.setString(index++, readerCard.getComment());
+        preparedStatement.execute();
     }
 
     @Override
@@ -126,7 +116,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     @Override
     public ReaderCardEntity getReaderCard(int readerCardId) {
         ReaderCardEntity readerCardEntity = new ReaderCardEntity();
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERCARD_BY_ID)) {
                 int index = 1;
                 preparedStatement.setInt(index++, readerCardId);
@@ -156,7 +146,7 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     @Override
     public List<ReaderCardEntity> getActiveReaderCards(int bookId) {
         List<ReaderCardEntity> resultList = new ArrayList<>();
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection
                     .prepareStatement(SQL_GET_ACTIVE_READERCARDS_BY_BOOKID)) {
                 int index = 1;
@@ -187,25 +177,25 @@ public class ReaderCardRepositoryImpl implements ReaderCardRepository {
     @Override
     public List<ReaderCardEntity> getAllReaderCards(int bookId) {
         List<ReaderCardEntity> resultList = new ArrayList<>();
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERCARDS_BY_BOOKID)) {
                 int index = 1;
                 preparedStatement.setInt(index++, bookId);
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
                     resultList.add(ReaderCardEntity.builder()
-                                .id(resultSet.getInt("ReaderCard_ID"))
-                                .bookId(resultSet.getInt("book_ID"))
-                                .readerId(resultSet.getInt("reader_ID"))
-                                .readerName(resultSet.getString("Name"))
-                                .readerEmail(resultSet.getString("Email"))
-                                .borrowDate(resultSet.getDate("Borrow_date"))
-                                .timePeriod(resultSet.getInt("Time_Period"))
-                                .status(resultSet.getString("Status"))
-                                .dueDate(resultSet.getDate("Due_date"))
-                                .returnDate(resultSet.getTimestamp("Return_date"))
-                                .comment(resultSet.getString("Comment"))
-                                .build());
+                            .id(resultSet.getInt("ReaderCard_ID"))
+                            .bookId(resultSet.getInt("book_ID"))
+                            .readerId(resultSet.getInt("reader_ID"))
+                            .readerName(resultSet.getString("Name"))
+                            .readerEmail(resultSet.getString("Email"))
+                            .borrowDate(resultSet.getDate("Borrow_date"))
+                            .timePeriod(resultSet.getInt("Time_Period"))
+                            .status(resultSet.getString("Status"))
+                            .dueDate(resultSet.getDate("Due_date"))
+                            .returnDate(resultSet.getTimestamp("Return_date"))
+                            .comment(resultSet.getString("Comment"))
+                            .build());
                 }
             }
         } catch (SQLException e) {

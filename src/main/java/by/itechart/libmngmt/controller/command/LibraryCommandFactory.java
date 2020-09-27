@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LibraryCommandFactory {
-    private final static Logger LOGGER = LogManager.getLogger(LibraryCommandFactory.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LibraryCommandFactory.class.getName());
     private static final Map<LibraryCommandType, LibraryCommand> commands = new HashMap<>();
 
     static  {

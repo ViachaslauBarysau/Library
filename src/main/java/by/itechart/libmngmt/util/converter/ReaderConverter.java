@@ -4,13 +4,19 @@ import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderEntity;
 
 public class ReaderConverter {
-    private static ReaderConverter instance;
+    private static volatile ReaderConverter instance;
 
     public static synchronized ReaderConverter getInstance() {
-        if(instance == null){
-            instance = new ReaderConverter();
+        ReaderConverter localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ReaderConverter.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ReaderConverter();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     public ReaderEntity convertReaderDtoToReaderEntity(ReaderDto readerDto) {

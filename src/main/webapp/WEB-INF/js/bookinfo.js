@@ -87,14 +87,13 @@ function closeModal() {
     myModal.setAttribute('style', 'display: none;');
     myModal.setAttribute('aria-hidden', 'true');
 }
+
 function createNewReaderCard() {
     if (availableAmount.value == 0) {
         modal.style.display = "block";
     } else {
         saveButton.style.display = 'inline-block';
         saveButton.setAttribute('onclick', "saveNewReaderCard()");
-        openModal();
-        setNewReaderCardProperties();
         readerCardId.value = 0;
         readerId.value = 0;
         email.value = "";
@@ -105,6 +104,8 @@ function createNewReaderCard() {
         borrowDate.value = fullDueDate;
         timePeriodSelect.value = "1";
         borrowingStatus.value = "borrowed";
+        openModal();
+        setNewReaderCardProperties();
     }
 }
 async function openExistingReaderCard(id) {
@@ -171,7 +172,6 @@ function changeStatusOnExistingReaderCard (id) {
         totalAmount.min--;
     } else {
         returnDateValue = "";
-
     }
     document.getElementById("rd" + id).innerText = returnDateValue;
     setBookStatus();
@@ -494,7 +494,4 @@ function addAuthorField() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", ready);
-function ready() {
-    totalAmount.min = totalAmount.value - availableAmount.value;
-}
+

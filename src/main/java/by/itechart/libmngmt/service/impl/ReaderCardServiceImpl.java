@@ -7,8 +7,9 @@ import by.itechart.libmngmt.repository.ReaderCardRepository;
 import by.itechart.libmngmt.repository.impl.ReaderCardRepositoryImpl;
 import by.itechart.libmngmt.service.ReaderCardService;
 import by.itechart.libmngmt.service.ReaderService;
-import by.itechart.libmngmt.util.converter.BookConverter;
 import by.itechart.libmngmt.util.converter.ReaderCardConverter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -16,17 +17,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReaderCardServiceImpl implements ReaderCardService {
-    private final ReaderCardConverter readerCardConverter = ReaderCardConverter.getInstance();
-    private final ReaderService readerService = ReaderServiceImpl.getInstance();
-    private final ReaderCardRepository readerCardRepository = ReaderCardRepositoryImpl.getInstance();
-    private static ReaderCardServiceImpl instance;
+    private ReaderCardConverter readerCardConverter = ReaderCardConverter.getInstance();
+    private ReaderService readerService = ReaderServiceImpl.getInstance();
+    private ReaderCardRepository readerCardRepository = ReaderCardRepositoryImpl.getInstance();
+    private static volatile ReaderCardServiceImpl instance;
 
     public static synchronized ReaderCardServiceImpl getInstance() {
-        if(instance == null){
-            instance = new ReaderCardServiceImpl();
+        ReaderCardServiceImpl localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ReaderCardServiceImpl.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ReaderCardServiceImpl();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
@@ -81,7 +89,8 @@ public class ReaderCardServiceImpl implements ReaderCardService {
                 .name(readerCardDto.getReaderName())
                 .build();
         readerCardDto.setReaderId(readerService.insertUpdateReaderGetId(readerDto, connection));
-        if (readerCardDto.getId() == 0) {
+        Boolean readerCardIsNew = new Boolean(readerCardDto.getId() == 0);
+        if (readerCardIsNew) {
             add(readerCardDto, connection);
         } else {
             update(readerCardDto, connection);
@@ -96,10 +105,5 @@ public class ReaderCardServiceImpl implements ReaderCardService {
             readerCardDtoList.add(readerCardConverter.convertToReaderCardDto(readerCardEntity));
         }
         return readerCardDtoList;
-    }
-
-    @Override
-    public int getBorrowBooksCount(int bookId) {
-        return readerCardRepository.getActiveReaderCardsCount(bookId);
     }
 }

@@ -8,10 +8,12 @@ import javax.servlet.annotation.WebListener;
 
 @WebListener
 public class Listener implements ServletContextListener {
+    private DatabaseInitializer databaseInitializer = DatabaseInitializer.getInstance();
+    private FolderPropertiesAdder folderPropertiesAdder = FolderPropertiesAdder.getInstance();
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        DatabaseInitializer.createDatabase();
-        FolderPropertiesAdder.addImageFolder();
+        databaseInitializer.createDatabase();
+        folderPropertiesAdder.addImageFolder();
         Trigger.startScheduler();
     }
 

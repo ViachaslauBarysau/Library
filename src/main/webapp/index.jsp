@@ -4,9 +4,7 @@
 <head>
     <meta http-equiv="refresh" content="0;URL=lib-app?command=GET_BOOK_LIST&page=1">
 </head>
-
 <body>
-
 </body>
 </html>
 

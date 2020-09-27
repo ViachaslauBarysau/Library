@@ -6,17 +6,23 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class UnknownCommand extends LibraryCommand {
-    private static UnknownCommand instance;
+    private static volatile UnknownCommand instance;
 
     public static synchronized UnknownCommand getInstance() {
-        if(instance == null){
-            instance = new UnknownCommand();
+        UnknownCommand localInstance = instance;
+        if (localInstance == null) {
+            synchronized (UnknownCommand.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new UnknownCommand();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
     public void process() throws ServletException, IOException {
-
+        forward("unknownpage");
     }
 }

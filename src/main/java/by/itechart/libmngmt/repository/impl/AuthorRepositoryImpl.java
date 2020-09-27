@@ -1,7 +1,9 @@
 package by.itechart.libmngmt.repository.impl;
 
 import by.itechart.libmngmt.repository.AuthorRepository;
-import by.itechart.libmngmt.util.ConnectionHelper;
+import by.itechart.libmngmt.util.ConnectionPool;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,14 +11,23 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthorRepositoryImpl implements AuthorRepository {
-    private final static Logger logger = LogManager.getLogger(AuthorRepositoryImpl.class.getName());
-    private static AuthorRepositoryImpl instance;
+    private static final Logger LOGGER = LogManager.getLogger(AuthorRepositoryImpl.class.getName());
+    private ConnectionPool connectionPool = ConnectionPool.getInstance();
+    private static volatile AuthorRepositoryImpl instance;
+
     public static synchronized AuthorRepositoryImpl getInstance() {
-        if(instance == null){
-            instance = new AuthorRepositoryImpl();
+        AuthorRepositoryImpl localInstance = instance;
+        if (localInstance == null) {
+            synchronized (AuthorRepositoryImpl.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new AuthorRepositoryImpl();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     private static final String SQL_GET_AUTHORS_NAMES = "SELECT Name FROM Authors;";
@@ -28,14 +39,14 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
     @Override
     public void add(String name) {
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_AUTHOR)) {
                 int index = 1;
                 preparedStatement.setString(index++, name);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Adding author error!", e);
+            LOGGER.debug("Adding author error.", e);
         }
     }
 
@@ -50,14 +61,14 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
     @Override
     public void deleteBooksAuthorsRecords(int bookId) {
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_AUTHORS_RECORDS)) {
                 int index = 1;
                 preparedStatement.setInt(index++, bookId);
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Deleting books_authors record error!", e);
+            LOGGER.debug("Deleting books_authors record error.", e);
         }
     }
 
@@ -72,7 +83,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
 
     @Override
     public void addBookAuthorRecord(int bookId, int authorId) {
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_AUTHOR_RECORD)) {
                 int index = 1;
                 preparedStatement.setInt(index++, bookId);
@@ -80,7 +91,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 preparedStatement.execute();
             }
         } catch (SQLException e) {
-            logger.debug("Adding books_author record error!", e);
+            LOGGER.debug("Adding books_author record error.", e);
         }
     }
 
@@ -97,7 +108,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     @Override
     public List<Integer> getAuthorIds(List<String> names) {
         List<Integer> resultList = new ArrayList<>();
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_IDS)) {
                 Array namesArray = connection.createArrayOf("VARCHAR", names.toArray());
                 int index = 1;
@@ -108,7 +119,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Getting authors IDs error!", e);
+            LOGGER.debug("Getting authors IDs error.", e);
         }
         return resultList;
     }
@@ -131,7 +142,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
     @Override
     public List<String> findAll() {
         List<String> resultList = new ArrayList<>();
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_AUTHORS_NAMES)) {
                 ResultSet resultSet = preparedStatement.executeQuery();
                 while (resultSet.next()) {
@@ -139,7 +150,7 @@ public class AuthorRepositoryImpl implements AuthorRepository {
                 }
             }
         } catch (SQLException e) {
-            logger.debug("Adding author error!", e);
+            LOGGER.debug("Adding author error.", e);
         }
         return resultList;
     }

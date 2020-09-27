@@ -15,35 +15,29 @@ import java.util.List;
 
 @WebServlet(urlPatterns = {"/reader"})
 public class ReaderServlet extends HttpServlet {
-    private final ReaderService readerService = ReaderServiceImpl.getInstance();
+    private ReaderService readerService = ReaderServiceImpl.getInstance();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String json = null;
-        if (req.getParameter("pattern") != null) {
-            String pattern = req.getParameter("pattern");
-            List<String> list = readerService.getEmails(pattern);
-            json = new Gson().toJson(list);
-        }
-        PrintWriter out = resp.getWriter();
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        out.print(json);
-        out.flush();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String pattern = request.getParameter("pattern");
+        List<String> list = readerService.getEmails(pattern);
+        String jsonList = new Gson().toJson(list);
+        sendResponse(jsonList, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String json = null;
-        if (req.getParameter("email") != null) {
-            String readerEmail = req.getParameter("email");
-            String readerName = readerService.getNameByEmail(readerEmail);
-            json = new Gson().toJson(readerName);
-        }
-        PrintWriter out = resp.getWriter();
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        out.print(json);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String readerEmail = request.getParameter("email");
+        String readerName = readerService.getNameByEmail(readerEmail);
+        String jsonName = new Gson().toJson(readerName);
+        sendResponse(jsonName, response);
+    }
+
+    private void sendResponse(String jsonString, HttpServletResponse response) throws IOException {
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        out.print(jsonString);
         out.flush();
     }
 }

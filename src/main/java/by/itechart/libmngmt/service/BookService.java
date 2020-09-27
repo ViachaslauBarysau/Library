@@ -15,10 +15,8 @@ public interface BookService {
     void delete(List<Integer> booksList);
     List<BookDto> search(List<String> searchParams, int pageNumber);
     int addEditBook(BookDto book);
-    int addBookGetId(BookDto book);
     BookDto find(int bookId);
     int getSearchPageCount(List<String> searchParams);
-    void updateBook(BookDto book);
     int addBookGetId(BookDto bookDto, Connection connection) throws SQLException;
     void updateBook(BookDto bookDto, Connection connection) throws SQLException;
 }

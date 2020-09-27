@@ -18,10 +18,16 @@ public class EmailSender {
     private static EmailSender instance;
 
     public static synchronized EmailSender getInstance() {
-        if(instance == null){
-            instance = new EmailSender();
+        EmailSender localInstance = instance;
+        if (localInstance == null) {
+            synchronized (EmailSender.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new EmailSender();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     public void sendEmail(String readerEmail, String message) {

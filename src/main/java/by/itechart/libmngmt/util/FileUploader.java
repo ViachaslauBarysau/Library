@@ -1,6 +1,7 @@
-package by.itechart.libmngmt.util.validator.fileValidator;
+package by.itechart.libmngmt.util;
 
-import by.itechart.libmngmt.util.emailScheduler.MailTemplate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,15 +11,22 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUploader {
     private final static Logger LOGGER = LogManager.getLogger(FileUploader.class.getName());
-    private static FileUploader instance;
+    private static volatile FileUploader instance;
 
     public static synchronized FileUploader getInstance() {
-        if(instance == null){
-            instance = new FileUploader();
+        FileUploader localInstance = instance;
+        if (localInstance == null) {
+            synchronized (FileUploader.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new FileUploader();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     public void uploadFile(Part filePart, String fileName) {

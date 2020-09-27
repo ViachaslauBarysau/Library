@@ -1,9 +1,9 @@
 package by.itechart.libmngmt.repository.impl;
 
-
 import by.itechart.libmngmt.entity.ReaderEntity;
 import by.itechart.libmngmt.repository.ReaderRepository;
-import by.itechart.libmngmt.util.ConnectionHelper;
+import by.itechart.libmngmt.util.ConnectionPool;
+import lombok.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,14 +14,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class  ReaderRepositoryImpl implements ReaderRepository {
-    private final static Logger LOGGER = LogManager.getLogger(ReaderCardRepositoryImpl.class.getName());
-    private static ReaderRepositoryImpl instance;
+    private static final Logger LOGGER = LogManager.getLogger(ReaderCardRepositoryImpl.class.getName());
+    private ConnectionPool connectionPool = ConnectionPool.getInstance();
+    private static volatile ReaderRepositoryImpl instance;
+
     public static synchronized ReaderRepositoryImpl getInstance() {
-        if(instance == null){
-            instance = new ReaderRepositoryImpl();
+        ReaderRepositoryImpl localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ReaderRepositoryImpl.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ReaderRepositoryImpl();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     private static final String SQL_ADD_READER = "INSERT INTO Readers (Name, Email) VALUES (?,?);";
@@ -33,7 +42,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
 
     @Override
     public void insertUpdate (ReaderEntity readerEntity) {
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_OR_UPDATE_READER)) {
                 int index = 1;
                 preparedStatement.setString(index++, readerEntity.getEmail());
@@ -48,7 +57,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
     @Override
     public int getId(String email) {
         int readerId = 0;
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READER_ID_BY_EMAIL)) {
                 int index = 1;
                 preparedStatement.setString(index++, email);
@@ -66,7 +75,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
     @Override
     public String getName(String email) {
         String name = "";
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READER_NAME_BY_EMAIL)) {
                 int index = 1;
                 preparedStatement.setString(index++, email);
@@ -84,7 +93,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
     @Override
     public List<String> getEmails(String searchParameter) {
         List<String> resultList = new ArrayList<>();
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_READERS_EMAILS)) {
                 int index = 1;
                 preparedStatement.setString(index++, searchParameter);
@@ -101,7 +110,7 @@ public class  ReaderRepositoryImpl implements ReaderRepository {
 
     @Override
     public void add(ReaderEntity reader) {
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_READER)) {
                 int index = 1;
                 preparedStatement.setString(index++, reader.getName());

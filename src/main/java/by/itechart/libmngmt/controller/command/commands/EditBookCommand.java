@@ -2,82 +2,79 @@ package by.itechart.libmngmt.controller.command.commands;
 
 import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.dto.BookDto;
-import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
-import by.itechart.libmngmt.util.converter.RequestConverter;
-import by.itechart.libmngmt.util.validator.BookValidator;
-import by.itechart.libmngmt.util.validator.ReaderCardValidator;
-import by.itechart.libmngmt.util.validator.fileValidator.FileUploader;
+import by.itechart.libmngmt.util.FileUploader;
+import by.itechart.libmngmt.util.converter.RequestExtractor;
+import by.itechart.libmngmt.util.validation.BookValidator;
+import by.itechart.libmngmt.util.validation.ReaderCardValidator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class EditBookCommand extends LibraryCommand {
-    private final FileUploader fileUploader = FileUploader.getInstance();
-    private final RequestConverter requestConverter = RequestConverter.getInstance();
-    private final BookService bookService = BookServiceImpl.getInstance();
-    private static EditBookCommand instance;
+    public static final String EMPTY_STRING = "";
+    public static final int COVER_INDEX = 0;
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String CONTENT_TYPE = "application/json";
+    public static final String ENCODING = "UTF-8";
+    private FileUploader fileUploader = FileUploader.getInstance();
+    private RequestExtractor requestExtractor = RequestExtractor.getInstance();
+    private BookService bookService = BookServiceImpl.getInstance();
+    private BookValidator bookValidator = BookValidator.getInstance();
+    private ReaderCardValidator readerCardValidator = ReaderCardValidator.getInstance();
+    private static volatile EditBookCommand instance;
 
     public static synchronized EditBookCommand getInstance() {
-        if (instance == null) {
-            instance = new EditBookCommand();
+        EditBookCommand localInstance = instance;
+        if (localInstance == null) {
+            synchronized (EditBookCommand.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new EditBookCommand();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
     public void process() throws ServletException, IOException {
-        BookValidator bookValidator = new BookValidator();
-        bookValidator.validate(request);
-        String fileName = bookValidator.validateFile(request);
-        List<String> readerCardsErrorMessages = validateReaderCards(request);
-        List<String> errorMessages = bookValidator.getErrorMessages();
-        errorMessages.addAll(readerCardsErrorMessages);
-        if (errorMessages.size() < 1) {
-            BookDto bookDto = requestConverter.convertToBookDto(request, fileName);
-            bookDto.setReaderCardDtos(getReaderCards(request));
-            bookService.addEditBook(bookDto);
-            if (!request.getPart("file").equals("")) {
-                fileUploader.uploadFile(request.getPart("file"), fileName);
-            }
-            response.sendRedirect(request.getContextPath() + "/lib-app?command=BOOK_PAGE&id=" +
-                    request.getParameter("id"));
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.addAll(bookValidator.validate(request).getErrorList());
+        errorMessages.addAll(readerCardValidator.validate(request).getErrorList());
+        boolean isValidationSuccessful = errorMessages.size() == 0;
+        if (isValidationSuccessful) {
+            editBook();
+            response.sendRedirect(request.getContextPath() + "/lib-app?command=BOOK_PAGE&id="
+                    + request.getParameter("id"));
         } else {
-            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-            String errors = gson.toJson(errorMessages);
-            PrintWriter out = response.getWriter();
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            out.print(errors);
-            out.flush();
+            sendResponse(errorMessages);
         }
     }
 
-    private List<String> validateReaderCards(HttpServletRequest request) {
-        List<String> readerCardsErrorMessages = new ArrayList<>();
-        if (request.getParameter("readerCards") != null && !request.getParameter("readerCards").isEmpty()) {
-            ReaderCardValidator readerCardValidator = new ReaderCardValidator();
-            List<ReaderCardDto> readerCards = getReaderCards(request);
-            for (ReaderCardDto readerCardDto : readerCards) {
-                readerCardValidator.validate(readerCardDto.getReaderEmail(), readerCardDto.getReaderName());
-            }
-            readerCardsErrorMessages.addAll(readerCardValidator.getErrorMessages());
-        }
-        return readerCardsErrorMessages;
+    private void sendResponse(List<String> errorMessages) throws IOException {
+        Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
+        String errors = gson.toJson(errorMessages);
+        PrintWriter out = response.getWriter();
+        response.setContentType(CONTENT_TYPE);
+        response.setCharacterEncoding(ENCODING);
+        out.print(errors);
+        out.flush();
     }
 
-    private List<ReaderCardDto> getReaderCards(HttpServletRequest request) {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
-        return new ArrayList<>(Arrays.asList(gson.fromJson
-                (request.getParameter("readerCards"), ReaderCardDto[].class)));
+    private void editBook() throws IOException, ServletException {
+        BookDto bookDto = requestExtractor.extractBookDto(request);
+        bookService.addEditBook(bookDto);
+        boolean isFileAttached = !request.getPart("file").getSubmittedFileName().equals(EMPTY_STRING);
+        if (isFileAttached) {
+            fileUploader.uploadFile(request.getPart("file"), bookDto.getCovers().get(COVER_INDEX));
+        }
     }
 }
 

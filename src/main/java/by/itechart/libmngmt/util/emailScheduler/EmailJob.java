@@ -12,9 +12,9 @@ public class EmailJob implements Job {
     public static final int SEVEN_DAYS_BEFORE = 7;
     public static final int ONE_DAY_BEFORE = 1;
     public static final int ONE_DAY_AFTER = -1;
-    private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
-    private final MailTemplate mailTemplate = MailTemplate.getInstance();
-    private final EmailSender emailSender = EmailSender.getInstance();
+    private ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
+    private MailTemplate mailTemplate = MailTemplate.getInstance();
+    private EmailSender emailSender = EmailSender.getInstance();
 
     public void execute(JobExecutionContext context) {
         List<ReaderCardDto> sevenDaysBeforeReaderCards = readerCardService.getExpiringReaderCards(SEVEN_DAYS_BEFORE);

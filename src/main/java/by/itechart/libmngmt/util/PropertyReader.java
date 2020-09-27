@@ -1,5 +1,7 @@
 package by.itechart.libmngmt.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -7,10 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PropertyReader {
-    private final static Logger LOGGER = LogManager.getLogger(PropertyReader.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(PropertyReader.class.getName());
     private static final String PROPERTIES_PATH = "db.properties";
-    private static Properties properties = new Properties();
+    private static volatile Properties properties = new Properties();
 
     static {
         try (InputStream input = PropertyReader.class.getClassLoader().getResourceAsStream(PROPERTIES_PATH)) {
@@ -18,9 +21,6 @@ public class PropertyReader {
         } catch (IOException e) {
             LOGGER.debug("Reading properties error.", e);
         }
-    }
-
-    private PropertyReader() {
     }
 
     public static String getProperty(String propertyName) {

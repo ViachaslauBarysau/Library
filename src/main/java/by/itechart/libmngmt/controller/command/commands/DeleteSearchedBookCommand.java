@@ -6,7 +6,6 @@ import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,26 +13,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DeleteSearchedBookCommand extends LibraryCommand {
-    private final static Logger LOGGER = LogManager.getLogger(DeleteSearchedBookCommand.class.getName());
-    private final BookService bookService = BookServiceImpl.getInstance();
-    private final int MIN_PAGE_NUMBER = 1;
-    private static DeleteSearchedBookCommand instance;
+    private static final Logger LOGGER = LogManager.getLogger(DeleteSearchedBookCommand.class.getName());
+    private static final int MIN_PAGE_NUMBER = 1;
+    private BookService bookService = BookServiceImpl.getInstance();
+    private static volatile DeleteSearchedBookCommand instance;
 
     public static synchronized DeleteSearchedBookCommand getInstance() {
-        if(instance == null){
-            instance = new DeleteSearchedBookCommand();
+        DeleteSearchedBookCommand localInstance = instance;
+        if (localInstance == null) {
+            synchronized (DeleteSearchedBookCommand.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new DeleteSearchedBookCommand();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
-    public void process() throws ServletException, IOException {
+    public void process() throws IOException {
         deleteBooks(request);
         String title = request.getParameter("title");
         String author = request.getParameter("author");
         String genre = request.getParameter("genre");
         String description = request.getParameter("description");
-        int pageNumber = setPageNumber(request);
+        int pageNumber = setPageNumber();
         response.sendRedirect(request.getContextPath() + "lib-app?command=SEARCH_PAGE&title=" + title +
                 "&author=" + author + "&genre=" + genre + "&description=" + description + "&page=" + pageNumber);
     }
@@ -51,7 +56,7 @@ public class DeleteSearchedBookCommand extends LibraryCommand {
         }
     }
 
-    private int setPageNumber(HttpServletRequest request) {
+    private int setPageNumber() {
         int pageNumber = MIN_PAGE_NUMBER;
         try {
             pageNumber = Integer.parseInt(request.getParameter("page"));

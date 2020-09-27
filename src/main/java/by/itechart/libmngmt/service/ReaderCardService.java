@@ -17,6 +17,5 @@ public interface ReaderCardService {
     List<ReaderCardDto> getActiveReaderCards(int bookId);
     ReaderCardDto getReaderCard(int readerCardId);
     Date getNearestReturnDates(int bookId);
-    int getBorrowBooksCount(int bookId);
     List<ReaderCardDto> getExpiringReaderCards(int days);
 }

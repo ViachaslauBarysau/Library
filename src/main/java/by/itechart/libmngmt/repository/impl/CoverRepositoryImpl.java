@@ -1,7 +1,9 @@
 package by.itechart.libmngmt.repository.impl;
 
 import by.itechart.libmngmt.repository.CoverRepository;
-import by.itechart.libmngmt.util.ConnectionHelper;
+import by.itechart.libmngmt.util.ConnectionPool;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,14 +11,23 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CoverRepositoryImpl implements CoverRepository {
-    private final static Logger LOGGER = LogManager.getLogger(CoverRepositoryImpl.class.getName());
-    private static CoverRepositoryImpl instance;
+    private static final Logger LOGGER = LogManager.getLogger(CoverRepositoryImpl.class.getName());
+    private ConnectionPool connectionPool = ConnectionPool.getInstance();
+    private static volatile CoverRepositoryImpl instance;
+
     public static synchronized CoverRepositoryImpl getInstance() {
-        if(instance == null){
-            instance = new CoverRepositoryImpl();
+        CoverRepositoryImpl localInstance = instance;
+        if (localInstance == null) {
+            synchronized (CoverRepositoryImpl.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new CoverRepositoryImpl();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     private static final String SQL_DELETE_COVERS_BY_BOOK_ID = "DELETE FROM Covers WHERE Book_id = ?;";
@@ -24,7 +35,7 @@ public class CoverRepositoryImpl implements CoverRepository {
 
     @Override
     public void add(int bookId, String title) {
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_COVER)) {
                 int index = 1;
                 preparedStatement.setInt(index++, bookId);
@@ -48,7 +59,7 @@ public class CoverRepositoryImpl implements CoverRepository {
 
     @Override
     public void delete(int bookId) {
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_COVERS_BY_BOOK_ID)) {
                 int index = 1;
                 preparedStatement.setInt(index++, bookId);

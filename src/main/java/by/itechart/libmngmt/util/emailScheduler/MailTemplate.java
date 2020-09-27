@@ -13,12 +13,19 @@ public class MailTemplate {
             " library(<bookTitle>). Return period expired. Please, contact library by the phone" +
             " +375(17)1231231 or by email: library@library.com.";
 
-    private static MailTemplate instance;
+    private static volatile MailTemplate instance;
+
     public static synchronized MailTemplate getInstance() {
-        if(instance == null){
-            instance = new MailTemplate();
+        MailTemplate localInstance = instance;
+        if (localInstance == null) {
+            synchronized (MailTemplate.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new MailTemplate();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     public String getMessageSevenDaysBefore(String bookTitle, String readerName) {

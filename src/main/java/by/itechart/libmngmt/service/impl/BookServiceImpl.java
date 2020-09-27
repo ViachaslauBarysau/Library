@@ -4,12 +4,12 @@ import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.repository.BookRepository;
-import by.itechart.libmngmt.repository.impl.AuthorRepositoryImpl;
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
 import by.itechart.libmngmt.service.*;
-import by.itechart.libmngmt.util.ConnectionHelper;
+import by.itechart.libmngmt.util.ConnectionPool;
 import by.itechart.libmngmt.util.converter.BookConverter;
-import by.itechart.libmngmt.util.converter.RequestConverter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,21 +18,29 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookServiceImpl implements BookService {
-    private final BookConverter bookConverter = BookConverter.getInstance();
-    private final static Logger LOGGER = LogManager.getLogger(BookServiceImpl.class.getName());
-    private final ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
-    private final BookRepository bookRepository = BookRepositoryImpl.getInstance();
-    private final AuthorService authorService = AuthorServiceImpl.getInstance();
-    private final GenreService genreService = GenreServiceImpl.getInstance();
-    private final CoverService coverService = CoverServiceImpl.getInstance();
-    private static BookServiceImpl instance;
+    private static final Logger LOGGER = LogManager.getLogger(BookServiceImpl.class.getName());
+    private ConnectionPool connectionPool = ConnectionPool.getInstance();
+    private BookConverter bookConverter = BookConverter.getInstance();
+    private ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
+    private BookRepository bookRepository = BookRepositoryImpl.getInstance();
+    private AuthorService authorService = AuthorServiceImpl.getInstance();
+    private GenreService genreService = GenreServiceImpl.getInstance();
+    private CoverService coverService = CoverServiceImpl.getInstance();
+    private static volatile BookServiceImpl instance;
 
     public static synchronized BookServiceImpl getInstance() {
-        if(instance == null){
-            instance = new BookServiceImpl();
+        BookServiceImpl localInstance = instance;
+        if (localInstance == null) {
+            synchronized (BookServiceImpl.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new BookServiceImpl();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     @Override
@@ -72,15 +80,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public int getSearchPageCount(List<String> searchParams) {
-        for (int index=0; index<searchParams.size(); index++){
-            searchParams.set(index, "%" + searchParams.get(index).toLowerCase().trim() + "%");
-        }
-        return bookRepository.getSearchPageCount(searchParams);
-    }
-
-    @Override
-    public void updateBook(BookDto bookDto) {
-        bookRepository.update(bookConverter.convertBookDtoToBookEntity(bookDto));
+        List<String> refactoredSearchParams = refactorSearchParams(searchParams);
+        return bookRepository.getSearchPageCount(refactoredSearchParams);
     }
 
     @Override
@@ -92,10 +93,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<BookDto> search(List<String> searchParams, int pageNumber) {
-        for (int index=0; index<searchParams.size(); index++) {
-            searchParams.set(index, "%" + searchParams.get(index) + "%");
-        }
-        List<BookEntity> bookEntities = bookRepository.search(searchParams, pageNumber);
+        List<String> refactoredSearchParams = refactorSearchParams(searchParams);
+        List<BookEntity> bookEntities = bookRepository.search(refactoredSearchParams, pageNumber);
         List<BookDto> bookDtoList = new ArrayList<>();
         for (BookEntity bookEntity : bookEntities) {
             bookDtoList.add(bookConverter.convertBookEntityToBookDto(bookEntity));
@@ -111,9 +110,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public int addEditBook(BookDto bookDto) {
         int bookId = 0;
-        try (Connection connection = ConnectionHelper.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             connection.setAutoCommit(false);
-            if (bookDto.getId()==0) {
+            if (bookDto.getId() == 0) {
                 bookDto.setAvailableAmount(bookDto.getTotalAmount());
                 bookId = addBookGetId(bookDto, connection);
                 bookDto.setId(bookId);
@@ -136,12 +135,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public int addBookGetId(BookDto bookDto) {
-        return bookRepository.add(bookConverter.convertBookDtoToBookEntity(bookDto));
-    }
-
-    @Override
     public int addBookGetId(BookDto bookDto, Connection connection) throws SQLException {
         return bookRepository.add(bookConverter.convertBookDtoToBookEntity(bookDto), connection);
+    }
+
+    private List<String> refactorSearchParams(List<String> searchParams) {
+        List<String> refactoredSearchParams = new ArrayList<>();
+        for (String parameter : searchParams) {
+            refactoredSearchParams.add("%" + parameter.toLowerCase().trim() + "%");
+        }
+        return refactoredSearchParams;
     }
 }

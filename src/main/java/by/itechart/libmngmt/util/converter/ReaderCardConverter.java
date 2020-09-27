@@ -4,13 +4,19 @@ import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 
 public class ReaderCardConverter {
-    private static ReaderCardConverter instance;
+    private static volatile ReaderCardConverter instance;
 
     public static synchronized ReaderCardConverter getInstance() {
-        if(instance == null){
-            instance = new ReaderCardConverter();
+        ReaderCardConverter localInstance = instance;
+        if (localInstance == null) {
+            synchronized (ReaderCardConverter.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new ReaderCardConverter();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     public ReaderCardDto convertToReaderCardDto(ReaderCardEntity readerCardEntity) {

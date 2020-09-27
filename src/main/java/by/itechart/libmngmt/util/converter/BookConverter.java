@@ -3,15 +3,22 @@ package by.itechart.libmngmt.util.converter;
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
 import by.itechart.libmngmt.service.impl.BookManagementServiceImpl;
+import by.itechart.libmngmt.service.impl.ReaderServiceImpl;
 
 public class BookConverter {
-    private static BookConverter instance;
+    private static volatile BookConverter instance;
 
     public static synchronized BookConverter getInstance() {
-        if(instance == null){
-            instance = new BookConverter();
+        BookConverter localInstance = instance;
+        if (localInstance == null) {
+            synchronized (BookConverter.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new BookConverter();
+                }
+            }
         }
-        return instance;
+        return localInstance;
     }
 
     public BookDto convertBookEntityToBookDto(BookEntity bookEntity) {
