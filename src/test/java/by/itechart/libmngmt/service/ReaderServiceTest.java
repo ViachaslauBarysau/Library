@@ -4,63 +4,94 @@ import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderEntity;
 import by.itechart.libmngmt.repository.ReaderRepository;
 import by.itechart.libmngmt.service.impl.ReaderServiceImpl;
+import by.itechart.libmngmt.service.converter.impl.ReaderDtoEntityConverter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReaderServiceTest {
-    final private int ID = 0;
-    final private String EMAIL = "someEmail";
-    final private String NAME = "someName";
-    final private String PATTERN = "somePattern";
-    final private String REFACTORED_PATTERN = "somePattern%";
-    final private ReaderDto READER_DTO = new ReaderDto();
-    final private ReaderEntity READER_ENTITY = new ReaderEntity();
-    final List<String> EMAIL_LIST = new ArrayList<>();
-
+    private Connection connection;
     @Mock
     ReaderRepository readerRepository;
+    @Mock
+    ReaderDtoEntityConverter readerConverter;
     @InjectMocks
     ReaderServiceImpl readerService;
 
     @Test
-    public void testGetIdByEmail() {
-        when(readerRepository.getId(EMAIL)).thenReturn(ID);
-        int readerId = readerService.getIdByEmail(EMAIL);
-        verify(readerRepository).getId(EMAIL);
-        assertEquals(ID, readerId);
-    }
-
-    @Test
     public void testGetNameByEmail() {
-        when(readerRepository.getName(EMAIL)).thenReturn(NAME);
-        String name = readerService.getNameByEmail(EMAIL);
-        verify(readerRepository).getName(EMAIL);
-        assertEquals(NAME, name);
+        //given
+        String email = "someEmail";
+        String expectedName = "someName";
+        when(readerRepository.getName(email)).thenReturn(expectedName);
+        //when
+        String name = readerService.getNameByEmail(email);
+        //then
+        verify(readerRepository).getName(email);
+        assertEquals(expectedName, name);
     }
 
     @Test
     public void testGetEmails() {
-        when(readerRepository.getEmails(REFACTORED_PATTERN)).thenReturn(EMAIL_LIST);
-        List<String> emailList = readerService.getEmails(PATTERN);
-        verify(readerRepository).getEmails(REFACTORED_PATTERN);
-        assertEquals(EMAIL_LIST, emailList);
+        //given
+        String pattern = "somePattern";
+        List<String> expectedEmailList = new ArrayList<>();
+        when(readerRepository.getEmails(anyString())).thenReturn(expectedEmailList);
+        //when
+        List<String> emailList = readerService.getEmails(pattern);
+        //then
+        verify(readerRepository).getEmails(anyString());
+        assertEquals(emailList, emailList);
     }
 
     @Test
-    public void testInsertUpdateReader() {
-        readerService.insertUpdateReader(READER_DTO);
-        verify(readerRepository).insertUpdate(READER_ENTITY);
+    public void TestInsertUpdateReaderGetId() throws SQLException {
+        //given
+        int expectedId = 0;
+        String email = "someEmail";
+        ReaderDto readerDto = new ReaderDto();
+        readerDto.setEmail(email);
+        ReaderEntity readerEntity = new ReaderEntity();
+        when(readerRepository.getId(readerDto.getEmail(), connection)).thenReturn(expectedId);
+        when(readerConverter.convertToEntity(readerDto)).thenReturn(readerEntity);
+        //when
+        int readerId = readerService.insertUpdateReaderGetId(readerDto, connection);
+        //then
+        verify(readerRepository).insertUpdate(readerEntity, connection);
+        verify(readerConverter).convertToEntity(readerDto);
+        verify(readerRepository).getId(email, connection);
+        assertEquals(expectedId, readerId);
+    }
+
+    @Test(expected = SQLException.class)
+    public void TestInsertUpdateReaderGetIdThrowsException() throws SQLException {
+        //given
+        int expectedId = 0;
+        String email = "someEmail";
+        ReaderDto readerDto = new ReaderDto();
+        readerDto.setEmail(email);
+        ReaderEntity readerEntity = new ReaderEntity();
+        when(readerRepository.getId(readerDto.getEmail(), connection)).thenThrow(new SQLException());
+        when(readerConverter.convertToEntity(readerDto)).thenReturn(readerEntity);
+        //when
+        int readerId = readerService.insertUpdateReaderGetId(readerDto, connection);
+        //then
+        verify(readerRepository).insertUpdate(readerEntity, connection);
+        verify(readerConverter).convertToEntity(readerDto);
+        verify(readerRepository).getId(email, connection);
+        assertEquals(expectedId, readerId);
     }
 }
 

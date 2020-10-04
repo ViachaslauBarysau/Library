@@ -18,6 +18,9 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Provides methods for getting unique name for the uploading file.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUtility {
     private static final Logger LOGGER = LogManager.getLogger(FileUtility.class.getName());
@@ -38,6 +41,15 @@ public class FileUtility {
         return localInstance;
     }
 
+    /**
+     * Returns unique name for the uploading file. Method returns own file's name
+     * if file with this name not exists. Otherwise method starts to generate
+     * symbols and adds it to the file name while name is not unique. Then method
+     * returns new generated name.
+     *
+     * @param request contains Part object
+     * @return unique file name
+     */
     public String getUniqueName(HttpServletRequest request) throws IOException, ServletException {
         Part filePart = request.getPart("file");
         String fileName = filePart.getSubmittedFileName();

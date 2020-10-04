@@ -19,8 +19,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BookManagementServiceTest {
-    private static final int ID = 0;
-
     @Mock
     ReaderCardService readerCardService;
     @Mock
@@ -31,18 +29,20 @@ public class BookManagementServiceTest {
     @Test
     public void testGetNearestReturnDates() {
         // given
-        BookDto boo = new BookDto();
+        int id = 0;
+        BookDto bookDto = new BookDto();
         List<ReaderCardDto> readerCardDtoList = new ArrayList<>();
         BookPageDto expectedBookPageDto = new BookPageDto();
-        expectedBookPageDto.setBookDto(boo);
+        expectedBookPageDto.setBookDto(bookDto);
         expectedBookPageDto.setReaderCards(readerCardDtoList);
-        when(bookService.find(ID)).thenReturn(boo);
-        when(readerCardService.getAllReaderCards(ID)).thenReturn(readerCardDtoList);
+        when(bookService.find(id)).thenReturn(bookDto);
+        when(readerCardService.getAllReaderCards(id)).thenReturn(readerCardDtoList);
         // when
-        BookPageDto bookPageDto = bookManagementService.getBookPageDto(ID);
+        BookPageDto bookPageDto = bookManagementService.getBookPageDto(id);
         // then
-        verify(bookService).find(ID);
-        verify(readerCardService).getAllReaderCards(ID);
+        verify(bookService).find(id);
+        verify(readerCardService).getAllReaderCards(id);
+        verify(readerCardService).getNearestReturnDates(id);
         assertEquals(expectedBookPageDto, bookPageDto);
     }
 }

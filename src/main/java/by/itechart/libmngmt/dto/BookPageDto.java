@@ -8,12 +8,15 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Represents a BookPageDto.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
 public class BookPageDto {
-    BookDto bookDto;
-    List<ReaderCardDto> readerCards;
-    Date nearestAvailableDate;
+    private BookDto bookDto;
+    private List<ReaderCardDto> readerCards;
+    private Date nearestAvailableDate;
 }

@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+/**
+ * Represents a ReaderCardEntity.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

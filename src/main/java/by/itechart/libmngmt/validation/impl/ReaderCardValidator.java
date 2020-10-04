@@ -1,10 +1,12 @@
-package by.itechart.libmngmt.util.validation;
+package by.itechart.libmngmt.validation.impl;
 
 import by.itechart.libmngmt.dto.ReaderCardDto;
-import by.itechart.libmngmt.util.converter.RequestExtractor;
-import lombok.Data;
+import by.itechart.libmngmt.service.converter.impl.RequestReaderCardDtoListConverter;
+import by.itechart.libmngmt.validation.ValidationResult;
+import by.itechart.libmngmt.validation.Validator;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.EmailValidator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -12,10 +14,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Data
-public class ReaderCardValidator {
-    private RequestExtractor requestExtractor = RequestExtractor.getInstance();
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ReaderCardValidator implements Validator {
     private static final String USERNAME_PATTERN = "^[a-zA-Z\\s]*$";
+    private static final String EMAIL_PATTERN = "^(.+)@(.+)$";
+    private RequestReaderCardDtoListConverter requestReaderCardDtoListConverter
+            = RequestReaderCardDtoListConverter.getInstance();
     private static ReaderCardValidator instance;
 
     public static synchronized ReaderCardValidator getInstance() {
@@ -31,27 +35,28 @@ public class ReaderCardValidator {
         return localInstance;
     }
 
-    public ValidationResult validate(HttpServletRequest request) {
+    public ValidationResult validate(final HttpServletRequest request) {
         Set<String> errorMessages = new HashSet<>();
         if (!StringUtils.isEmpty(request.getParameter("readerCards"))) {
-            List<ReaderCardDto> readerCards = requestExtractor.extractReaderCardDtoList(request);
+            List<ReaderCardDto> readerCards = requestReaderCardDtoListConverter.convertToDto(request);
             for (ReaderCardDto readerCardDto : readerCards) {
                 validateEmail(readerCardDto.getReaderEmail(), errorMessages);
                 validateUsername(readerCardDto.getReaderName(), errorMessages);
             }
         }
-        ValidationResult validationResult = new ValidationResult(new ArrayList<>(errorMessages));
-        return validationResult;
+        return ValidationResult.builder()
+                .errorList(new ArrayList<>(errorMessages))
+                .build();
     }
 
-    private void validateEmail(String email, Set<String> errorMessages) {
-        if (!EmailValidator.getInstance().isValid(email)) {
+    private void validateEmail(final String email, final Set<String> errorMessages) {
+        if (StringUtils.isEmpty(email) || !email.matches(EMAIL_PATTERN)) {
             errorMessages.add("Email in reader card(s) is incorrect!!");
         }
     }
 
-    private void validateUsername(String userName, Set<String> errorMessages) {
-        if (userName == null || userName.isEmpty() || !userName.matches(USERNAME_PATTERN)) {
+    private void validateUsername(final String userName, final Set<String> errorMessages) {
+        if (StringUtils.isEmpty(userName) || !userName.matches(USERNAME_PATTERN)) {
             errorMessages.add("Name in reader card(s) is incorrect!");
         }
     }

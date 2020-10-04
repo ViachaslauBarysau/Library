@@ -1,20 +1,18 @@
 package by.itechart.libmngmt.repository.impl;
 
 import by.itechart.libmngmt.repository.GenreRepository;
-import by.itechart.libmngmt.util.ConnectionPool;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides methods for CRUD operations with genres.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GenreRepositoryImpl implements GenreRepository {
-    private static final Logger LOGGER = LogManager.getLogger(GenreRepositoryImpl.class.getName());
-    private ConnectionPool connectionPool = ConnectionPool.getInstance();
     private static volatile GenreRepositoryImpl instance;
 
     public static synchronized GenreRepositoryImpl getInstance() {
@@ -37,21 +35,15 @@ public class GenreRepositoryImpl implements GenreRepository {
             " VALUES (?,?);";
     private static final String SQL_DELETE_BOOKS_GENRES_RECORDS = "DELETE FROM Books_Genres WHERE Book_id = ?;";
 
+    /**
+     * Deletes records in Books_Genres table by book ID.
+     *
+     * @param bookId     ID of book
+     * @param connection current connection
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public void deleteBooksGenresRecords(int bookId) {
-        try (Connection connection = connectionPool.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_GENRES_RECORDS)) {
-                int index = 1;
-                preparedStatement.setInt(index++, bookId);
-                preparedStatement.execute();
-            }
-        } catch (SQLException e) {
-            LOGGER.debug("Deleting books_genres record error.", e);
-        }
-    }
-
-    @Override
-    public void deleteBooksGenresRecords(int bookId, Connection connection) throws SQLException {
+    public void deleteBooksGenresRecords(final int bookId, final Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE_BOOKS_GENRES_RECORDS)) {
             int index = 1;
             preparedStatement.setInt(index++, bookId);
@@ -59,28 +51,16 @@ public class GenreRepositoryImpl implements GenreRepository {
         }
     }
 
+    /**
+     * Returns list of genre's IDs searched by genre's titles.
+     *
+     * @param genres     list of genre's titles
+     * @param connection current connection
+     * @return list of genre's IDs
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public List<Integer> getGenreIds(List<String> genres) {
-        List<Integer> resultList = new ArrayList<>();
-        try (Connection connection = connectionPool.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
-                Array genresArray = connection.createArrayOf("VARCHAR", genres.toArray());
-                int index = 1;
-                preparedStatement.setArray(index++, genresArray);
-                preparedStatement.executeQuery();
-                ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    resultList.add(resultSet.getInt("ID"));
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.debug("Getting genres IDs record error.", e);
-        }
-        return resultList;
-    }
-
-    @Override
-    public List<Integer> getGenreIds(List<String> genres, Connection connection) throws SQLException {
+    public List<Integer> getGenreIds(final List<String> genres, final Connection connection) throws SQLException {
         List<Integer> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_IDS)) {
             Array genresArray = connection.createArrayOf("VARCHAR", genres.toArray());
@@ -95,22 +75,16 @@ public class GenreRepositoryImpl implements GenreRepository {
         return resultList;
     }
 
+    /**
+     * Adds records in Books_Genres table.
+     *
+     * @param bookId     ID of book
+     * @param genreId    ID of author
+     * @param connection current connection
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public void addBookGenreRecord(int bookId, int genreId) {
-        try (Connection connection = connectionPool.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_GENRE_RECORD)) {
-                int index = 1;
-                preparedStatement.setInt(index++, bookId);
-                preparedStatement.setInt(index++, genreId);
-                preparedStatement.execute();
-            }
-        } catch (SQLException e) {
-            LOGGER.debug("Adding books_genres record error.", e);
-        }
-    }
-
-    @Override
-    public void addBookGenreRecord(int bookId, int genreId, Connection connection) throws SQLException {
+    public void addBookGenreRecord(final int bookId, final int genreId, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_BOOK_GENRE_RECORD)) {
             int index = 1;
             preparedStatement.setInt(index++, bookId);
@@ -119,24 +93,15 @@ public class GenreRepositoryImpl implements GenreRepository {
         }
     }
 
+    /**
+     * Returns list of all genre's titles.
+     *
+     * @param connection current connection
+     * @return list of genre's titles
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public List<String> findAll() {
-        List<String> resultList = new ArrayList<>();
-        try (Connection connection = connectionPool.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_TITLES)) {
-                ResultSet resultSet = preparedStatement.executeQuery();
-                while (resultSet.next()) {
-                    resultList.add(resultSet.getString("Title"));
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.debug("Getting all genres error.", e);
-        }
-        return resultList;
-    }
-
-    @Override
-    public List<String> findAll(Connection connection) throws SQLException {
+    public List<String> findAll(final Connection connection) throws SQLException {
         List<String> resultList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_GET_GENRES_TITLES)) {
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -147,21 +112,15 @@ public class GenreRepositoryImpl implements GenreRepository {
         return resultList;
     }
 
+    /**
+     * Adds genre's title to the database.
+     *
+     * @param title      genre's title
+     * @param connection current connection
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public void add(String title) {
-        try (Connection connection = connectionPool.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_GENRE)) {
-                int index = 1;
-                preparedStatement.setString(index++, title);
-                preparedStatement.execute();
-            }
-        } catch (SQLException e) {
-            LOGGER.debug("Adding genre record error.", e);
-        }
-    }
-
-    @Override
-    public void add(String title, Connection connection) throws SQLException {
+    public void add(final String title, final Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL_ADD_GENRE)) {
             int index = 1;
             preparedStatement.setString(index++, title);

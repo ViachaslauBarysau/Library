@@ -1,5 +1,7 @@
 package by.itechart.libmngmt.util.emailScheduler;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -7,14 +9,18 @@ import org.apache.commons.mail.SimpleEmail;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Provides method for sending emails.
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EmailSender {
-    private final static Logger LOGGER = LogManager.getLogger(EmailSender.class.getName());
-    private final static String LIBRARY_EMAIL = "librarystlab@gmail.com";
-    private final static String EMAIL_SUBJECT = "Library notification.";
-    private final static String AUTHENTICATION_USERNAME = "librarystlab@gmail.com";
-    private final static String AUTHENTICATION_PASSWORD = "123123nnn";
-    private final static String HOST_NAME = "smtp.googlemail.com";
-    private final static int PORT = 465;
+    private static final Logger LOGGER = LogManager.getLogger(EmailSender.class.getName());
+    private static final String LIBRARY_EMAIL = "librarystlab@gmail.com";
+    private static final String EMAIL_SUBJECT = "Library notification.";
+    private static final String AUTHENTICATION_USERNAME = "librarystlab@gmail.com";
+    private static final String AUTHENTICATION_PASSWORD = "123123nnn";
+    private static final String HOST_NAME = "smtp.googlemail.com";
+    private static final int PORT = 465;
     private static EmailSender instance;
 
     public static synchronized EmailSender getInstance() {
@@ -30,6 +36,12 @@ public class EmailSender {
         return localInstance;
     }
 
+    /**
+     * Sends email using properties and incoming parameters.
+     *
+     * @param readerEmail reader's email
+     * @param message     message
+     */
     public void sendEmail(String readerEmail, String message) {
         try {
             Email email = new SimpleEmail();

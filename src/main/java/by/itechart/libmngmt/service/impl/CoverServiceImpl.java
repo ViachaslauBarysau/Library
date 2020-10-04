@@ -4,12 +4,16 @@ import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.repository.CoverRepository;
 import by.itechart.libmngmt.repository.impl.CoverRepositoryImpl;
 import by.itechart.libmngmt.service.CoverService;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Provides methods for operations with book covers.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CoverServiceImpl implements CoverService {
     private CoverRepository coverRepository = CoverRepositoryImpl.getInstance();
@@ -28,8 +32,16 @@ public class CoverServiceImpl implements CoverService {
         return localInstance;
     }
 
+    /**
+     * Adds cover of specific book to the database. First, method deletes
+     * old records about book cover, then adds new records there.
+     *
+     * @param bookDto    BookDto object
+     * @param connection current connection
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public void add(BookDto bookDto, Connection connection) throws SQLException {
+    public void add(final BookDto bookDto, final Connection connection) throws SQLException {
         List<String> bookCoversList = bookDto.getCovers();
         coverRepository.delete(bookDto.getId(), connection);
         for (String cover : bookCoversList) {

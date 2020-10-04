@@ -15,10 +15,11 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+<!-- Book form starts -->
   <form method="post" id="bookform" enctype="multipart/form-data">
     <div>
       <div>
-        <input type="text" class="form-control" size="60" name="id" value="${bookpagedto.bookDto.id}" hidden>
+        <input type="text" id="bookId" class="form-control" size="60" name="id" value="${bookpagedto.bookDto.id}" hidden>
       </div>
       <div>
         <input type="text" class="form-control" size="60" name="currentCover" value="${bookpagedto.bookDto.covers.get(0)}" hidden>
@@ -37,17 +38,20 @@
       <div>
         <label>Authors:</label>
         <c:if test="${empty bookpagedto.bookDto.authors}">
-          <span name="span-authors"><input type="text" class="form-control" name="authors" size="60" required>
+          <span name="span-authors"><input type="text" class="form-control" name="authors" size="60"
+                                           onchange="validateAuthorsGenres(this)" required>
             <img class="remove" src="images/src/minus_PNG41.png" alt="Delete author" width="40" onclick="deleteAuthor(this)">
           </span>
         </c:if>
         <c:forEach var="author"  items="${bookpagedto.bookDto.authors}">
-          <span name="span-authors"><input type="text" class="form-control" name="authors" size="60" value="${author}" required>
+          <span name="span-authors"><input type="text" class="form-control" name="authors" size="60" value="${author}"
+                                           onchange="validateAuthorsGenres(this)" required>
             <img class="remove" src="images/src/minus_PNG41.png" alt="Delete author" width="40" onclick="deleteAuthor(this)">
           </span>
          </c:forEach>
       </div>
-      <div>
+
+      <div class="add-field">
         <img class="add-field" src="images/src/n8mnMsJKMVg1.png" alt="Add author" width="50" onclick="addAuthorField()">
       </div>
       <div>
@@ -55,13 +59,13 @@
         <input type="text" class="form-control" name="publisher" size="60" value="${bookpagedto.bookDto.publisher}" required>
       </div>
       <div>
-        <label>Publish date:</label>
+        <label>Publish year:</label>
         <c:choose>
           <c:when test="${bookpagedto.bookDto.id == 0}">
-            <input type="number" type="number" min="1900" max="2020" class="form-control" name="publishDate" size="60" required>
+            <input type="number" type="number" min="0" max="2020" class="form-control" name="publishDate" size="60" required>
           </c:when>
           <c:otherwise>
-            <input type="number" min="1900" max="2020" class="form-control" name="publishDate" size="60"
+            <input type="number" min="0" max="2020" class="form-control" name="publishDate" size="60"
                         value="${bookpagedto.bookDto.publishDate}" required />
           </c:otherwise>
         </c:choose>
@@ -69,12 +73,14 @@
       <div>
         <label>Genres:</label>
         <c:if test="${empty bookpagedto.bookDto.genres}">
-          <span name="span-genres"><input type="text" class="form-control" name="genres" size="60" required>
+          <span name="span-genres"><input type="text" class="form-control" name="genres" size="60"
+                                          onchange="validateAuthorsGenres(this)" required>
             <img class="remove" src="images/src/minus_PNG41.png" alt="Delete genre" width="40" onclick="deleteGenre(this)">
           </span>
         </c:if>
         <c:forEach var="genre" items="${bookpagedto.bookDto.genres}">
-          <span name="span-genres"><input type="text" class="form-control" name="genres" size="60" value="${genre}" required>
+          <span name="span-genres"><input type="text" class="form-control" name="genres" size="60"
+                                          onchange="validateAuthorsGenres(this)" value="${genre}" required>
             <img class="remove" src="images/src/minus_PNG41.png" alt="Delete genre" width="40" onclick="deleteGenre(this)">
           </span>
         </c:forEach>
@@ -96,7 +102,8 @@
       </div>
       <div>
         <label>ISBN:</label>
-        <input type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.isbn}" required>
+        <input id="isbn" type="text" class="form-control" name="ISBN" size="60" value="${bookpagedto.bookDto.isbn}"
+              onchange="validateIsbn()" required>
       </div>
       <div>
         <label>Description:</label>
@@ -109,13 +116,13 @@
         <c:choose>
           <c:when test="${bookpagedto.bookDto.id == 0}">
             <input type="number" min="${bookpagedto.bookDto.totalAmount - bookpagedto.bookDto.availableAmount}"
-                   max="999" class="form-control" size="60" id="totalAmount" onchange="onAmountChange(this.value)"
+                   max="999" class="form-control" size="60" id="totalAmount" onchange="onAmountChange()"
                    name="totalAmount" required>
           </c:when>
           <c:otherwise>
           <input type="number" min="${bookpagedto.bookDto.totalAmount - bookpagedto.bookDto.availableAmount}"
                  max="999" class="form-control" size="60" id="totalAmount" required name="totalAmount"
-                 onchange="onAmountChange(this.value)" value="${bookpagedto.bookDto.totalAmount}">
+                 onchange="onAmountChange()" value="${bookpagedto.bookDto.totalAmount}">
           </c:otherwise>
         </c:choose>
       </div>
@@ -148,45 +155,48 @@
     </div>
     <div>
       <button class="btn btn-primary" type="button" onclick="sendForm()"/>Save</button>
-      <button class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=1" />Dismiss</button>
+      <button class="btn btn-primary" formaction="lib-app?command=GET_BOOK_LIST&page=1" />Discard</button>
     </div>
   </form>
+<!-- Book form ends -->
   <c:choose>
     <c:when test="${bookpagedto.bookDto.id == 0}">
       <button type="button" id="addButton" class="btn btn-primary" data-toggle="modal" data-target="#myModal"
                 onclick="createNewReaderCard()" hidden />Add</button>
     </c:when>
     <c:otherwise>
+      <!-- Borrow records table starts -->
       <label>Borrow Records List:</label>
       <table class="table table-striped" id="table">
         <thead class="thead-dark">
           <tr>
             <th>Email</th>
-              <th>Name</th>
-              <th>Borrow Date</th>
-              <th>Due Date</th>
-              <th>Return Date</th>
+            <th>Name</th>
+            <th>Borrow Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
           </tr>
         </thead>
           <c:forEach var="readerCard" items="${bookpagedto.readerCards}" >
             <tr>
               <c:if test="${empty readerCard.returnDate}">
-                <td><a href="#" id="email${readerCard.id}" onclick="openExistingReaderCard(${readerCard.id})"
+              <td><a href="#" id="email${readerCard.id}" onclick="openExistingReaderCard(${readerCard.id})"
                        data-toggle="modal" data-target="#myModal"
                        class="stretched-link">${readerCard.readerEmail}</a></td>
               </c:if>
               <c:if test="${not empty readerCard.returnDate}">
-                <td><a href="#" id="link${readerCard.id}" onclick="openClosedReaderCard(${readerCard.id})"
+               <td><a href="#" id="link${readerCard.id}" onclick="openClosedReaderCard(${readerCard.id})"
                         data-toggle="modal" data-target="#myModal"
                         class="stretched-link">${readerCard.readerEmail}</a></td>
               </c:if>
-                <td>${readerCard.readerName}</td>
-                <td>${readerCard.borrowDate}</td>
-                <td>${readerCard.dueDate}</td>
-                <td id="rd${readerCard.id}" >${readerCard.returnDate}</td>
+              <td>${readerCard.readerName}</td>
+              <td>${readerCard.borrowDate}</td>
+              <td>${readerCard.dueDate}</td>
+              <td id="rd${readerCard.id}" >${readerCard.returnDate}</td>
             </tr>
             </c:forEach>
         </table>
+      <!-- Borrow records table ends -->
         <c:if test="${empty bookpagedto.readerCards}">
           <div id="records-message" align="center">No borrow records yet.</div>
         </c:if>
@@ -207,7 +217,7 @@
           <!-- Modal Header -->
           <div class="modal-header">
             <h4 class="modal-title">Borrow Record:</h4>
-              <button type="button" class="close" onclick="closeModal()" data-dismiss="modal">×</button>
+            <button type="button" class="close" onclick="closeModal()" data-dismiss="modal">×</button>
           </div>
           <!-- Modal body -->
           <div class="modal-body">
@@ -220,7 +230,7 @@
               </div>
               <div>
                 <label id="emailLabel" for="email">Email:</label>
-                <p><input id="email" class="form-control" type="text" size="40" pattern=^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$
+                <p><input id="email" class="form-control" type="text" size="40" pattern=^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$
                           autocomplete="new-password" onkeyup="getEmailsByPattern(this.value)"  required></p>
               </div>
               <div id="autocomplete-container">
@@ -242,25 +252,25 @@
               <div>
                 <label id="timeperiodlabel" for="timeperiod">Time period:</label>
                 <p><select id="timeperiod" class="form-control" name="timeperiod" required>
-                     <option value="1">1</option>
-                     <option value="2">2</option>
-                     <option value="3">3</option>
-                     <option value="6">6</option>
-                     <option value="12">12</option>
-                   </select></p>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="6">6</option>
+                  <option value="12">12</option>
+                </select></p>
               </div>
               <div>
                 <label id="statuslabel" for="borrowingStatus">Choose status:</label>
                 <p><select id="borrowingStatus" class="form-control" name="borrowingStatus" required>
-                     <option value="borrowed"></option>
-                     <option value="returned">Returned</option>
-                     <option value="damaged">Returned and damaged</option>
-                     <option value="lost">Lost</option>
-                   </select></p>
+                  <option value="borrowed"></option>
+                  <option value="returned">Returned</option>
+                  <option value="damaged">Returned and damaged</option>
+                  <option value="lost">Lost</option>
+                </select></p>
               </div>
               <div>
-              <label id="commentlabel" for="comment">Comment:</label>
-              <p><input id="comment" class="form-control" type="text" size="40"></p>
+                <label id="commentlabel" for="comment">Comment:</label>
+                <p><input id="comment" class="form-control" type="text" size="40"></p>
                 <div class="modal-footer">
                   <button type="button" id="saveButton" class="btn btn-primary" data-dismiss="modal">Save</button>
                   <button type="button" class="btn btn-primary" onclick="closeModal()" data-dismiss="modal">Close</button>
@@ -281,8 +291,11 @@
 </body>
 </html>
 <script type="text/javascript">
-    <%@include file="/WEB-INF/js/bookinfo.js"%>
+  <%@include file="/WEB-INF/js/bookinfo.js"%>
+  <%@include file="/WEB-INF/js/booklist-modal-parameters.js"%>
+  <%@include file="/WEB-INF/js/booklist-modal-functions.js"%>
+  <%@include file="/WEB-INF/js/validation.js"%>
 </script>
 <style>
-    <%@include file="/WEB-INF/css/bookinfo.css"%>
+  <%@include file="/WEB-INF/css/bookinfo.css"%>
 </style>

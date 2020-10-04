@@ -7,7 +7,8 @@ import by.itechart.libmngmt.repository.BookRepository;
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
 import by.itechart.libmngmt.service.*;
 import by.itechart.libmngmt.util.ConnectionPool;
-import by.itechart.libmngmt.util.converter.BookConverter;
+import by.itechart.libmngmt.service.converter.Converter;
+import by.itechart.libmngmt.service.converter.ConverterFactory;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -17,12 +18,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+/**
+ * Provides methods for operations with book.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookServiceImpl implements BookService {
     private static final Logger LOGGER = LogManager.getLogger(BookServiceImpl.class.getName());
+    private static final int BOOK_DTO_ENTITY_CONVERTER_TYPE = 1;
     private ConnectionPool connectionPool = ConnectionPool.getInstance();
-    private BookConverter bookConverter = BookConverter.getInstance();
+    private Converter<BookDto, BookEntity> bookDtoEntityConverterConverter
+            = ConverterFactory.getInstance().createConverter(BOOK_DTO_ENTITY_CONVERTER_TYPE);
     private ReaderCardService readerCardService = ReaderCardServiceImpl.getInstance();
     private BookRepository bookRepository = BookRepositoryImpl.getInstance();
     private AuthorService authorService = AuthorServiceImpl.getInstance();
@@ -43,76 +50,44 @@ public class BookServiceImpl implements BookService {
         return localInstance;
     }
 
+    /**
+     * Returns list of books gets by page number.
+     *
+     * @param pageNumber ID of book
+     * @return list of BookDto
+     */
     @Override
-    public List<BookDto> getBookPage(int pageNumber) {
-        List<BookEntity> bookEntities = bookRepository.findAll(pageNumber);
-        List<BookDto> bookDtoList = new ArrayList<>();
-        for (BookEntity bookEntity : bookEntities) {
-            bookDtoList.add(bookConverter.convertBookEntityToBookDto(bookEntity));
-        }
-        return bookDtoList;
+    public List<BookDto> getAllBookPage(final int pageNumber) {
+        return bookRepository.findAll(pageNumber).stream()
+                .map(bookEntity -> bookDtoEntityConverterConverter.convertToDto(bookEntity))
+                .collect(Collectors.toList());
     }
 
+    /**
+     * Returns count of pages with all books.
+     *
+     * @return count of pages
+     */
     @Override
-    public int getPageCount() {
-        return bookRepository.getPageCount();
+    public int getAllBookPageCount() {
+        return bookRepository.getAllPageCount();
     }
 
+    /**
+     * Adds new or edits existing book and returns its ID.
+     * It checks book ID and then invokes add(ID=0) or update methods
+     * and calls for another services to add book info like cover etc.
+     *
+     * @param bookDto BookDto object for adding/editing
+     * @return book ID
+     */
     @Override
-    public int getAvailableBookPageCount() {
-        return bookRepository.getAvailableBookPageCount();
-    }
-
-    @Override
-    public List<BookDto> getAvailableBookPage(int pageNumber) {
-        List<BookEntity> bookEntities = bookRepository.findAvailable(pageNumber);
-        List<BookDto> bookDtoList = new ArrayList<>();
-        for (BookEntity bookEntity : bookEntities) {
-            bookDtoList.add(bookConverter.convertBookEntityToBookDto(bookEntity));
-        }
-        return bookDtoList;
-    }
-
-    @Override
-    public void delete(List<Integer> booksList) {
-        bookRepository.delete(booksList);
-    }
-
-    @Override
-    public int getSearchPageCount(List<String> searchParams) {
-        List<String> refactoredSearchParams = refactorSearchParams(searchParams);
-        return bookRepository.getSearchPageCount(refactoredSearchParams);
-    }
-
-    @Override
-    public BookDto find(int bookId) {
-        BookEntity bookEntity = bookRepository.find(bookId);
-        BookDto bookDto = bookConverter.convertBookEntityToBookDto(bookEntity);
-        return bookDto;
-    }
-
-    @Override
-    public List<BookDto> search(List<String> searchParams, int pageNumber) {
-        List<String> refactoredSearchParams = refactorSearchParams(searchParams);
-        List<BookEntity> bookEntities = bookRepository.search(refactoredSearchParams, pageNumber);
-        List<BookDto> bookDtoList = new ArrayList<>();
-        for (BookEntity bookEntity : bookEntities) {
-            bookDtoList.add(bookConverter.convertBookEntityToBookDto(bookEntity));
-        }
-        return bookDtoList;
-    }
-
-    @Override
-    public void updateBook(BookDto bookDto, Connection connection) throws SQLException {
-        bookRepository.update(bookConverter.convertBookDtoToBookEntity(bookDto), connection);
-    }
-
-    @Override
-    public int addEditBook(BookDto bookDto) {
+    public int addEditBook(final BookDto bookDto) {
         int bookId = 0;
         try (Connection connection = connectionPool.getConnection()) {
             connection.setAutoCommit(false);
-            if (bookDto.getId() == 0) {
+            boolean isBookNew = bookDto.getId() == 0;
+            if (isBookNew) {
                 bookDto.setAvailableAmount(bookDto.getTotalAmount());
                 bookId = addBookGetId(bookDto, connection);
                 bookDto.setId(bookId);
@@ -134,12 +109,85 @@ public class BookServiceImpl implements BookService {
         return bookId;
     }
 
+    /**
+     * Returns count of pages without unavailable books.
+     *
+     * @return count of pages
+     */
     @Override
-    public int addBookGetId(BookDto bookDto, Connection connection) throws SQLException {
-        return bookRepository.add(bookConverter.convertBookDtoToBookEntity(bookDto), connection);
+    public int getAvailableBookPageCount() {
+        return bookRepository.getAvailableBookPageCount();
     }
 
-    private List<String> refactorSearchParams(List<String> searchParams) {
+    /**
+     * Returns list of available books by page number.
+     *
+     * @param pageNumber ID of book
+     * @return list of BookDto
+     */
+    @Override
+    public List<BookDto> getAvailableBookPage(final int pageNumber) {
+        return bookRepository.findAvailable(pageNumber).stream()
+                .map(bookEntity -> bookDtoEntityConverterConverter.convertToDto(bookEntity))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes books by IDs.
+     *
+     * @param booksList list with book IDs
+     */
+    @Override
+    public void delete(final List<Integer> booksList) {
+        bookRepository.delete(booksList);
+    }
+
+    /**
+     * Returns count of pages with search results.
+     *
+     * @param searchParams list with search parameters
+     * @return count of pages
+     */
+    @Override
+    public int getSearchPageCount(final List<String> searchParams) {
+        return bookRepository.getSearchPageCount(refactorSearchParams(searchParams));
+    }
+
+    /**
+     * Return book searched by its ID.
+     *
+     * @param bookId book ID
+     * @return BookDto object
+     */
+    @Override
+    public BookDto find(final int bookId) {
+        return bookDtoEntityConverterConverter.convertToDto(bookRepository.find(bookId));
+    }
+
+    /**
+     * Returns list of books searched by search parameters(for one specific page).
+     * Search parameters are changed here, so no need to refactor them before.
+     *
+     * @param searchParams list with search parameters
+     * @param pageNumber   page number
+     * @return list of BookDto
+     */
+    @Override
+    public List<BookDto> search(final List<String> searchParams, final int pageNumber) {
+        return bookRepository.search(refactorSearchParams(searchParams), pageNumber).stream()
+                .map(bookEntity -> bookDtoEntityConverterConverter.convertToDto(bookEntity))
+                .collect(Collectors.toList());
+    }
+
+    private void updateBook(final BookDto bookDto, final Connection connection) throws SQLException {
+        bookRepository.update(bookDtoEntityConverterConverter.convertToEntity(bookDto), connection);
+    }
+
+    private int addBookGetId(final BookDto bookDto, final Connection connection) throws SQLException {
+        return bookRepository.add(bookDtoEntityConverterConverter.convertToEntity(bookDto), connection);
+    }
+
+    private List<String> refactorSearchParams(final List<String> searchParams) {
         List<String> refactoredSearchParams = new ArrayList<>();
         for (String parameter : searchParams) {
             refactoredSearchParams.add("%" + parameter.toLowerCase().trim() + "%");

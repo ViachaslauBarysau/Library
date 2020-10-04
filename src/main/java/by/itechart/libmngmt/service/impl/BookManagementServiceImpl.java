@@ -7,8 +7,9 @@ import by.itechart.libmngmt.service.ReaderCardService;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
-
+/**
+ * Provides methods for operations with BookPageDto.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookManagementServiceImpl implements BookManagementService {
     private BookService bookService = BookServiceImpl.getInstance();
@@ -28,13 +29,19 @@ public class BookManagementServiceImpl implements BookManagementService {
         return localInstance;
     }
 
+    /**
+     * Returns BookPageDto object needed for book page. Consists of BookDto,
+     * list of ReaderCards and nearest available date of specific Book.
+     *
+     * @param bookId ID of book
+     * @return BookPageDto object
+     */
     @Override
-    public BookPageDto getBookPageDto(int bookId) {
-        BookPageDto bookPageDto = BookPageDto.builder()
+    public BookPageDto getBookPageDto(final int bookId) {
+        return BookPageDto.builder()
                 .bookDto(bookService.find(bookId))
                 .readerCards(readerCardService.getAllReaderCards(bookId))
                 .nearestAvailableDate(readerCardService.getNearestReturnDates(bookId))
                 .build();
-        return bookPageDto;
     }
 }

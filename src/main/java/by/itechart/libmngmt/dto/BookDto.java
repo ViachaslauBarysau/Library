@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Represents a BookDto.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

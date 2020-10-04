@@ -9,8 +9,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Title</title>
-    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
@@ -35,7 +33,7 @@
                     </a>
                 </td>
                 <td><c:forEach var="author" items="${book.authors}">
-                    ${author}
+                    ${author}<br>
                     </c:forEach>
                 </td>
                 <td>${book.publishDate}</td>
@@ -44,12 +42,8 @@
         </c:forEach>
     </table>
     <input hidden name="page" value="${pageNumber}">
-    <button type="submit" class="btn btn-primary" formaction="lib-app?command=ADD_BOOK_PAGE" />
-    Add Book
-    </button>
-    <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_BOOK" />
-    Delete Book(-s)
-    </button>
+    <button type="submit" class="btn btn-primary" formaction="lib-app?command=ADD_BOOK_PAGE" />Add Book</button>
+    <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_BOOK" />Delete Book(-s)</button>
 
     <c:if test ="${not empty pageNumber}">
         <c:if test ="${pageNumber > 1}">
@@ -75,16 +69,14 @@
             </button>
         </c:if>
     </c:if>
-
     <c:if test ="${not empty hideUnavailable}">
-            <span style="float:right"><input type="checkbox" id="hide-unavailable" name="hideunavailable"  align="right"
+    <span style="float:right"><input type="checkbox" id="hide-unavailable" name="hideunavailable"  align="right"
                                              onchange="hideUnavailable(this)" checked />   Hide unavailable</span>
     </c:if>
     <c:if test ="${empty hideUnavailable}">
-            <span style="float:right"><input type="checkbox" id="hide-unavailable" name="hideunavailable"  align="right"
+    <span style="float:right"><input type="checkbox" id="hide-unavailable" name="hideunavailable"  align="right"
                                              onchange="hideUnavailable(this)" />   Hide unavailable</span>
     </c:if>
-
 </form>
 
 </body>

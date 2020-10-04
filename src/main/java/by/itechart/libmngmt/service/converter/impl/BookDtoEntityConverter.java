@@ -1,28 +1,37 @@
-package by.itechart.libmngmt.util.converter;
+package by.itechart.libmngmt.service.converter.impl;
 
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.entity.BookEntity;
-import by.itechart.libmngmt.service.impl.BookManagementServiceImpl;
-import by.itechart.libmngmt.service.impl.ReaderServiceImpl;
+import by.itechart.libmngmt.service.converter.Converter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class BookConverter {
-    private static volatile BookConverter instance;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class BookDtoEntityConverter implements Converter<BookDto, BookEntity> {
+    private static volatile BookDtoEntityConverter instance;
 
-    public static synchronized BookConverter getInstance() {
-        BookConverter localInstance = instance;
+    public static synchronized BookDtoEntityConverter getInstance() {
+        BookDtoEntityConverter localInstance = instance;
         if (localInstance == null) {
-            synchronized (BookConverter.class) {
+            synchronized (BookDtoEntityConverter.class) {
                 localInstance = instance;
                 if (localInstance == null) {
-                    instance = localInstance = new BookConverter();
+                    instance = localInstance = new BookDtoEntityConverter();
                 }
             }
         }
         return localInstance;
     }
 
-    public BookDto convertBookEntityToBookDto(BookEntity bookEntity) {
-        BookDto bookDto = BookDto.builder()
+    /**
+     * Converts BookEntity to BookDto.
+     *
+     * @param bookEntity BookEntity object
+     * @return BookDto object
+     */
+    @Override
+    public BookDto convertToDto(final BookEntity bookEntity) {
+        return BookDto.builder()
                 .id(bookEntity.getId())
                 .title(bookEntity.getTitle())
                 .authors(bookEntity.getAuthors())
@@ -36,11 +45,17 @@ public class BookConverter {
                 .totalAmount(bookEntity.getTotalAmount())
                 .availableAmount(bookEntity.getAvailableAmount())
                 .build();
-        return bookDto;
     }
 
-    public BookEntity convertBookDtoToBookEntity(BookDto bookDto) {
-        BookEntity bookEntity = BookEntity.builder()
+    /**
+     * Converts BookDto to BookEntity.
+     *
+     * @param bookDto BookDto object
+     * @return BookEntity object
+     */
+    @Override
+    public BookEntity convertToEntity(final BookDto bookDto) {
+        return BookEntity.builder()
                 .id(bookDto.getId())
                 .title(bookDto.getTitle())
                 .authors(bookDto.getAuthors())
@@ -54,6 +69,5 @@ public class BookConverter {
                 .totalAmount(bookDto.getTotalAmount())
                 .availableAmount(bookDto.getAvailableAmount())
                 .build();
-        return bookEntity;
     }
 }

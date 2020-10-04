@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a ReaderDto.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

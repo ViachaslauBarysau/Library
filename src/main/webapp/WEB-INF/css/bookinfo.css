@@ -15,7 +15,7 @@ body.modal-open {
 }
 
 .add-field {
-    float: ledt;
+    float: bottom;
 }
 
 #overlay {
@@ -33,10 +33,11 @@ body.modal-open {
 #autocomplete {
     width: calc(100% - 2rem);
     position: absolute;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     background: white;
     padding: 5px;
 }
+
 #autocomplete ul li {
     width: 100%;
     padding: 5px 0px;
@@ -56,11 +57,17 @@ body.modal-open {
 }
 
 input:invalid {
-    border-color: red;
+    border-color: orange;
 }
 
 input:valid {
-    border-color: green;
+    border-color: forestgreen;
+}
+
+label {
+    font-size: 18px;
+    padding-top: 4px;
+    margin-bottom: 0;
 }
 
 .modal {
@@ -72,7 +79,7 @@ input:valid {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.82);
+    background-color: rgba(0, 0, 0, 0.82);
 }
 
 .modal-cont {
@@ -99,10 +106,6 @@ input:valid {
     font-size: 17px;
 }
 
-.form-row {
-
-}
-
 #snackbar.show {
     visibility: visible;
     -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
@@ -110,21 +113,45 @@ input:valid {
 }
 
 @-webkit-keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
 }
 
 @keyframes fadein {
-    from {bottom: 0; opacity: 0;}
-    to {bottom: 30px; opacity: 1;}
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
 }
 
 @-webkit-keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
 }
 
 @keyframes fadeout {
-    from {bottom: 30px; opacity: 1;}
-    to {bottom: 0; opacity: 0;}
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
 }

@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides methods for operations with genres.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GenreServiceImpl implements GenreService {
     private GenreRepository genreRepository = GenreRepositoryImpl.getInstance();
@@ -30,8 +33,17 @@ public class GenreServiceImpl implements GenreService {
         return localInstance;
     }
 
+    /**
+     * Adds genre's titles of specific book to the database. First, method
+     * finds not existing genres and adds them to the database, then deletes
+     * records from Books_Genres table and adds new records there.
+     *
+     * @param bookDto    BookDto object
+     * @param connection current connection
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public void add(BookDto bookDto, Connection connection) throws SQLException {
+    public void add(final BookDto bookDto, final Connection connection) throws SQLException {
         addNotExistGenres(bookDto, connection);
         genreRepository.deleteBooksGenresRecords(bookDto.getId(), connection);
         addBooksGenresRecords(bookDto, connection);

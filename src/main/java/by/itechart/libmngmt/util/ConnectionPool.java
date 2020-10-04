@@ -2,20 +2,21 @@ package by.itechart.libmngmt.util;
 
 import by.itechart.libmngmt.repository.impl.BookRepositoryImpl;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import java.beans.PropertyVetoException;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * Provides method for managing connections using connection pool.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConnectionPool {
-    private static final ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
     private static final Logger LOGGER = LogManager.getLogger(ConnectionPool.class.getName());
     private static final String DB_DRIVER = PropertyReader.getProperty("jdbc.driverClassName");
     private static final String DB_URL = PropertyReader.getProperty("jdbc.url");
@@ -23,6 +24,8 @@ public class ConnectionPool {
     private static final String DB_USERPASSWORD = PropertyReader.getProperty("jdbc.password");
     private static final String UNICODE_PROPERTY = "true";
     private static final String ENCODING = "UTF8";
+    private static final ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
+
     private static volatile ConnectionPool instance;
 
     public static synchronized ConnectionPool getInstance() {
@@ -38,29 +41,34 @@ public class ConnectionPool {
         return localInstance;
     }
 
-    static  {
+    static {
         try {
             comboPooledDataSource.setDriverClass(DB_DRIVER);
-            comboPooledDataSource.setJdbcUrl    (DB_URL);
-            comboPooledDataSource.setUser       (DB_USERNAME);
-            comboPooledDataSource.setPassword   (DB_USERPASSWORD);
+            comboPooledDataSource.setJdbcUrl(DB_URL);
+            comboPooledDataSource.setUser(DB_USERNAME);
+            comboPooledDataSource.setPassword(DB_USERPASSWORD);
             Properties properties = new Properties();
-            properties.setProperty ("user", DB_USERNAME);
-            properties.setProperty ("password", DB_USERPASSWORD);
-            properties.setProperty ("useUnicode", UNICODE_PROPERTY);
-            properties.setProperty ("characterEncoding", ENCODING);
+            properties.setProperty("user", DB_USERNAME);
+            properties.setProperty("password", DB_USERPASSWORD);
+            properties.setProperty("useUnicode", UNICODE_PROPERTY);
+            properties.setProperty("characterEncoding", ENCODING);
             comboPooledDataSource.setProperties(properties);
-            comboPooledDataSource.setMaxStatements             (180);
+            comboPooledDataSource.setMaxStatements(180);
             comboPooledDataSource.setMaxStatementsPerConnection(180);
-            comboPooledDataSource.setMinPoolSize               ( 50);
-            comboPooledDataSource.setAcquireIncrement          ( 10);
-            comboPooledDataSource.setMaxPoolSize               ( 60);
-            comboPooledDataSource.setMaxIdleTime               ( 30);
+            comboPooledDataSource.setMinPoolSize(50);
+            comboPooledDataSource.setAcquireIncrement(10);
+            comboPooledDataSource.setMaxPoolSize(60);
+            comboPooledDataSource.setMaxIdleTime(30);
         } catch (PropertyVetoException e) {
             LOGGER.debug("Adding connection properties error.", e);
         }
     }
 
+    /**
+     * Returns connection instance from connection pool or creates new one.
+     *
+     * @return Connection object
+     */
     public Connection getConnection() {
         Connection connection = null;
         try {

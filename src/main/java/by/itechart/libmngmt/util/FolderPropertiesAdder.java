@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.File;
 
+/**
+ * Provides method for creating image upload folder.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FolderPropertiesAdder {
     private static volatile FolderPropertiesAdder instance;
@@ -21,7 +24,12 @@ public class FolderPropertiesAdder {
         }
         return localInstance;
     }
-    public void addImageFolder(){
+
+    /**
+     * Creates independent of system file upload path, creates folders
+     * and assigns this folder path to the system property.
+     */
+    public void addImageFolder() {
         String uploadPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main"
                 + File.separator + "webapp" + File.separator + "images" + File.separator;
         File uploadDir = new File(uploadPath);

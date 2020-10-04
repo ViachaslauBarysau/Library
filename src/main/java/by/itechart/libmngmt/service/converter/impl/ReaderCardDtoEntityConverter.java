@@ -1,26 +1,37 @@
-package by.itechart.libmngmt.util.converter;
+package by.itechart.libmngmt.service.converter.impl;
 
 import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
+import by.itechart.libmngmt.service.converter.Converter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class ReaderCardConverter {
-    private static volatile ReaderCardConverter instance;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ReaderCardDtoEntityConverter implements Converter<ReaderCardDto, ReaderCardEntity> {
+    private static volatile ReaderCardDtoEntityConverter instance;
 
-    public static synchronized ReaderCardConverter getInstance() {
-        ReaderCardConverter localInstance = instance;
+    public static synchronized ReaderCardDtoEntityConverter getInstance() {
+        ReaderCardDtoEntityConverter localInstance = instance;
         if (localInstance == null) {
-            synchronized (ReaderCardConverter.class) {
+            synchronized (ReaderCardDtoEntityConverter.class) {
                 localInstance = instance;
                 if (localInstance == null) {
-                    instance = localInstance = new ReaderCardConverter();
+                    instance = localInstance = new ReaderCardDtoEntityConverter();
                 }
             }
         }
         return localInstance;
     }
 
-    public ReaderCardDto convertToReaderCardDto(ReaderCardEntity readerCardEntity) {
-        ReaderCardDto readerCardDto = ReaderCardDto.builder()
+    /**
+     * Converts ReaderCardEntity to ReaderCardDto.
+     *
+     * @param readerCardEntity ReaderCardEntity object
+     * @return ReaderCardDto object
+     */
+    @Override
+    public ReaderCardDto convertToDto(final ReaderCardEntity readerCardEntity) {
+        return ReaderCardDto.builder()
                 .id(readerCardEntity.getId())
                 .bookId(readerCardEntity.getBookId())
                 .readerId(readerCardEntity.getReaderId())
@@ -34,11 +45,17 @@ public class ReaderCardConverter {
                 .status(readerCardEntity.getStatus())
                 .comment(readerCardEntity.getComment())
                 .build();
-        return readerCardDto;
     }
 
-    public ReaderCardEntity convertToReaderCardEntity(ReaderCardDto readerCardDto) {
-        ReaderCardEntity readerCardEntity = ReaderCardEntity.builder()
+    /**
+     * Converts ReaderCardDto to ReaderCardEntity.
+     *
+     * @param readerCardDto ReaderCardEntity object
+     * @return ReaderCardDto object
+     */
+    @Override
+    public ReaderCardEntity convertToEntity(final ReaderCardDto readerCardDto) {
+        return ReaderCardEntity.builder()
                 .id(readerCardDto.getId())
                 .bookId(readerCardDto.getBookId())
                 .readerId(readerCardDto.getReaderId())
@@ -52,6 +69,5 @@ public class ReaderCardConverter {
                 .status(readerCardDto.getStatus())
                 .comment(readerCardDto.getComment())
                 .build();
-        return readerCardEntity;
     }
 }

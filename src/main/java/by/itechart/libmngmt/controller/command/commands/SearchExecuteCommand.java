@@ -4,39 +4,48 @@ import by.itechart.libmngmt.controller.command.LibraryCommand;
 import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchPageCommand extends LibraryCommand {
-    private static final Logger LOGGER = LogManager.getLogger(SearchPageCommand.class.getName());
-    private static final int MIN_PAGE_NUMBER = 1;
+/**
+ * Processes requests of search executing.
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class SearchExecuteCommand extends LibraryCommand {
     private static final String EMPTY_STRING = "";
     private static final int TITLE_INDEX = 0;
     private static final int AUTHOR_INDEX = 1;
     private static final int GENRE_INDEX = 2;
     private static final int DESCRIPTION_INDEX = 3;
     private BookService bookService = BookServiceImpl.getInstance();
-    private static volatile SearchPageCommand instance;
+    private static volatile SearchExecuteCommand instance;
 
-    public static synchronized SearchPageCommand getInstance() {
-        SearchPageCommand localInstance = instance;
+    public static synchronized SearchExecuteCommand getInstance() {
+        SearchExecuteCommand localInstance = instance;
         if (localInstance == null) {
-            synchronized (SearchPageCommand.class) {
+            synchronized (SearchExecuteCommand.class) {
                 localInstance = instance;
                 if (localInstance == null) {
-                    instance = localInstance = new SearchPageCommand();
+                    instance = localInstance = new SearchExecuteCommand();
                 }
             }
         }
         return localInstance;
     }
 
+    /**
+     * Invokes search of book by search parameters and forwards to the
+     * search page with search results.
+     *
+     * @throws ServletException in case of servlet failure
+     * @throws IOException      in case of IO failure
+     */
     @Override
     public void process() throws ServletException, IOException {
         List<String> searchParams = getSearchParams();
@@ -45,7 +54,7 @@ public class SearchPageCommand extends LibraryCommand {
                 || !searchParams.get(GENRE_INDEX).equals(EMPTY_STRING)
                 || !searchParams.get(DESCRIPTION_INDEX).equals(EMPTY_STRING)) {
             int pageCount = bookService.getSearchPageCount(searchParams);
-            int pageNumber = getPageNumber(pageCount);
+            int pageNumber = setPageNumber(pageCount);
             List<BookDto> searchResult = bookService.search(searchParams, pageNumber);
             request.setAttribute("books", searchResult);
             request.setAttribute("pageCount", pageCount);
@@ -56,21 +65,6 @@ public class SearchPageCommand extends LibraryCommand {
             request.setAttribute("description", searchParams.get(DESCRIPTION_INDEX));
         }
         forward("searchpage");
-    }
-
-    private int getPageNumber(int pageCount) {
-        int pageNumber = MIN_PAGE_NUMBER;
-        try {
-            pageNumber = Integer.parseInt(request.getParameter("page"));
-        } catch (Exception e) {
-            LOGGER.debug("Wrong page number.", e);
-        }
-        if (pageNumber > pageCount) {
-            pageNumber = pageCount;
-        } else if (pageNumber < MIN_PAGE_NUMBER) {
-            pageNumber = MIN_PAGE_NUMBER;
-        }
-        return pageNumber;
     }
 
     private List<String> getSearchParams() {

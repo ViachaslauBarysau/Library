@@ -1,18 +1,17 @@
 package by.itechart.libmngmt.util.emailScheduler;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
+/**
+ * Provides method for creating email text using templates.
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MailTemplate {
-    final private String SEVEN_DAYS_BEFORE_MESSAGE = "Hello, <readerName>! You borrowed a book from the " +
-            "library(<bookTitle>). Return period expires in 7 days. You can contact library by the phone" +
-            " +375(17)1231231 or by email: library@library.com";
-    final private String ONE_DAY_BEFORE_MESSAGE = "Hello, <readerName>! You borrowed a book from the" +
-            " library(<bookTitle>). Return period expires in 1 day. You can contact library by the phone" +
-            " +375(17)1231231 or by email: library@library.com";
-    final private String ONE_DAY_AFTER_MESSAGE = "Hello, <readerName>! You borrowed a book from the" +
-            " library(<bookTitle>). Return period expired. Please, contact library by the phone" +
-            " +375(17)1231231 or by email: library@library.com.";
-
+    private STGroup stGroup = new STGroupFile("templates.stg");
     private static volatile MailTemplate instance;
 
     public static synchronized MailTemplate getInstance() {
@@ -28,22 +27,43 @@ public class MailTemplate {
         return localInstance;
     }
 
+    /**
+     * Creates message using template and incoming parameters.
+     *
+     * @param bookTitle  book title
+     * @param readerName reader name
+     * @return message
+     */
     public String getMessageSevenDaysBefore(String bookTitle, String readerName) {
-        ST message = new ST(SEVEN_DAYS_BEFORE_MESSAGE);
-        message.add("readerName", readerName);
-        message.add("bookTitle", bookTitle);
-        return message.render();
+        ST message = stGroup.getInstanceOf("sevenDaysBeforeTemplate");
+        return createMessage(message, bookTitle, readerName);
     }
 
+    /**
+     * Creates message using template and incoming parameters.
+     *
+     * @param bookTitle  book title
+     * @param readerName reader name
+     * @return message
+     */
     public String getMessageOneDayBefore(String bookTitle, String readerName) {
-        ST message = new ST(ONE_DAY_BEFORE_MESSAGE);
-        message.add("readerName", readerName);
-        message.add("bookTitle", bookTitle);
-        return message.render();
+        ST message = stGroup.getInstanceOf("oneDayBeforeTemplate");
+        return createMessage(message, bookTitle, readerName);
     }
 
+    /**
+     * Creates message using template and incoming parameters.
+     *
+     * @param bookTitle  book title
+     * @param readerName reader name
+     * @return message
+     */
     public String getMessageOneDayAfter(String bookTitle, String readerName) {
-        ST message = new ST(ONE_DAY_AFTER_MESSAGE);
+        ST message = stGroup.getInstanceOf("oneDayAfterTemplate");
+        return createMessage(message, bookTitle, readerName);
+    }
+
+    private String createMessage(ST message, String bookTitle, String readerName) {
         message.add("readerName", readerName);
         message.add("bookTitle", bookTitle);
         return message.render();

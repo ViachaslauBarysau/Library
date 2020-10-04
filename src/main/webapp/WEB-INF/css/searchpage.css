@@ -3,4 +3,14 @@ body {
     max-width: 900px;
     position: relative;
     margin: 0 auto;
+    padding-bottom : 20px;
+    font-family: 'Secular One', sans-serif;
+}
+#search-nav {
+    color: indianred;
+}
+label {
+    font-size: 18px;
+    padding-top: 4px;
+    margin-bottom: 0;
 }

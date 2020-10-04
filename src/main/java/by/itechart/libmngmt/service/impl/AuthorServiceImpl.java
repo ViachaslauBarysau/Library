@@ -12,6 +12,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides methods for operations with authors.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthorServiceImpl implements AuthorService {
     private AuthorRepository authorRepository = AuthorRepositoryImpl.getInstance();
@@ -30,14 +33,23 @@ public class AuthorServiceImpl implements AuthorService {
         return localInstance;
     }
 
+    /**
+     * Adds author's names of specific book to the database. First, method
+     * finds not existing names and adds them to the database, then deletes
+     * old records from Books_Authors table and adds new records there.
+     *
+     * @param bookDto    BookDto object
+     * @param connection current connection
+     * @throws SQLException in case of SQL failure
+     */
     @Override
-    public void add(BookDto bookDto, Connection connection) throws SQLException {
+    public void add(final BookDto bookDto, final Connection connection) throws SQLException {
         addNotExistAuthors(bookDto, connection);
         authorRepository.deleteBooksAuthorsRecords(bookDto.getId(), connection);
         addBooksAuthorsRecords(bookDto, connection);
     }
 
-    private void addNotExistAuthors(BookDto bookDto, Connection connection) throws SQLException {
+    private void addNotExistAuthors(final BookDto bookDto, final Connection connection) throws SQLException {
         List<String> allAuthorsList = authorRepository.findAll(connection);
         List<String> bookAuthorsList = new ArrayList<>();
         bookAuthorsList.addAll(bookDto.getAuthors());
@@ -47,10 +59,10 @@ public class AuthorServiceImpl implements AuthorService {
         }
     }
 
-    private void addBooksAuthorsRecords(BookDto bookDto, Connection connection) throws SQLException {
-        List<Integer> authorIDs = authorRepository.getAuthorIds(bookDto.getAuthors(), connection);
-        for (int authorID : authorIDs) {
-            authorRepository.addBookAuthorRecord(bookDto.getId(), authorID, connection);
+    private void addBooksAuthorsRecords(final BookDto bookDto, final Connection connection) throws SQLException {
+        List<Integer> authorIds = authorRepository.getAuthorIds(bookDto.getAuthors(), connection);
+        for (int authorId : authorIds) {
+            authorRepository.addBookAuthorRecord(bookDto.getId(), authorId, connection);
         }
     }
 }

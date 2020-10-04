@@ -3,4 +3,6 @@ body {
     max-width: 900px;
     position: relative;
     margin: 0 auto;
+    padding-bottom : 20px;
+    font-family: 'Secular One', sans-serif;
 }

@@ -5,29 +5,33 @@ import by.itechart.libmngmt.dto.BookDto;
 import by.itechart.libmngmt.service.BookService;
 import by.itechart.libmngmt.service.impl.BookServiceImpl;
 import by.itechart.libmngmt.util.FileUploader;
-import by.itechart.libmngmt.util.converter.RequestExtractor;
-import by.itechart.libmngmt.util.validation.BookValidator;
-import by.itechart.libmngmt.util.validation.ReaderCardValidator;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import by.itechart.libmngmt.service.converter.Converter;
+import by.itechart.libmngmt.service.converter.ConverterFactory;
+import by.itechart.libmngmt.validation.ValidatorFactory;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Processes book editing requests.
+ */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EditBookCommand extends LibraryCommand {
-    public static final String EMPTY_STRING = "";
-    public static final int COVER_INDEX = 0;
-    public static final String DATE_FORMAT = "yyyy-MM-dd";
-    public static final String CONTENT_TYPE = "application/json";
-    public static final String ENCODING = "UTF-8";
+    private static final String EMPTY_STRING = "";
+    private static final int COVER_INDEX = 0;
+    private static final int BOOK_VALIDATOR_TYPE = 1;
+    private static final int READER_CARD_VALIDATOR_TYPE = 2;
+    private static final int REQUEST_BOOK_DTO_CONVERTER_TYPE = 4;
     private FileUploader fileUploader = FileUploader.getInstance();
-    private RequestExtractor requestExtractor = RequestExtractor.getInstance();
+    private Converter<BookDto, HttpServletRequest> requestBookDtoConverter
+            = ConverterFactory.getInstance().createConverter(REQUEST_BOOK_DTO_CONVERTER_TYPE);
     private BookService bookService = BookServiceImpl.getInstance();
-    private BookValidator bookValidator = BookValidator.getInstance();
-    private ReaderCardValidator readerCardValidator = ReaderCardValidator.getInstance();
+    private ValidatorFactory validatorFactory = ValidatorFactory.getInstance();
     private static volatile EditBookCommand instance;
 
     public static synchronized EditBookCommand getInstance() {
@@ -43,11 +47,19 @@ public class EditBookCommand extends LibraryCommand {
         return localInstance;
     }
 
+    /**
+     * Redirects to the book page if book was edited or sends
+     * list of error messages if validation was failed.
+     *
+     * @throws ServletException in case of servlet failure
+     * @throws IOException      in case of IO failure
+     */
     @Override
     public void process() throws ServletException, IOException {
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.addAll(bookValidator.validate(request).getErrorList());
-        errorMessages.addAll(readerCardValidator.validate(request).getErrorList());
+        errorMessages.addAll(validatorFactory.createValidator(BOOK_VALIDATOR_TYPE).validate(request).getErrorList());
+        errorMessages.addAll(validatorFactory.createValidator(READER_CARD_VALIDATOR_TYPE).validate(request)
+                .getErrorList());
         boolean isValidationSuccessful = errorMessages.size() == 0;
         if (isValidationSuccessful) {
             editBook();
@@ -58,18 +70,8 @@ public class EditBookCommand extends LibraryCommand {
         }
     }
 
-    private void sendResponse(List<String> errorMessages) throws IOException {
-        Gson gson = new GsonBuilder().setDateFormat(DATE_FORMAT).create();
-        String errors = gson.toJson(errorMessages);
-        PrintWriter out = response.getWriter();
-        response.setContentType(CONTENT_TYPE);
-        response.setCharacterEncoding(ENCODING);
-        out.print(errors);
-        out.flush();
-    }
-
     private void editBook() throws IOException, ServletException {
-        BookDto bookDto = requestExtractor.extractBookDto(request);
+        BookDto bookDto = requestBookDtoConverter.convertToDto(request);
         bookService.addEditBook(bookDto);
         boolean isFileAttached = !request.getPart("file").getSubmittedFileName().equals(EMPTY_STRING);
         if (isFileAttached) {

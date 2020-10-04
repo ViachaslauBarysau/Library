@@ -11,9 +11,12 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Provides method for uploading files.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUploader {
-    private final static Logger LOGGER = LogManager.getLogger(FileUploader.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(FileUploader.class.getName());
     private static volatile FileUploader instance;
 
     public static synchronized FileUploader getInstance() {
@@ -29,6 +32,12 @@ public class FileUploader {
         return localInstance;
     }
 
+    /**
+     * Uploads file to the selected folder.
+     *
+     * @param filePart file needed to upload
+     * @param fileName name for the uploading file
+     */
     public void uploadFile(Part filePart, String fileName) {
         try (InputStream fileContent = filePart.getInputStream();
              OutputStream outputStream = new FileOutputStream(new File(System.getProperty("uploadFolderPath")

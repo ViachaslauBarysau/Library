@@ -1,6 +1,9 @@
-package by.itechart.libmngmt.util.validation;
+package by.itechart.libmngmt.validation.impl;
 
-import by.itechart.libmngmt.controller.command.commands.EditBookCommand;
+import by.itechart.libmngmt.validation.ValidationResult;
+import by.itechart.libmngmt.validation.Validator;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.ISBNValidator;
 
@@ -11,10 +14,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class BookValidator {
-    private static final String AUTHOR_GENRE_PATTERN = "^[a-zA-Z\\s]*$";
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class BookValidator implements Validator {
     private static final String NUMBER_PATTERN = "[0-9]+";
-    private static final int MIN_DATE = 1900;
+    private static final int MIN_DATE = 0;
     private static final int MAX_PAGE_COUNT = 9999;
     private static final String JPEG_FORMAT = "image/jpeg";
     private static final String PNG_FORMAT = "image/png";
@@ -38,7 +41,7 @@ public class BookValidator {
         return localInstance;
     }
 
-    public ValidationResult validate(HttpServletRequest request) throws IOException, ServletException {
+    public ValidationResult validate(final HttpServletRequest request) throws IOException, ServletException {
         List<String> errorMessages = new ArrayList<>();
         validateTitle(request.getParameter("title"), errorMessages);
         validateAuthors(Arrays.asList(request.getParameterValues("authors")), errorMessages);
@@ -49,23 +52,23 @@ public class BookValidator {
         validatePageCount(request.getParameter("pageCount"), errorMessages);
         validateTotalAmount(request.getParameter("totalAmount"), errorMessages);
         validateFile(request, errorMessages);
-        ValidationResult validationResult = new ValidationResult(errorMessages);
-        return validationResult;
+        return ValidationResult.builder()
+                .errorList(errorMessages)
+                .build();
     }
 
-    private void validateTitle(String title, List<String> errorMessages) {
+    private void validateTitle(final String title, final List<String> errorMessages) {
         if (StringUtils.isEmpty(title) || title.length() > MAX_TITLE_LENGTH) {
             errorMessages.add("Title is incorrect.");
         }
     }
 
-    private void validateAuthors(List<String> authors, List<String> errorMessages) {
+    private void validateAuthors(final List<String> authors, final List<String> errorMessages) {
         if (authors != null) {
             Set<String> authorsSet = new HashSet<>();
             for (String name : authors) {
                 String authorName = name.trim().toLowerCase();
-                if (!StringUtils.isEmpty(authorName) && authorName.length() < MAX_LENGTH
-                        && authorName.matches(AUTHOR_GENRE_PATTERN)) {
+                if (StringUtils.isNotEmpty(authorName) && authorName.length() < MAX_LENGTH) {
                     authorsSet.add(authorName);
                 }
             }
@@ -77,12 +80,12 @@ public class BookValidator {
         }
     }
 
-    private void validateGenres(List<String> genres, List<String> errorMessages) {
+    private void validateGenres(final List<String> genres, final List<String> errorMessages) {
         if (genres != null) {
             Set<String> genresSet = new HashSet<>();
             for (String bookGenre : genres) {
                 String genre = bookGenre.trim().toLowerCase();
-                if (!StringUtils.isEmpty(genre) && genre.length() < MAX_LENGTH && genre.matches(AUTHOR_GENRE_PATTERN)) {
+                if (StringUtils.isNotEmpty(genre) && genre.length() < MAX_LENGTH) {
                     genresSet.add(genre);
                 }
             }
@@ -94,42 +97,41 @@ public class BookValidator {
         }
     }
 
-    private void validateIsbn(String isbn, List<String> errorMessages) {
+    private void validateIsbn(final String isbn, final List<String> errorMessages) {
         ISBNValidator isbnValidator = ISBNValidator.getInstance();
         if (StringUtils.isEmpty(isbn) || !isbnValidator.isValid(isbn)) {
             errorMessages.add("ISBN is not valid.");
         }
     }
 
-    private void validatePublishDate(String date, List<String> errorMessages) {
-        if (StringUtils.isEmpty(date) || !date.matches(NUMBER_PATTERN) || Integer.parseInt(date) < MIN_DATE ||
-                Integer.parseInt(date) > LocalDate.now().getYear()) {
+    private void validatePublishDate(final String date, final List<String> errorMessages) {
+        if (StringUtils.isEmpty(date) || !date.matches(NUMBER_PATTERN) || Integer.parseInt(date) < MIN_DATE
+                || (Integer.parseInt(date) > LocalDate.now().getYear())) {
             errorMessages.add("Publish date is not valid.");
         }
     }
 
-    private void validatePublisher(String publisher, List<String> errorMessages) {
-        if (StringUtils.isEmpty(publisher) || publisher.length() > MAX_LENGTH ||
-                !publisher.matches(AUTHOR_GENRE_PATTERN)) {
+    private void validatePublisher(final String publisher, final List<String> errorMessages) {
+        if (StringUtils.isEmpty(publisher) || publisher.length() > MAX_LENGTH) {
             errorMessages.add("Publisher name is incorrect.");
         }
     }
 
-    private void validatePageCount(String pageCount, List<String> errorMessages) {
-        if (StringUtils.isEmpty(pageCount) || !pageCount.matches(NUMBER_PATTERN) ||
-                (Integer.parseInt(pageCount) <= MIN_COUNT || Integer.parseInt(pageCount) > MAX_PAGE_COUNT)) {
+    private void validatePageCount(final String pageCount, final List<String> errorMessages) {
+        if (StringUtils.isEmpty(pageCount) || !pageCount.matches(NUMBER_PATTERN)
+                || (Integer.parseInt(pageCount) <= MIN_COUNT || Integer.parseInt(pageCount) > MAX_PAGE_COUNT)) {
             errorMessages.add("Page count is not valid.");
         }
     }
 
-    private void validateTotalAmount(String totalAmount, List<String> errorMessages) {
-        if (StringUtils.isEmpty(totalAmount) || !totalAmount.matches(NUMBER_PATTERN) ||
-                Integer.parseInt(totalAmount) < MIN_COUNT) {
+    private void validateTotalAmount(final String totalAmount, final List<String> errorMessages) {
+        if (StringUtils.isEmpty(totalAmount) || !totalAmount.matches(NUMBER_PATTERN)
+                || Integer.parseInt(totalAmount) < MIN_COUNT) {
             errorMessages.add("Total amount is not valid.");
         }
     }
 
-    private void validateFile(HttpServletRequest request, List<String> errors) throws IOException, ServletException {
+    private void validateFile(final HttpServletRequest request, final List<String> errors) throws IOException, ServletException {
         Part filePart = request.getPart("file");
         long fileSize = filePart.getSize();
         String fileType = filePart.getContentType();
