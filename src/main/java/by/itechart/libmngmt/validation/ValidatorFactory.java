@@ -7,11 +7,14 @@ import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Validation factory for getting needed validator.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ValidatorFactory {
     private static final Logger LOGGER = LogManager.getLogger(ValidatorFactory.class.getName());
-    private static final int BOOK_VALIDATOR = 1;
-    private static final int READER_CARD_VALIDATOR = 2;
+    private static final int BOOK_VALIDATOR_INDEX = 1;
+    private static final int READER_CARD_VALIDATOR_INDEX = 2;
     private BookValidator bookValidator = BookValidator.getInstance();
     private ReaderCardValidator readerCardValidator = ReaderCardValidator.getInstance();
     private static volatile ValidatorFactory instance;
@@ -29,12 +32,18 @@ public class ValidatorFactory {
         return localInstance;
     }
 
+    /**
+     * Returns validator depending on the validator type index.
+     *
+     * @param validatorType validator type index
+     * @return Converter object
+     */
     public Validator createValidator(final int validatorType) {
         switch (validatorType) {
-            case (BOOK_VALIDATOR): {
+            case (BOOK_VALIDATOR_INDEX): {
                 return bookValidator;
             }
-            case (READER_CARD_VALIDATOR): {
+            case (READER_CARD_VALIDATOR_INDEX): {
                 return readerCardValidator;
             }
             default: {

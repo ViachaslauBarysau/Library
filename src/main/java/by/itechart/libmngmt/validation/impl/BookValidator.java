@@ -14,17 +14,20 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Provides methods for validation request parameters.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookValidator implements Validator {
     private static final String NUMBER_PATTERN = "[0-9]+";
-    private static final int MIN_DATE = 0;
-    private static final int MAX_PAGE_COUNT = 9999;
     private static final String JPEG_FORMAT = "image/jpeg";
     private static final String PNG_FORMAT = "image/png";
+    private static final String EMPTY_STRING = "";
+    private static final int MIN_DATE = 0;
+    private static final int MAX_PAGE_COUNT = 9999;
     private static final int MAX_FILE_SIZE = 2097152;
     private static final int MAX_TITLE_LENGTH = 50;
     private static final int MAX_LENGTH = 30;
-    private static final String EMPTY_STRING = "";
     public static final int MIN_COUNT = 0;
     private static BookValidator instance;
 
@@ -41,6 +44,13 @@ public class BookValidator implements Validator {
         return localInstance;
     }
 
+    /**
+     * Returns ValidationResult object that contains list with
+     * validation error messages.
+     *
+     * @param request HttpServletRequest
+     * @return ValidationResult object
+     */
     public ValidationResult validate(final HttpServletRequest request) throws IOException, ServletException {
         List<String> errorMessages = new ArrayList<>();
         validateTitle(request.getParameter("title"), errorMessages);

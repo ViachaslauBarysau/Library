@@ -1,10 +1,6 @@
 package by.itechart.libmngmt.service.converter;
 
-import by.itechart.libmngmt.service.converter.impl.RequestBookDtoConverter;
-import by.itechart.libmngmt.service.converter.impl.RequestReaderCardDtoListConverter;
-import by.itechart.libmngmt.service.converter.impl.BookDtoEntityConverter;
-import by.itechart.libmngmt.service.converter.impl.ReaderCardDtoEntityConverter;
-import by.itechart.libmngmt.service.converter.impl.ReaderDtoEntityConverter;
+import by.itechart.libmngmt.service.converter.impl.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.logging.log4j.LogManager;

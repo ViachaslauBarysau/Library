@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Represents a ValidationResult.
+ */
 @Data
 @Builder
 @NoArgsConstructor

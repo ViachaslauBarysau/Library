@@ -2,8 +2,6 @@ package by.itechart.libmngmt.service;
 
 import by.itechart.libmngmt.dto.BookDto;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 public interface BookService {

@@ -34,6 +34,7 @@
     <commons-validator.version>1.7</commons-validator.version>
     <commons-lang3.version>3.11</commons-lang3.version>
     <mockito-core.version>3.5.11</mockito-core.version>
+    <c3p0.version>0.9.5.5</c3p0.version>
   </properties>
 
   <dependencies>
@@ -41,8 +42,9 @@
     <dependency>
       <groupId>com.mchange</groupId>
       <artifactId>c3p0</artifactId>
-      <version>0.9.5.5</version>
+      <version>${c3p0.version}</version>
     </dependency>
+
     <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
     <dependency>
       <groupId>org.mockito</groupId>

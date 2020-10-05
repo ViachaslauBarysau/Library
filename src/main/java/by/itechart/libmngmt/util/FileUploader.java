@@ -17,6 +17,7 @@ import java.io.OutputStream;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FileUploader {
     private static final Logger LOGGER = LogManager.getLogger(FileUploader.class.getName());
+    private static final String UPLOAD_FOLDER = "uploadFolderPath";
     private static volatile FileUploader instance;
 
     public static synchronized FileUploader getInstance() {
@@ -40,7 +41,7 @@ public class FileUploader {
      */
     public void uploadFile(Part filePart, String fileName) {
         try (InputStream fileContent = filePart.getInputStream();
-             OutputStream outputStream = new FileOutputStream(new File(System.getProperty("uploadFolderPath")
+             OutputStream outputStream = new FileOutputStream(new File(System.getProperty(UPLOAD_FOLDER)
                      + fileName));) {
             int read = 0;
             byte[] bytes = new byte[1024];

@@ -3,8 +3,8 @@ package by.itechart.libmngmt.service;
 import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderEntity;
 import by.itechart.libmngmt.repository.ReaderRepository;
-import by.itechart.libmngmt.service.impl.ReaderServiceImpl;
 import by.itechart.libmngmt.service.converter.impl.ReaderDtoEntityConverter;
+import by.itechart.libmngmt.service.impl.ReaderServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,7 +18,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReaderServiceTest {

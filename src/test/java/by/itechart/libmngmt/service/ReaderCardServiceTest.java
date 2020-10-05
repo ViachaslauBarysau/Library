@@ -4,8 +4,8 @@ import by.itechart.libmngmt.dto.ReaderCardDto;
 import by.itechart.libmngmt.dto.ReaderDto;
 import by.itechart.libmngmt.entity.ReaderCardEntity;
 import by.itechart.libmngmt.repository.ReaderCardRepository;
-import by.itechart.libmngmt.service.impl.ReaderCardServiceImpl;
 import by.itechart.libmngmt.service.converter.impl.ReaderCardDtoEntityConverter;
+import by.itechart.libmngmt.service.impl.ReaderCardServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,8 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReaderCardServiceTest {

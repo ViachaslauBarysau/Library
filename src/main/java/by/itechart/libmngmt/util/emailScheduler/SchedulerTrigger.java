@@ -37,7 +37,7 @@ public class SchedulerTrigger {
         Trigger trigger = TriggerBuilder
                 .newTrigger()
                 .withSchedule(CronScheduleBuilder.cronSchedule("0 00 10 * * ?"))
-                                .build();
+                .build();
         try {
             Scheduler scheduler = new StdSchedulerFactory().getScheduler();
             scheduler.start();

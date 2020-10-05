@@ -14,9 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Provides methods for validation request parameters.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReaderCardValidator implements Validator {
-    private static final String USERNAME_PATTERN = "^[a-zA-Z\\s]*$";
     private static final String EMAIL_PATTERN = "^(.+)@(.+)$";
     private RequestReaderCardDtoListConverter requestReaderCardDtoListConverter
             = RequestReaderCardDtoListConverter.getInstance();
@@ -35,6 +37,13 @@ public class ReaderCardValidator implements Validator {
         return localInstance;
     }
 
+    /**
+     * Returns ValidationResult object that contains list with
+     * validation error messages.
+     *
+     * @param request HttpServletRequest
+     * @return ValidationResult object
+     */
     public ValidationResult validate(final HttpServletRequest request) {
         Set<String> errorMessages = new HashSet<>();
         if (!StringUtils.isEmpty(request.getParameter("readerCards"))) {
@@ -56,7 +65,7 @@ public class ReaderCardValidator implements Validator {
     }
 
     private void validateUsername(final String userName, final Set<String> errorMessages) {
-        if (StringUtils.isEmpty(userName) || !userName.matches(USERNAME_PATTERN)) {
+        if (StringUtils.isEmpty(userName)) {
             errorMessages.add("Name in reader card(s) is incorrect!");
         }
     }
