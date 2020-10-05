@@ -6,7 +6,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 </head>
 <body>
+<!-- Form starts -->
 <form method="post">
+    <!-- Table starts -->
     <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
@@ -34,6 +36,7 @@
             </tr>
         </c:forEach>
     </table>
+    <!-- Table ends -->
     <input hidden name="page" value="${pageNumber}">
     <button type="submit" class="btn btn-primary" formaction="lib-app?command=ADD_BOOK_PAGE" />Add Book</button>
     <button type="submit" class="btn btn-primary" formaction="lib-app?command=DELETE_BOOK" />Delete Book(-s)</button>
@@ -71,7 +74,7 @@
                                              onchange="hideUnavailable(this)" />   Hide unavailable</span>
     </c:if>
 </form>
-
+<!-- Form ends -->
 </body>
 </html>
 <script type="text/javascript">

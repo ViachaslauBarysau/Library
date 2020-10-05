@@ -100,7 +100,7 @@
       </div>
       <div>
         <label>Description:</label>
-        <textarea class="form-control" maxlength="980" name="description" cols="60" rows="12" required>
+        <textarea class="form-control" maxlength="980" name="description" cols="60" rows="12">
             ${bookpagedto.bookDto.description}
         </textarea>
       </div>
