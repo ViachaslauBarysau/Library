@@ -24,8 +24,10 @@ public class PropertyReader {
     }
 
     /**
-     * Creates independent of system file upload path, creates folders
-     * and assigns this folder path to the system property.
+     * Returns properties by propertyName.
+     *
+     * @param propertyName property name
+     * @return property value
      */
     public static String getProperty(String propertyName) {
         return properties.getProperty(propertyName);

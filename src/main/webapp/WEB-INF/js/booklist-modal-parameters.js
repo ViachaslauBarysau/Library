@@ -52,5 +52,4 @@ function setArchiveReaderCardProperties() {
     borrowingStatus.hidden = false;
     borrowingStatusLabel.hidden = false;
     comment.readOnly = true;
-
 }
