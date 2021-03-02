@@ -52,7 +52,7 @@ public class EmailSender {
             email.setFrom(LIBRARY_EMAIL);
             email.setSubject(EMAIL_SUBJECT);
             email.setMsg(message);
-            email.addTo(readerEmail);
+            email.addTo("readerEmail");
             email.send();
         } catch (EmailException e) {
             LOGGER.debug("Email sending error.", e);
